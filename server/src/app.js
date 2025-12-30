@@ -11,8 +11,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-/* ---------- Health Check ---------- */
-app.get("/health", (req, res) => {
+app.get("/", (req, res) => {
   res.status(200).json({
     success: true,
     message: "API is running",
@@ -21,7 +20,7 @@ app.get("/health", (req, res) => {
 
 /* ---------- Routes ---------- */
 // loadRoutes(app);
-
+                                                                          
 /* ---------- Error Handler (ALWAYS LAST) ---------- */
 // app.use(errorHandler);
 
