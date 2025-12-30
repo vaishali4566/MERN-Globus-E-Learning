@@ -16,3 +16,5 @@ const loadRoutes = (app) => {
 };
 
 export default loadRoutes;
+
+
