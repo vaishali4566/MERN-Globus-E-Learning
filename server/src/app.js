@@ -1,8 +1,8 @@
 import express from "express";
 import cors from "cors";
 
-// import loadRoutes from "./routes/index.js";
-// import { errorHandler } from "./middlewares/error.middleware.js";
+import loadRoutes from "./routes/index.js";
+import { errorHandler } from "./middlewares/error.middleware.js";
 
 const app = express();
 
@@ -19,9 +19,11 @@ app.get("/", (req, res) => {
 });
 
 /* ---------- Routes ---------- */
+loadRoutes(app);
+
 // loadRoutes(app);
                                                                           
 /* ---------- Error Handler (ALWAYS LAST) ---------- */
-// app.use(errorHandler);
+app.use(errorHandler);
 
 export default app;
