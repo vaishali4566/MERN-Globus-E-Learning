@@ -10,16 +10,10 @@ const AuthLinks = ({ showRemember = true, signupText = "Sign Up" }) => {
           Remember Me
         </label>
       )}
-      <a href="#" className="text-blue-500 hover:underline">
+      <a href="/forgot-password" className="text-blue-500 hover:underline">
         Forgot Password?
       </a>
       </div>
-      <p className="text-gray-400">
-        Don’t have an account?{" "}
-        <a href="/signup" className="text-blue-500 hover:underline">
-          {signupText}
-        </a>
-      </p>
     </div>
   );
 };
