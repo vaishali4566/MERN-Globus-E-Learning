@@ -1,49 +1,54 @@
 import { signupUser, loginUser } from "./auth.service.js";
+import asyncHandler from "../utils/asyncHandler.js";
 import jwt from "jsonwebtoken";
 
 // Helper to generate JWT token
-const generateToken = (userId) => {
-  return jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: "7d" });
-};
+const generateToken = (user) =>
+  jwt.sign(
+    { id: user._id, role: user.role },
+    process.env.JWT_SECRET,
+    { expiresIn: "7d" }
+  );
 
-// Signup controller
-export const signup = async (req, res, next) => {
-  try {
-    const { name, email, password, role } = req.body; 
-    // Optional: validate role
-    const allowedRoles = ["student", "trainer"];
-    const userRole = allowedRoles.includes(role) ? role : "student";
+// Signup
+export const signup = asyncHandler(async (req, res) => {
+  const { name, email, password, role } = req.body;
 
-    const user = await signupUser({ name, email, password, role: userRole });
+  const allowedRoles = ["student", "trainer"];
+  const userRole = allowedRoles.includes(role) ? role : "student";
 
-    const token = generateToken(user._id);
-    res.status(201).json({
-      success: true,
-      data: {
-        user: { id: user._id, name: user.name, email: user.email, role: user.role },
-        token,
+  const user = await signupUser({ name, email, password, role: userRole });
+
+  res.status(201).json({
+    success: true,
+    data: {
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
       },
-    });
-  } catch (err) {
-    next(err);
-  }
-};
+      token: generateToken(user),
+    },
+  });
+});
 
-// Login controller
-export const login = async (req, res, next) => {
-  try {
-    const { email, password } = req.body;
-    const user = await loginUser({ email, password });
+// Login
+export const login = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
 
-    const token = generateToken(user._id);
-    res.status(200).json({
-      success: true,
-      data: {
-        user: { id: user._id, name: user.name, email: user.email, role: user.role },
-        token,
+  const user = await loginUser({ email, password });
+
+  res.status(200).json({
+    success: true,
+    data: {
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
       },
-    });
-  } catch (err) {
-    next(err);
-  }
-};
+      token: generateToken(user),
+    },
+  });
+});
