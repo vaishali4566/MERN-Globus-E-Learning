@@ -1,5 +1,5 @@
 import User from "./auth.model.js";
-import { AppError } from "../utils/AppError.js"; 
+import { AppError } from "../../utils/appError.js"; 
 
 // Signup service
 export const signupUser = async ({ name, email, password, role }) => {
@@ -23,7 +23,7 @@ export const loginUser = async ({ email, password }) => {
 
   const isMatch = await user.comparePassword(password);
   if (!isMatch) {
-    throw new AppError("Invalid credentials", 401); 
+    throw new AppError("Invalid credentials", 401);
   }
 
   return user;
