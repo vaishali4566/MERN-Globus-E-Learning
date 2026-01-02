@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const AuthLinks = ({ showRemember = true, signupText = "Sign Up" }) => {
   return (
@@ -10,9 +11,9 @@ const AuthLinks = ({ showRemember = true, signupText = "Sign Up" }) => {
           Remember Me
         </label>
       )}
-      <a href="/forgot-password" className="text-blue-500 hover:underline">
+      <Link to="/forgot-password" className="text-blue-500 hover:underline">
         Forgot Password?
-      </a>
+      </Link>
       </div>
     </div>
   );

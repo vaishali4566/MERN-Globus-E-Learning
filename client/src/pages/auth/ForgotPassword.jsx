@@ -1,5 +1,6 @@
 import React from "react";
 import AuthLayout from "../../components/auth/AuthLayout";
+import { Link } from "react-router-dom";
 
 const ForgotPassword = () => {
   return (
@@ -39,12 +40,12 @@ const ForgotPassword = () => {
       {/* Back to Login */}
       <p className="text-sm text-center mt-6">
         Remember your password?
-        <a
-          href="/login"
+        <Link
+          to="/login"
           className="text-[#316aff] ml-1 hover:underline"
         >
           Back to Login
-        </a>
+        </Link>
       </p>
     </AuthLayout>
   );
