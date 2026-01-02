@@ -1,5 +1,6 @@
 import { signupUser, loginUser } from "./auth.service.js";
-import asyncHandler from "../utils/asyncHandler.js";
+import asyncHandler from "../../utils/asyncHandler.js";
+import { AppError } from "../../utils/appError.js";
 import jwt from "jsonwebtoken";
 
 // Helper to generate JWT token
@@ -15,9 +16,11 @@ export const signup = asyncHandler(async (req, res) => {
   const { name, email, password, role } = req.body;
 
   const allowedRoles = ["student", "trainer"];
-  const userRole = allowedRoles.includes(role) ? role : "student";
+  if (!allowedRoles.includes(role)) {
+    throw new AppError(`Role must be either student or trainer`, 400);
+  }
 
-  const user = await signupUser({ name, email, password, role: userRole });
+  const user = await signupUser({ name, email, password, role});
 
   res.status(201).json({
     success: true,
