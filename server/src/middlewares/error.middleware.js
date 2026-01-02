@@ -1,11 +1,25 @@
 export const errorHandler = (err, req, res, next) => {
-  console.log("🔥 ERROR STACK TRACE");
-  console.log(err.stack);
+  // default values
+  err.statusCode = err.statusCode || 500;
+  err.message = err.message || "Internal Server Error";
 
-  const statusCode = err.statusCode || 500;
+  // dev environment
+  if (process.env.NODE_ENV === "development") {
+    console.log("🔥 ERROR STACK TRACE");
+    console.log(err.stack);
 
-  res.status(statusCode).json({
+    return res.status(err.statusCode).json({
+      success: false,
+      message: err.message,
+      stack: err.stack,
+    });
+  }
+
+  // production environment
+  res.status(err.statusCode).json({
     success: false,
-    message: err.message,
+    message: err.isOperational
+      ? err.message
+      : "Something went wrong, please try again later",
   });
 };
