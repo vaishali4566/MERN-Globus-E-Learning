@@ -21,7 +21,6 @@ app.get("/", (req, res) => {
 /* ---------- Routes ---------- */
 loadRoutes(app);
 
-// loadRoutes(app);
                                                                           
 /* ---------- Error Handler (ALWAYS LAST) ---------- */
 app.use(errorHandler);
