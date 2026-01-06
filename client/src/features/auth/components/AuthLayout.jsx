@@ -1,6 +1,6 @@
 import React from "react";
-import authBg from "../../assets/images/auth/auth-cover-bg.png";
-import authImg from "../../assets/images/auth/auth.png";
+import authBg from "../../../assets/images/auth/auth-cover-bg.png";
+import authImg from "../../../assets/images/auth/auth.png";
 
 const AuthLayout = ({ children, heading, subheading }) => {
   return (
