@@ -1,4 +1,3 @@
-import DashboardLayout from "../../../components/layout/DashboardLayout";
 import CourseCard from "./CourseCard";
 
 const MyCourses = () => {
@@ -30,69 +29,57 @@ const MyCourses = () => {
   ];
 
   return (
-    <DashboardLayout>
-      <div className="space-y-6">
+    <div className="space-y-4">
 
-        {/* ===== Page Header ===== */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-              My Courses
-            </h1>
-            <nav className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-              <ol className="flex items-center gap-2">
-                <li>
-                  <a
-                    href="/student/dashboard"
-                    className="hover:text-blue-600 dark:hover:text-blue-400"
-                  >
-                    Dashboard
-                  </a>
-                </li>
-                <li>/</li>
-                <li className="text-gray-700 dark:text-gray-300">
-                  My Courses
-                </li>
-              </ol>
-            </nav>
-          </div>
+      {/* ===== Page Header ===== */}
+      <div>
+        <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
+          My Courses
+        </h1>
+        <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 mt-1">
+          <span className="hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer">
+            Dashboard
+          </span>
+          <span>/</span>
+          <span className="text-gray-700 dark:text-gray-300">My Courses</span>
         </div>
-
-        {/* ===== Courses Grid ===== */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {courses.map((course) => (
-            <CourseCard key={course.id} course={course} />
-          ))}
-        </div>
-
-        {/* ===== Pagination ===== */}
-        <div className="flex justify-center">
-          <ul className="flex items-center gap-2 text-sm">
-            <li>
-              <button className="px-3 py-1 border rounded-md hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-darkHover">
-                «
-              </button>
-            </li>
-            <li>
-              <button className="px-3 py-1 border rounded-md bg-blue-600 text-white border-blue-600">
-                1
-              </button>
-            </li>
-            <li>
-              <button className="px-3 py-1 border rounded-md hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-darkHover">
-                2
-              </button>
-            </li>
-            <li>
-              <button className="px-3 py-1 border rounded-md hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-darkHover">
-                »
-              </button>
-            </li>
-          </ul>
-        </div>
-
       </div>
-    </DashboardLayout>
+
+      {/* ===== Courses Grid ===== */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {courses.map((course) => (
+          <CourseCard key={course.id} course={course} />
+        ))}
+      </div>
+
+      {/* ===== Pagination ===== */}
+      <div className="flex justify-center mt-6">
+        <div className="flex items-center gap-2 text-xs">
+          <button className="px-3 py-1 rounded-md border
+            border-gray-300 dark:border-[#515268]
+            hover:bg-gray-100 dark:hover:bg-[#1f2337] transition">
+            «
+          </button>
+
+          <button className="px-3 py-1 rounded-md bg-blue-600 text-white">
+            1
+          </button>
+
+          <button className="px-3 py-1 rounded-md border
+            border-gray-300 dark:border-[#515268]
+            hover:bg-gray-100 dark:hover:bg-[#1f2337] transition">
+            2
+          </button>
+
+          <button className="px-3 py-1 rounded-md border
+            border-gray-300 dark:border-[#515268]
+            hover:bg-gray-100 dark:hover:bg-[#1f2337] transition">
+            »
+          </button>
+        </div>
+      </div>
+
+    </div>
   );
 };
 
