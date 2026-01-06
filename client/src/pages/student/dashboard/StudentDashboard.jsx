@@ -78,7 +78,7 @@ const StudentDashboard = () => {
             </p>
           </div>
           <div className="flex items-center gap-4">
-            <div className="bg-white dark:bg-[#1d1e30] rounded-lg p-4 shadow flex items-center gap-3">
+            <div className="bg-white dark:bg-[#1f2337] rounded-lg p-4 shadow flex items-center gap-3">
               <FiBookOpen className="text-blue-600 dark:text-blue-400 w-6 h-6" />
               <div>
                 <p className="text-gray-900 dark:text-white font-semibold">3</p>
@@ -87,7 +87,7 @@ const StudentDashboard = () => {
                 </p>
               </div>
             </div>
-            <div className="bg-white dark:bg-[#1d1e30] rounded-lg p-4 shadow flex items-center gap-3">
+            <div className="bg-white dark:bg-[#1f2337] rounded-lg p-4 shadow flex items-center gap-3">
               <FiCheckCircle className="text-green-500 w-6 h-6" />
               <div>
                 <p className="text-gray-900 dark:text-white font-semibold">
@@ -98,7 +98,7 @@ const StudentDashboard = () => {
                 </p>
               </div>
             </div>
-            <div className="bg-white dark:bg-[#1d1e30] rounded-lg p-4 shadow flex items-center gap-3">
+            <div className="bg-white dark:bg-[#1f2337] rounded-lg p-4 shadow flex items-center gap-3">
               <FiAward className="text-yellow-500 w-6 h-6" />
               <div>
                 <p className="text-gray-900 dark:text-white font-semibold">5</p>
@@ -120,7 +120,7 @@ const StudentDashboard = () => {
           ].map((action, idx) => (
             <div
               key={idx}
-              className={`bg-white dark:bg-[#1d1e30] rounded-lg shadow p-4 flex items-center gap-3 hover:shadow-lg transition cursor-pointer`}
+              className={`bg-white dark:bg-[#1f2337] rounded-lg shadow p-4 flex items-center gap-3 hover:shadow-lg transition cursor-pointer`}
             >
               <span
                 className={`text-${action.bg}-600 dark:text-${action.bg}-400 w-6 h-6`}
@@ -143,7 +143,7 @@ const StudentDashboard = () => {
             {courses.map((course) => (
               <div
                 key={course.id}
-                className="bg-white dark:bg-[#1d1e30] p-4 rounded-lg shadow hover:shadow-lg transition-all"
+                className="bg-white dark:bg-[#1f2337] p-4 rounded-lg shadow hover:shadow-lg transition-all"
               >
                 <div className="flex justify-between items-center mb-3">
                   <h3 className="text-gray-900 dark:text-white font-semibold">
@@ -170,9 +170,9 @@ const StudentDashboard = () => {
                     <p className="text-gray-500 dark:text-gray-400 text-sm">
                       Progress
                     </p>
-                    <div className="w-full bg-gray-200 dark:bg-[#515268] h-2 rounded-full mt-1">
+                    <div className="w-full bg-gray-200 dark:bg-[#1f2337] h-2 rounded-full mt-1">
                       <div
-                        className="bg-blue-600 dark:bg-blue-400 h-2 rounded-full"
+                        className="bg-blue-600 dark:bg-[#1f2337] h-2 rounded-full"
                         style={{ width: `${course.progress}%` }}
                       />
                     </div>
@@ -186,7 +186,7 @@ const StudentDashboard = () => {
         {/* ===== Upcoming + Notifications + Activities ===== */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Upcoming Events */}
-          <div className="bg-white dark:bg-[#1d1e30] rounded-lg shadow p-4">
+          <div className="bg-white dark:bg-[#1f2337] rounded-lg shadow p-4">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
               Upcoming Events
             </h2>
@@ -211,7 +211,7 @@ const StudentDashboard = () => {
           </div>
 
           {/* Notifications */}
-          <div className="bg-white dark:bg-[#1d1e30] rounded-lg shadow p-4">
+          <div className="bg-white dark:bg-[#1f2337] rounded-lg shadow p-4">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
               Notifications
             </h2>
@@ -231,7 +231,7 @@ const StudentDashboard = () => {
           </div>
 
           {/* Recent Activities */}
-          <div className="bg-white dark:bg-[#1d1e30] rounded-lg shadow p-4">
+          <div className="bg-white dark:bg-[#1f2337] rounded-lg shadow p-4">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
               Recent Activities
             </h2>
@@ -260,7 +260,7 @@ const StudentDashboard = () => {
             {recommendedCourses.map((course) => (
               <div
                 key={course.id}
-                className="bg-white dark:bg-[#1d1e30] p-4 rounded-lg shadow hover:shadow-lg transition cursor-pointer"
+                className="bg-white dark:bg-[#1f2337] p-4 rounded-lg shadow hover:shadow-lg transition cursor-pointer"
               >
                 <h3 className="text-gray-900 dark:text-white font-medium">
                   {course.title}
@@ -273,20 +273,20 @@ const StudentDashboard = () => {
           </div>
         </div>
         {/* ===== Learning Streak ===== */}
-        <div className="bg-white dark:bg-[#1d1e30] rounded-lg shadow p-4">
+        <div className="bg-white dark:bg-[#1f2337] rounded-lg shadow p-4">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
             Learning Streak
           </h2>
           <p className="text-gray-500 dark:text-gray-400 text-sm mb-2">
             You've been learning 7 days in a row!
           </p>
-          <div className="w-full h-3 bg-gray-200 dark:bg-[#515268] rounded-full">
-            <div className="h-3 bg-blue-600 dark:bg-blue-400 rounded-full w-[70%]"></div>
+          <div className="w-full h-3 bg-gray-200 dark:bg-[#1f2337] rounded-full">
+            <div className="h-3 bg-blue-600 dark:bg-[#1f2337] rounded-full w-[70%]"></div>
           </div>
         </div>
 
         {/* ===== Leaderboard / Peer Comparison ===== */}
-        <div className="bg-white dark:bg-[#1d1e30] rounded-lg shadow p-4">
+        <div className="bg-white dark:bg-[#1f2337] rounded-lg shadow p-4">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
             Leaderboard
           </h2>
@@ -311,7 +311,7 @@ const StudentDashboard = () => {
         </div>
 
         {/* ===== Assignments / Deadlines ===== */}
-        <div className="bg-white dark:bg-[#1d1e30] rounded-lg shadow p-4">
+        <div className="bg-white dark:bg-[#1f2337] rounded-lg shadow p-4">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
             Assignments / Deadlines
           </h2>
@@ -333,7 +333,7 @@ const StudentDashboard = () => {
         </div>
 
         {/* ===== Footer / Help Links ===== */}
-        <div className="bg-white dark:bg-[#1d1e30] rounded-lg shadow p-4 text-center text-gray-500 dark:text-gray-400 text-sm">
+        <div className="bg-white dark:bg-[#1f2337] rounded-lg shadow p-4 text-center text-gray-500 dark:text-gray-400 text-sm">
           Need help?{" "}
           <a
             href="#"
@@ -348,3 +348,86 @@ const StudentDashboard = () => {
 };
 
 export default StudentDashboard;
+
+
+// Node.js Complete Course
+//  └── Section 1: Node.js Fundamentals
+//       └── Lesson 1: Introduction to Node.js
+//            ├── 🎥 Video: What is Node.js?
+//            ├── 📄 PDF: Node.js Overview Notes
+//            ├── 🧪 Quiz: Node.js Basics Quiz
+//            ├── 📝 Assignment: Install Node & Run First Script
+
+//       └── Lesson 2: Node.js Architecture
+//            ├── 🎥 Video: Event Loop & Non-Blocking I/O
+//            ├── 📄 PDF: Event Loop Explained
+//            ├── 🧪 Quiz: Event Loop MCQs
+//            ├── 📝 Assignment: Explain Event Loop (Text)
+
+//  └── Section 2: Core Node.js Modules
+//       └── Lesson 3: fs Module
+//            ├── 🎥 Video: File System Module
+//            ├── 📄 PDF: fs Module Methods
+//            ├── 🧪 Quiz: fs MCQs
+//            ├── 📝 Assignment: Build File CRUD App
+
+//       └── Lesson 4: Path & OS Modules
+//            ├── 🎥 Video: path & os Modules
+//            ├── 📄 PDF: Path & OS Cheatsheet
+//            ├── 🧪 Quiz: Core Modules Quiz
+//            ├── 📝 Assignment: System Info Script
+
+//  └── Section 3: Node.js with npm
+//       └── Lesson 5: npm & Packages
+//            ├── 🎥 Video: npm & package.json
+//            ├── 📄 PDF: npm Commands Guide
+//            ├── 🧪 Quiz: npm Basics
+//            ├── 📝 Assignment: Create & Publish Package
+
+//  └── Section 4: Express.js Framework
+//       └── Lesson 6: Express Basics
+//            ├── 🎥 Video: Express Setup & Routing
+//            ├── 📄 PDF: Express Routing Notes
+//            ├── 🧪 Quiz: Routing Quiz
+//            ├── 📝 Assignment: REST API (Users)
+
+//       └── Lesson 7: Middleware
+//            ├── 🎥 Video: Middleware Explained
+//            ├── 📄 PDF: Types of Middleware
+//            ├── 🧪 Quiz: Middleware MCQs
+//            ├── 📝 Assignment: Auth Middleware
+
+//  └── Section 5: Database Integration
+//       └── Lesson 8: MongoDB with Mongoose
+//            ├── 🎥 Video: Mongoose Models
+//            ├── 📄 PDF: Schema Design Guide
+//            ├── 🧪 Quiz: MongoDB Basics
+//            ├── 📝 Assignment: CRUD API with MongoDB
+
+//  └── Section 6: Authentication & Security
+//       └── Lesson 9: JWT Authentication
+//            ├── 🎥 Video: JWT Flow
+//            ├── 📄 PDF: Auth Best Practices
+//            ├── 🧪 Quiz: Auth Quiz
+//            ├── 📝 Assignment: Login / Signup API
+
+//  └── Section 7: Advanced Concepts
+//       └── Lesson 10: Error Handling
+//            ├── 🎥 Video: Central Error Handling
+//            ├── 📄 PDF: Error Patterns
+//            ├── 🧪 Quiz: Error Handling MCQs
+//            ├── 📝 Assignment: Global Error Middleware
+
+//  └── Section 8: Performance & Production
+//       └── Lesson 11: Logging & Monitoring
+//            ├── 🎥 Video: Winston & Morgan
+//            ├── 📄 PDF: Logging Setup Guide
+//            ├── 🧪 Quiz: Production Readiness
+//            ├── 📝 Assignment: Add Logging System
+
+//  └── Section 9: Deployment
+//       └── Lesson 12: Deploy Node App
+//            ├── 🎥 Video: Deploy on VPS / Render
+//            ├── 📄 PDF: Deployment Checklist
+//            ├── 🧪 Quiz: Deployment Quiz
+//            ├── 📝 Assignment: Deploy Live API

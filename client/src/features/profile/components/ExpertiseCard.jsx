@@ -15,7 +15,7 @@ const Skill = ({ name, value }) => (
 
 const ExpertiseCard = () => {
   return (
-    <div className="bg-white dark:bg-darkSecondary rounded-xl p-5 shadow">
+    <div className="bg-white dark:bg-[#1f2337] rounded-xl p-5 shadow">
       <h4 className="font-semibold mb-4 text-gray-900 dark:text-white">
         Expertise
       </h4>
