@@ -1,5 +1,5 @@
 import React from "react";
-import AuthLayout from "../../components/auth/AuthLayout";
+import AuthLayout from "../../features/auth/components/AuthLayout";
 import { Link } from "react-router-dom";
 
 const ForgotPassword = () => {
