@@ -140,3 +140,40 @@ body {
 .animate-float {
   animation: float 4s ease-in-out infinite;
 }
+
+/* ===== Custom Scrollbar ===== */
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #2564eb6c transparent; /* blue-600 */
+}
+
+/* Chrome / Edge / Safari */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #2563eb; /* blue */
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #1d4ed8; /* darker blue */
+}
+
+/* Dark mode scrollbar */
+.dark ::-webkit-scrollbar-thumb {
+  background-color: #3b82f6; /* blue-500 */
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background-color: #60a5fa; /* blue-400 */
+}
+

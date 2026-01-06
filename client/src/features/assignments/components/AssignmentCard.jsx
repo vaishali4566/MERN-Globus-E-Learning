@@ -6,7 +6,7 @@ const statusBadge = {
 
 const AssignmentCard = ({ assignment }) => {
   return (
-    <div className="bg-white dark:bg-darkSecondary rounded-xl p-5 shadow-sm hover:shadow-md transition">
+    <div className="bg-white dark:bg-[#1f2337] rounded-xl p-5 shadow-sm hover:shadow-md transition">
 
       {/* Header */}
       <div className="flex justify-between items-start mb-3">

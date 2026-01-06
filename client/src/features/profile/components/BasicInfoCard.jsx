@@ -7,7 +7,7 @@ const InfoRow = ({ label, value }) => (
 
 const BasicInfoCard = () => {
   return (
-    <div className="bg-white dark:bg-darkSecondary rounded-xl shadow p-5">
+    <div className="bg-white dark:bg-[#1f2337] rounded-xl shadow p-5">
       <h4 className="font-semibold mb-4 text-gray-900 dark:text-white">
         Basic Information
       </h4>

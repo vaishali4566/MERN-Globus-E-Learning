@@ -4,7 +4,7 @@ const CourseCard = ({ course }) => {
   const isEnrolled = course.isEnrolled;
 
   return (
-    <div className="bg-white dark:bg-darkSecondary rounded-xl shadow hover:shadow-lg transition overflow-hidden">
+    <div className="bg-white dark:bg-[#1f2337] rounded-xl shadow hover:shadow-lg transition overflow-hidden">
 
       {/* ===== Thumbnail ===== */}
       <div className="relative m-2 overflow-hidden rounded-lg">

@@ -12,25 +12,31 @@ import {
 import { RiArrowDropDownLine } from "react-icons/ri";
 import { useTheme } from "@/hooks/useTheme";
 
-const Navbar = ({ toggleSidebar }) => {
+const Navbar = ({ toggleSidebar, isSidebarOpen }) => {
   const [openProfile, setOpenProfile] = useState(false);
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
   return (
-    <header className="w-full border-b dark:bg-[#26283e] border-gray-200 dark:border-white/10 px-4 py-4 flex items-center justify-between text-gray-700 dark:text-[#aeb5c4] transition-colors duration-300">
-      
+    <header
+      className={`fixed top-0 right-0 z-50 h-18
+      border-b border-gray-200 dark:border-white/10
+      bg-white dark:bg-[#26283e]
+      px-4 flex items-center justify-between
+      text-gray-700 dark:text-[#aeb5c4]
+      transition-all duration-300
+      ${isSidebarOpen ? "left-60" : "left-20"}`}
+    >
       {/* LEFT */}
       <div className="flex items-center gap-4">
-        {/* Sidebar Toggle */}
         <button
           onClick={toggleSidebar}
-          className="w-9 h-9 flex items-center justify-center rounded-md hover:bg-gray-200 dark:hover:bg-[#3a3c50] transition-colors"
+          className="w-9 h-9 flex items-center justify-center rounded-md
+                     hover:bg-gray-200 dark:hover:bg-[#3a3c50]"
         >
           <FiMenu size={20} />
         </button>
 
-        {/* Search */}
         <div className="hidden md:flex items-center relative">
           <FiSearch className="absolute left-3 text-gray-400" />
           <input
@@ -44,20 +50,18 @@ const Navbar = ({ toggleSidebar }) => {
           />
         </div>
 
-        {/* Links */}
         <div className="hidden xl:flex gap-6 text-sm">
-          <a className="hover:text-gray-900 dark:hover:text-white cursor-pointer">
+          <span className="cursor-pointer hover:text-gray-900 dark:hover:text-white">
             Reports & Analytics
-          </a>
-          <a className="hover:text-gray-900 dark:hover:text-white cursor-pointer">
+          </span>
+          <span className="cursor-pointer hover:text-gray-900 dark:hover:text-white">
             Help
-          </a>
+          </span>
         </div>
       </div>
 
       {/* RIGHT */}
       <div className="flex items-center gap-4">
-        {/* Theme Toggle */}
         <button
           onClick={toggleTheme}
           className="w-9 h-9 rounded-full flex items-center justify-center
@@ -68,34 +72,24 @@ const Navbar = ({ toggleSidebar }) => {
 
         <div className="h-10 w-px bg-gray-300 dark:bg-[#51545e]" />
 
-        {/* Mail */}
-        <button className="relative w-9 h-9 rounded-full
-                           hover:bg-gray-200 dark:hover:bg-[#3a3c50]
-                           flex items-center justify-center">
+        <button className="relative w-9 h-9 rounded-full hover:bg-gray-200 dark:hover:bg-[#3a3c50] flex items-center justify-center">
           <FiMail />
           <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
         </button>
 
-        {/* Notifications */}
-        <button className="w-9 h-9 rounded-full
-                           hover:bg-gray-200 dark:hover:bg-[#3a3c50]
-                           flex items-center justify-center">
+        <button className="w-9 h-9 rounded-full hover:bg-gray-200 dark:hover:bg-[#3a3c50] flex items-center justify-center">
           <FiBell />
         </button>
 
-        {/* Calendar */}
-        <button className="w-9 h-9 rounded-full
-                           hover:bg-gray-200 dark:hover:bg-[#3a3c50]
-                           flex items-center justify-center">
+        <button className="w-9 h-9 rounded-full hover:bg-gray-200 dark:hover:bg-[#3a3c50] flex items-center justify-center">
           <FiCalendar />
         </button>
 
         <div className="h-10 w-px bg-gray-300 dark:bg-[#51545e]" />
 
-        {/* Profile */}
         <div className="relative">
           <button
-            onClick={() => setOpenProfile((prev) => !prev)}
+            onClick={() => setOpenProfile(!openProfile)}
             className="flex items-center gap-2"
           >
             <div className="hidden lg:block text-right">
@@ -104,45 +98,28 @@ const Navbar = ({ toggleSidebar }) => {
               </p>
               <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
                 <RiArrowDropDownLine className="w-5 h-5" />
-                Manager
+                Student
               </div>
             </div>
             <img src="/avatar.jpg" className="w-9 h-9 rounded-full" />
           </button>
 
           {openProfile && (
-            <div
-              className="absolute right-0 mt-4 w-52
-                         bg-white dark:bg-[#26283e]
-                         border border-gray-200 dark:border-[#37384b]
-                         rounded-md shadow-lg text-sm"
-            >
+            <div className="absolute right-0 mt-3 w-52 bg-white dark:bg-[#26283e]
+                            border border-gray-200 dark:border-[#37384b]
+                            rounded-md shadow-lg text-sm">
               <ul className="py-1">
-                <li
-                  onClick={() => {
-                    navigate("/profile");
-                    setOpenProfile(false);
-                  }}
-                  className="px-4 py-2 cursor-pointer
-                             hover:bg-gray-100 dark:hover:bg-[#3a3c50]"
-                >
+                <li onClick={() => navigate("/student/profile")} className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-[#3a3c50] cursor-pointer">
                   View Profile
                 </li>
-
-                <li className="px-4 py-2 cursor-pointer
-                               hover:bg-gray-100 dark:hover:bg-[#3a3c50]">
+                <li className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-[#3a3c50] cursor-pointer">
                   My Tasks
                 </li>
-
-                <li className="px-4 py-2 cursor-pointer
-                               hover:bg-gray-100 dark:hover:bg-[#3a3c50]">
+                <li className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-[#3a3c50] cursor-pointer">
                   Account Settings
                 </li>
-
-                <li className="border-t border-gray-200 dark:border-[#37384b] my-1" />
-
-                <li className="px-4 py-2 text-red-500 cursor-pointer
-                               hover:bg-gray-100 dark:hover:bg-[#3a3c50]">
+                <li className="border-t my-1 border-gray-200 dark:border-[#37384b]" />
+                <li className="px-4 py-2 text-red-500 hover:bg-gray-100 dark:hover:bg-[#3a3c50] cursor-pointer">
                   Logout
                 </li>
               </ul>
