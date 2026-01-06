@@ -1,10 +1,10 @@
-import DashboardLayout from "../../components/dashboard/DashboardLayout";
-import ProfileHeader from "../../components/profile/ProfileHeader";
-import BasicInfoCard from "../../components/profile/BasicInfoCard";
-import SocialLinksCard from "../../components/profile/SocialLinksCard";
-import ExpertiseCard from "../../components/profile/ExpertiseCard";
-import AccountSettingsForm from "../../components/profile/AccountSettingsForm";
-import DangerZone from "../../components/profile/DangerZone";
+import DashboardLayout from "../../components/layout/DashboardLayout";
+import ProfileHeader from "../../features/profile/components/ProfileHeader";
+import BasicInfoCard from "../../features/profile/components/BasicInfoCard";
+import SocialLinksCard from "../../features/profile/components/SocialLinksCard";
+import ExpertiseCard from "../../features/profile/components/ExpertiseCard";
+import AccountSettingsForm from "../../features/profile/components/AccountSettingsForm";
+import DangerZone from "../../features/profile/components/DangerZone";
 
 const Profile = () => {
   return (

@@ -1,4 +1,4 @@
-import AuthLinks from "@/components/auth/AuthLinks";
+import AuthLinks from "@/features/auth/components/AuthLinks";
 
 const AuthForm = ({
   type = "login", // "login" | "signup"

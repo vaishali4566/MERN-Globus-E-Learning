@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 
-import AuthLayout from "../../components/auth/AuthLayout";
-import AuthForm from "../../components/auth/AuthForm";
-import SocialLogin from "../../components/auth/SocialLogin";
+import AuthLayout from "../../features/auth/components/AuthLayout";
+import AuthForm from "../../features/auth/components/AuthForm";
+import SocialLogin from "../../features/auth/components/SocialLogin";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { signupApi } from "../../features/auth/authApi"; // make sure you have signupApi defined
 
