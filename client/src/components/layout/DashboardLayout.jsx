@@ -8,7 +8,6 @@ const DashboardLayout = ({ children }) => {
   const { theme } = useTheme();
 
   return (
-    // Top-level div gets the `dark` class for Tailwind
     <div className={`${theme === "dark" ? "dark" : ""} flex min-h-screen`}>
       {/* Sidebar */}
       <Sidebar isOpen={isSidebarOpen} />
@@ -18,11 +17,15 @@ const DashboardLayout = ({ children }) => {
         className={`flex flex-col flex-1 transition-all duration-300
         ${isSidebarOpen ? "ml-60" : "ml-20"}`}
       >
-        {/* Navbar */}
-        <Navbar toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
+        {/* Fixed Navbar */}
+        <Navbar
+          toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+          isSidebarOpen={isSidebarOpen}
+        />
 
         {/* Main content */}
-        <main className="p-6 flex-1 bg-white dark:bg-[#26283e] text-gray-900 dark:text-white transition-all duration-300">
+        <main className="pt-25 p-15 flex-1 bg-white dark:bg-[#1f2035]
+                         text-gray-900 dark:text-white transition-all">
           {children}
         </main>
       </div>

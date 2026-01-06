@@ -2,7 +2,7 @@ const tabs = ["To Do", "In Progress", "Submit"];
 
 const AssignmentTabs = ({ active, setActive }) => {
   return (
-    <div className="flex gap-3 bg-gray-100 dark:bg-darkSecondary p-2 rounded-lg">
+    <div className="flex gap-3 bg-gray-100 dark:bg-[#1f2337] p-2 rounded-lg">
       {tabs.map((tab) => (
         <button
           key={tab}

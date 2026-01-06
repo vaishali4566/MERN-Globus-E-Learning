@@ -1,7 +1,6 @@
 import { useState } from "react";
 import AssignmentTabs from "../../../features/assignments/components/AssignmentTabs";
 import AssignmentColumn from "../../../features/assignments/components/AssignmentColumn";
-import DashboardLayout from "@/components/layout/DashboardLayout";
 
 const Page = () => {
   const [activeTab, setActiveTab] = useState("To Do");
@@ -50,7 +49,7 @@ const Page = () => {
   };
 
   return (
-    <DashboardLayout>
+    
         <div className="space-y-6">
 
       {/* Header */}
@@ -68,7 +67,7 @@ const Page = () => {
       <AssignmentColumn assignments={assignments[activeTab]} />
 
     </div>
-    </DashboardLayout>
+    
   );
 };
 

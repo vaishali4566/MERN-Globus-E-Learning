@@ -2,7 +2,7 @@ import { FiCamera } from "react-icons/fi";
 
 const ProfileHeader = () => {
   return (
-    <div className="bg-white dark:bg-darkSecondary rounded-xl p-5 shadow">
+    <div className="bg-white dark:bg-[#1f2337] rounded-xl p-5 shadow">
       <div className="flex flex-wrap gap-4 items-center justify-between">
 
         <div className="flex gap-4 items-center">
@@ -26,18 +26,13 @@ const ProfileHeader = () => {
 
             <div className="flex gap-2 mt-2">
               <span className="px-2 py-0.5 rounded-full text-xs bg-blue-100 text-blue-600 dark:bg-blue-600/20 dark:text-blue-400">
-                Administrator
+                Student
               </span>
               <span className="px-2 py-0.5 rounded-full text-xs bg-green-100 text-green-600 dark:bg-green-600/20 dark:text-green-400">
                 Active
               </span>
             </div>
           </div>
-        </div>
-
-        <div className="flex gap-2">
-          <button className="btn-primary">Message</button>
-          <button className="btn-outline">Follow</button>
         </div>
 
       </div>
