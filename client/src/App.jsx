@@ -1,18 +1,15 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import DashboardLayout from "./components/layout/DashboardLayout";
-// import AuthRoutes from "./routes/AuthRoutes";
 import StudentRoutes from "./routes/StudentRoutes";
-// import PublicRoutes from "./routes/PublicRoutes";
+import PublicRoutes from "./routes/PublicRoutes";
+import LandingPage from "./pages/Landing/LandingPage";
 
 function App() {
   return (
     <Router>
       <Routes>
         {/* Public */}
-        {/* <Route path="/*" element={<PublicRoutes />} /> */}
-
-        {/* Auth */}
-        {/* <Route path="/auth/*" element={<AuthRoutes />} /> */}
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/*" element={<PublicRoutes />} />
 
         {/* Student Dashboard */}
         <Route path="/student/*" element={<StudentRoutes />} />

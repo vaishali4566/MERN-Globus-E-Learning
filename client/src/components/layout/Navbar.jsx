@@ -11,6 +11,7 @@ import {
 } from "react-icons/fi";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import { useTheme } from "@/hooks/useTheme";
+import logout from "@/utils/logout";
 
 const Navbar = ({ toggleSidebar, isSidebarOpen }) => {
   const [openProfile, setOpenProfile] = useState(false);
@@ -119,7 +120,7 @@ const Navbar = ({ toggleSidebar, isSidebarOpen }) => {
                   Account Settings
                 </li>
                 <li className="border-t my-1 border-gray-200 dark:border-[#37384b]" />
-                <li className="px-4 py-2 text-red-500 hover:bg-gray-100 dark:hover:bg-[#3a3c50] cursor-pointer">
+                <li onClick={()=> logout(navigate)} className="px-4 py-2 text-red-500 hover:bg-gray-100 dark:hover:bg-[#3a3c50] cursor-pointer">
                   Logout
                 </li>
               </ul>
