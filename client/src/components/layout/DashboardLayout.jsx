@@ -24,7 +24,7 @@ const DashboardLayout = ({ children }) => {
         />
 
         {/* Main content */}
-        <main className="pt-25 p-15 flex-1 bg-white dark:bg-[#1f2035]
+        <main className="pt-25 p-15 flex-1 bg-white dark:bg-[#26283e]
                          text-gray-900 dark:text-white transition-all">
           {children}
         </main>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate , Link} from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 import AuthLayout from "../../features/auth/components/AuthLayout";
 import AuthForm from "../../features/auth/components/AuthForm";
@@ -37,17 +37,21 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const res = await loginApi({
-        ...formData,
-        role,
-      });
+      const res = await loginApi(formData);
 
       const { token, user } = res.data.data;
 
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
 
-      navigate("/dashboard");
+      // ✅ role based redirect (backend truth)
+      if (user.role === "student") {
+        navigate("/student/dashboard");
+      } else if (user.role === "trainer") {
+        navigate("/trainer/dashboard");
+      } else {
+        navigate("/");
+      }
     } catch (err) {
       setError(err.response?.data?.message || "Login failed");
     } finally {

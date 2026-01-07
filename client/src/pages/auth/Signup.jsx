@@ -47,7 +47,11 @@ const Signup = () => {
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
 
-      navigate("/dashboard"); // redirect after signup
+      if (role === "student") {
+        navigate("/student/dashboard");
+      } else {
+        navigate("/trainer/dashboard");
+      }
     } catch (err) {
       setError(err.response?.data?.message || "Signup failed");
     } finally {
