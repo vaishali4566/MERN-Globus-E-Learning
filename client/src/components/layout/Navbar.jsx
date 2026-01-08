@@ -12,11 +12,18 @@ import {
 import { RiArrowDropDownLine } from "react-icons/ri";
 import { useTheme } from "@/hooks/useTheme";
 import logout from "@/utils/logout";
+import { getUserName ,getUserRole } from "@/utils/getUser";
 
 const Navbar = ({ toggleSidebar, isSidebarOpen }) => {
   const [openProfile, setOpenProfile] = useState(false);
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
+
+  const user = getUserName();
+  const role = getUserRole();
+
+  // Role-based profile links
+  const profileBase = `/${role}/profile`;
 
   return (
     <header
@@ -95,14 +102,17 @@ const Navbar = ({ toggleSidebar, isSidebarOpen }) => {
           >
             <div className="hidden lg:block text-right">
               <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                Robert Brown
+                {user || "Robert Brown"}
               </p>
               <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
                 <RiArrowDropDownLine className="w-5 h-5" />
-                Student
+                {role.charAt(0).toUpperCase() + role.slice(1)}
               </div>
             </div>
-            <img src="/avatar.jpg" className="w-9 h-9 rounded-full" />
+            <img
+              src={user.avatar || "/avatar.jpg"}
+              className="w-9 h-9 rounded-full"
+            />
           </button>
 
           {openProfile && (
@@ -110,7 +120,10 @@ const Navbar = ({ toggleSidebar, isSidebarOpen }) => {
                             border border-gray-200 dark:border-[#37384b]
                             rounded-md shadow-lg text-sm">
               <ul className="py-1">
-                <li onClick={() => navigate("/student/profile")} className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-[#3a3c50] cursor-pointer">
+                <li
+                  onClick={() => navigate(profileBase)}
+                  className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-[#3a3c50] cursor-pointer"
+                >
                   View Profile
                 </li>
                 <li className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-[#3a3c50] cursor-pointer">
@@ -120,7 +133,10 @@ const Navbar = ({ toggleSidebar, isSidebarOpen }) => {
                   Account Settings
                 </li>
                 <li className="border-t my-1 border-gray-200 dark:border-[#37384b]" />
-                <li onClick={()=> logout(navigate)} className="px-4 py-2 text-red-500 hover:bg-gray-100 dark:hover:bg-[#3a3c50] cursor-pointer">
+                <li
+                  onClick={() => logout(navigate, role)}
+                  className="px-4 py-2 text-red-500 hover:bg-gray-100 dark:hover:bg-[#3a3c50] cursor-pointer"
+                >
                   Logout
                 </li>
               </ul>

@@ -1,17 +1,18 @@
 import {
   FiPlay,
-  FiClock,
   FiCheckCircle,
-  FiTrendingUp,
 } from "react-icons/fi";
+import { getUserName } from "@/utils/getUser";
 
 const StudentDashboard = () => {
+
+  const user = getUserName();
   return (
     <div className="space-y-6">
 
       {/* ===== Greeting ===== */}
       <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
-        Goodmorning, Arun..
+        Goodmorning, {user}...
       </h1>
 
       {/* ===== Main Grid ===== */}
@@ -117,7 +118,7 @@ const StudentDashboard = () => {
             <h3 className="font-semibold text-blue-700">
               Wow !!! You’re doing great.
             </h3>
-            <p className="text-xs mt-2">
+            <p className="text-xs text-black mt-2">
               You have more attendance than 30% of the batch.
             </p>
             <button className="mt-3 bg-orange-500 text-white px-3 py-1.5 rounded-md text-xs">
@@ -130,7 +131,7 @@ const StudentDashboard = () => {
             <h3 className="font-semibold text-purple-700">
               Did you know?
             </h3>
-            <p className="text-xs mt-2">
+            <p className="text-xs text-black mt-2">
               15 min daily PYQs improves accuracy by 15%.
             </p>
             <button className="mt-3 bg-orange-500 text-white px-3 py-1.5 rounded-md text-xs">
@@ -143,7 +144,7 @@ const StudentDashboard = () => {
             <h3 className="font-semibold text-green-700">
               Congratulations.
             </h3>
-            <p className="text-xs mt-2">
+            <p className="text-xs text-black mt-2">
               Free access activated for next 7 days.
             </p>
           </div>

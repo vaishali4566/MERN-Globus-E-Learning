@@ -1,3 +1,14 @@
+// Course
+//  └── Section
+//       └── Assignment
+//            ├── Instructions
+//            ├── Submission (file / text / link)
+//            ├── Due date
+//            ├── Marks & feedback
+
+
+
+
 import mongoose from "mongoose";
 
 const lessonSchema = new mongoose.Schema(
@@ -90,11 +101,3 @@ lessonSchema.index(
 );
 
 export default mongoose.model("Lesson", lessonSchema);
-
-// Course
-//  └── Section
-//       └── Lesson
-//            ├── Video
-//            ├── Article
-//            ├── Live class link
-

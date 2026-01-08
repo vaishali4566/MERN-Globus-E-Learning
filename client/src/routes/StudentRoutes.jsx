@@ -9,7 +9,7 @@ import DashboardLayout from "@/components/layout/DashboardLayout";
 import SchedulePage from "@/pages/student/schedule/Page";
 import LiveClasses from "@/pages/student/liveclass/Page";
 import Progress from "@/pages/student/progress/Page"
-import ProtectedRoute from "@/routes/ProtectedRoute";
+import ProtectedRoute from "@/routes/gaurds/ProtectedRoute";
 
 const StudentRoutes = () => {
   return (

@@ -1,10 +1,9 @@
 import React from 'react'
 import Login from '@/pages/auth/Login'
 import Signup from '@/pages/auth/Signup'
-import LandingPage from '@/pages/Landing/LandingPage'
 import { Routes, Route } from "react-router-dom";
 
-const PublicRoutes = () => {
+const AuthRoutes = () => {
   return (
     <Routes>
         <Route path='login' element={<Login/>}/>
@@ -13,4 +12,4 @@ const PublicRoutes = () => {
   )
 }
 
-export default PublicRoutes
+export default AuthRoutes
