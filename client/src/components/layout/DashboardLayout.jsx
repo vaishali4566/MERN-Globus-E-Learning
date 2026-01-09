@@ -1,16 +1,17 @@
 import { useState } from "react";
+import { Outlet } from "react-router-dom";
 import Sidebar from "./sidebar/Sidebar";
 import Navbar from "./Navbar";
 import { useTheme } from "@/hooks/useTheme";
 
-const DashboardLayout = ({ children }) => {
+const DashboardLayout = ({ role = "student" }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const { theme } = useTheme();
 
   return (
     <div className={`${theme === "dark" ? "dark" : ""} flex min-h-screen`}>
       {/* Sidebar */}
-      <Sidebar isOpen={isSidebarOpen} />
+      <Sidebar isOpen={isSidebarOpen} role={role} />
 
       {/* Right section */}
       <div
@@ -24,9 +25,12 @@ const DashboardLayout = ({ children }) => {
         />
 
         {/* Main content */}
-        <main className="pt-25 p-15 flex-1 bg-white dark:bg-[#26283e]
-                         text-gray-900 dark:text-white transition-all">
-          {children}
+        <main
+          className="pt-25 p-15 flex-1 bg-white dark:bg-[#26283e]
+                     text-gray-900 dark:text-white transition-all"
+        >
+          {/* 🔥 Outlet replaces children */}
+          <Outlet />
         </main>
       </div>
     </div>
@@ -34,3 +38,4 @@ const DashboardLayout = ({ children }) => {
 };
 
 export default DashboardLayout;
+
