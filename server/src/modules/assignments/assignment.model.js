@@ -11,8 +11,46 @@
 
 import mongoose from "mongoose";
 
-const lessonSchema = new mongoose.Schema(
+const submissionSchema = new mongoose.Schema(
   {
+    student: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+
+    type: {
+      type: String,
+      enum: ["file", "text", "link"],
+      required: true,
+    },
+
+    content: {
+      type: String, // file URL / text answer / link
+      required: true,
+    },
+
+    submittedAt: {
+      type: Date,
+      default: Date.now,
+    },
+
+    marksObtained: {
+      type: Number,
+      default: null,
+    },
+
+    feedback: {
+      type: String,
+      default: "",
+    },
+  },
+  { _id: false }
+);
+
+const assignmentSchema = new mongoose.Schema(
+  {
+    // BASIC INFO
     title: {
       type: String,
       required: true,
@@ -20,12 +58,13 @@ const lessonSchema = new mongoose.Schema(
       maxlength: 150,
     },
 
-    description: {
+    instructions: {
       type: String,
-      default: "",
-      maxlength: 1000,
+      required: true,
+      maxlength: 3000,
     },
 
+    // RELATION
     course: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Course",
@@ -40,32 +79,27 @@ const lessonSchema = new mongoose.Schema(
       index: true,
     },
 
-    type: {
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true, // trainer
+    },
+
+    // ASSIGNMENT CONFIG
+    submissionType: {
       type: String,
-      enum: ["video", "article", "live"],
+      enum: ["file", "text", "link", "mixed"],
+      default: "file",
+    },
+
+    maxMarks: {
+      type: Number,
       required: true,
+      min: 1,
     },
 
-    // ===== VIDEO LESSON =====
-    video: {
-      url: String,
-      duration: Number, // seconds
-      provider: {
-        type: String,
-        enum: ["youtube", "vimeo", "s3", "wasabi"],
-      },
-    },
-
-    // ===== ARTICLE LESSON =====
-    content: {
-      type: String, // HTML / Markdown
-    },
-
-    // ===== LIVE CLASS =====
-    liveClass: {
-      meetingUrl: String,
-      startTime: Date,
-      endTime: Date,
+    dueDate: {
+      type: Date,
     },
 
     order: {
@@ -73,20 +107,12 @@ const lessonSchema = new mongoose.Schema(
       required: true,
     },
 
-    isPreview: {
-      type: Boolean,
-      default: false, // free preview before purchase
-    },
+    // STUDENT DATA
+    submissions: [submissionSchema],
 
     isPublished: {
       type: Boolean,
       default: false,
-    },
-
-    createdBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true, // trainer
     },
   },
   {
@@ -94,10 +120,8 @@ const lessonSchema = new mongoose.Schema(
   }
 );
 
-// Ensure lesson order unique inside section
-lessonSchema.index(
-  { section: 1, order: 1 },
-  { unique: true }
-);
+// Unique assignment order per section
+assignmentSchema.index({ section: 1, order: 1 }, { unique: true });
 
-export default mongoose.model("Lesson", lessonSchema);
+export default mongoose.model("Assignment", assignmentSchema);
+

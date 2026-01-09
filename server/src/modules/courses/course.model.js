@@ -1,12 +1,20 @@
 import mongoose from "mongoose";
+import slugify from "slugify";
 
 const courseSchema = new mongoose.Schema(
   {
+    // ===== BASIC INFO =====
     title: {
       type: String,
       required: true,
       trim: true,
       maxlength: 120,
+    },
+
+    slug: {
+      type: String,
+      unique: true,
+      index: true,
     },
 
     description: {
@@ -16,13 +24,19 @@ const courseSchema = new mongoose.Schema(
     },
 
     thumbnail: {
-      type: String, // S3 / Cloudinary URL
+      type: String, // S3 / Cloudinary
       default: "",
     },
 
+    previewVideo: {
+      type: String, // intro video url
+      default: "",
+    },
+
+    // ===== PRICING =====
     price: {
       type: Number,
-      default: 0, // free course
+      default: 0,
       min: 0,
     },
 
@@ -37,18 +51,35 @@ const courseSchema = new mongoose.Schema(
       default: "English",
     },
 
+    category: {
+      type: String,
+      index: true,
+    },
+
+    tags: [
+      {
+        type: String,
+        index: true,
+      },
+    ],
+
+    // ===== RELATION =====
     trainer: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
+      index: true,
     },
 
+    // ===== STATUS =====
     status: {
       type: String,
       enum: ["draft", "published", "archived"],
       default: "draft",
+      index: true,
     },
 
+    // ===== STATS =====
     totalStudents: {
       type: Number,
       default: 0,
@@ -67,6 +98,8 @@ const courseSchema = new mongoose.Schema(
     rating: {
       type: Number,
       default: 0,
+      min: 0,
+      max: 5,
     },
 
     reviewsCount: {
@@ -78,5 +111,12 @@ const courseSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+// ===== SLUG GENERATION =====
+courseSchema.pre("save", async function () {
+  if (!this.slug && this.title) {
+    this.slug = slugify(this.title, { lower: true, strict: true });
+  }
+});
 
 export default mongoose.model("Course", courseSchema);

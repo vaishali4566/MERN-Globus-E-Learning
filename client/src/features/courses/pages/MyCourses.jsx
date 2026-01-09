@@ -1,6 +1,11 @@
-import CourseCard from "./CourseCard";
+import CourseCard from "../components/CourseCard";
+import { getUserRole } from "@/utils/getUser";
+import { useNavigate } from "react-router-dom";
 
 const MyCourses = () => {
+  const role = getUserRole();
+  const navigate =  useNavigate();
+
   const courses = [
     {
       id: 1,
@@ -9,6 +14,7 @@ const MyCourses = () => {
       thumbnail: "/assets/images/course/course1.webp",
       instructor: "Vaishali",
       enrolledDate: "12 Jan 2025",
+      isEnrolled: true,
     },
     {
       id: 2,
@@ -17,6 +23,7 @@ const MyCourses = () => {
       thumbnail: "/assets/images/course/course2.webp",
       instructor: "Roberts",
       enrolledDate: "20 Feb 2025",
+      isEnrolled: true,
     },
     {
       id: 3,
@@ -25,6 +32,7 @@ const MyCourses = () => {
       thumbnail: "/assets/images/course/course3.webp",
       instructor: "John Doe",
       enrolledDate: "05 Mar 2025",
+      isEnrolled: true,
     },
   ];
 
@@ -32,17 +40,22 @@ const MyCourses = () => {
     <div className="space-y-4">
 
       {/* ===== Page Header ===== */}
-      <div>
-        <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
-          My Courses
-        </h1>
-        <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 mt-1">
-          <span className="hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer">
-            Dashboard
-          </span>
-          <span>/</span>
-          <span className="text-gray-700 dark:text-gray-300">My Courses</span>
+      <div className="flex justify-between items-start">
+        <div>
+          <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
+            My Courses
+          </h1>
+          
         </div>
+
+        {/* ===== Create Course Button for Trainers ===== */}
+        {role === "trainer" && (
+          <button onClick={()=> navigate("/trainer/courses/create")}
+            className="px-4 py-2 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+          >
+            Create Course
+          </button>
+        )}
       </div>
 
       {/* ===== Courses Grid ===== */}
@@ -55,9 +68,7 @@ const MyCourses = () => {
       {/* ===== Pagination ===== */}
       <div className="flex justify-center mt-6">
         <div className="flex items-center gap-2 text-xs">
-          <button className="px-3 py-1 rounded-md border
-            border-gray-300 dark:border-[#515268]
-            hover:bg-gray-100 dark:hover:bg-[#1f2337] transition">
+          <button className="px-3 py-1 rounded-md border border-gray-300 dark:border-[#515268] hover:bg-gray-100 dark:hover:bg-[#1f2337] transition">
             «
           </button>
 
@@ -65,20 +76,15 @@ const MyCourses = () => {
             1
           </button>
 
-          <button className="px-3 py-1 rounded-md border
-            border-gray-300 dark:border-[#515268]
-            hover:bg-gray-100 dark:hover:bg-[#1f2337] transition">
+          <button className="px-3 py-1 rounded-md border border-gray-300 dark:border-[#515268] hover:bg-gray-100 dark:hover:bg-[#1f2337] transition">
             2
           </button>
 
-          <button className="px-3 py-1 rounded-md border
-            border-gray-300 dark:border-[#515268]
-            hover:bg-gray-100 dark:hover:bg-[#1f2337] transition">
+          <button className="px-3 py-1 rounded-md border border-gray-300 dark:border-[#515268] hover:bg-gray-100 dark:hover:bg-[#1f2337] transition">
             »
           </button>
         </div>
       </div>
-
     </div>
   );
 };

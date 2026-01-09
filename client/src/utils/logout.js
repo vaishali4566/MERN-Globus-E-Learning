@@ -3,7 +3,7 @@ const logout = (navigate)=>{
     localStorage.removeItem("user");
     localStorage.removeItem("theme");
 
-    navigate("/login");
+    navigate("/auth/login");
 }
 
 export default logout;

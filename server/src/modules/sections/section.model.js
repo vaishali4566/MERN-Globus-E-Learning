@@ -24,7 +24,7 @@ const sectionSchema = new mongoose.Schema(
 
     order: {
       type: Number,
-      required: true, // for sorting sections
+      required: true,
     },
 
     totalLessons: {
@@ -34,13 +34,18 @@ const sectionSchema = new mongoose.Schema(
 
     isPublished: {
       type: Boolean,
-      default: false, // trainer hide/show section
+      default: false,
+    },
+
+    isDeleted: {
+      type: Boolean,
+      default: false,
     },
 
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true, // trainer only
+      required: true,
     },
   },
   {
@@ -48,7 +53,10 @@ const sectionSchema = new mongoose.Schema(
   }
 );
 
-// Ensure unique order per course
+// Unique section order per course
 sectionSchema.index({ course: 1, order: 1 }, { unique: true });
+
+// Fast lookup + UX safety
+sectionSchema.index({ course: 1, title: 1 });
 
 export default mongoose.model("Section", sectionSchema);

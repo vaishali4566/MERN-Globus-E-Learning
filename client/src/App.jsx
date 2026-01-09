@@ -1,24 +1,24 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import StudentRoutes from "./routes/StudentRoutes";
-import PublicRoutes from "./routes/gaurds/PublicRoutes";
-import LandingPage from "./pages/Landing/LandingPage";
 import TrainerRoutes from "./routes/TrainerRoutes";
+import AuthRoutes from "./routes/AuthRoutes";
+import LandingPage from "./pages/Landing/LandingPage";
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        {/* Public */}
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/*" element={<PublicRoutes />} />
+    <Routes>
+      {/* Landing */}
+      <Route path="/" element={<LandingPage />} />
 
-        {/* Student Dashboard */}
-        <Route path="/student/*" element={<StudentRoutes />} />
+      {/* Auth */}
+      <Route path="/auth/*" element={<AuthRoutes />} />
 
-        {/* Trainer Dashboard */}
-        <Route path="/trainer/*" element={<TrainerRoutes />} />
-      </Routes>
-    </Router>
+      {/* Student */}
+      <Route path="/student/*" element={<StudentRoutes />} />
+
+      {/* Trainer */}
+      <Route path="/trainer/*" element={<TrainerRoutes />} />
+    </Routes>
   );
 }
 

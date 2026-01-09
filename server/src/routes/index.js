@@ -1,7 +1,9 @@
 // Import module routes
 import authRoutes from "../modules/auth/auth.routes.js";
-// import courseRoutes from "../modules/course/course.routes.js";
-// import lessonRoutes from "../modules/lesson/lesson.routes.js";
+import courseRoutes from "../modules/courses/course.routes.js";
+import sectionRoutes from "../modules/sections/section.routes.js"
+import lessonRoutes from "../modules/lessons/lesson.routes.js";
+import assignmentRoutes from "../modules/assignments/assignment.routes.js"
 
 // Function to load routes
 const loadRoutes = (app) => {
@@ -9,10 +11,16 @@ const loadRoutes = (app) => {
   app.use("/api/auth", authRoutes);
 
   // Course routes
-  // app.use("/api/courses", courseRoutes);
+  app.use("/api/courses", courseRoutes);
+
+  // Section routes
+  app.use("/api/sections", sectionRoutes);
 
   // Lesson routes
-  // app.use("/api/lessons", lessonRoutes);
+  app.use("/api/lessons", lessonRoutes);
+
+  // Assignment routes
+  app.use("/api/assignments", assignmentRoutes);
 };
 
 export default loadRoutes;

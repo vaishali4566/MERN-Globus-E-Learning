@@ -17,8 +17,10 @@ const CourseCard = ({ course }) => {
         />
 
         {isEnrolled && (
-          <span className="absolute top-2 left-2 text-[10px] font-medium
-            bg-green-500 text-white px-2 py-0.5 rounded-full">
+          <span
+            className="absolute top-2 right-2 text-[10px] font-medium
+            bg-green-500 text-white px-2 py-0.5 rounded-full"
+          >
             Enrolled
           </span>
         )}
@@ -34,8 +36,10 @@ const CourseCard = ({ course }) => {
       </p>
 
       {/* Meta */}
-      <div className="flex items-center justify-between text-xs
-        text-gray-400 dark:text-gray-500 mt-3">
+      <div
+        className="flex items-center justify-between text-xs
+        text-gray-400 dark:text-gray-500 mt-3"
+      >
         <div className="flex items-center gap-1">
           <FiUser className="text-blue-600 dark:text-blue-400" />
           <span>{course.instructor}</span>

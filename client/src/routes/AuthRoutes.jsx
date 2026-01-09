@@ -2,13 +2,16 @@ import React from 'react'
 import Login from '@/pages/auth/Login'
 import Signup from '@/pages/auth/Signup'
 import { Routes, Route } from "react-router-dom";
+import PublicRoute from './gaurds/PublicRoutes';
 
 const AuthRoutes = () => {
   return (
     <Routes>
-        <Route path='login' element={<Login/>}/>
-        <Route path='signup' element={<Signup/>}/>
-    </Routes>
+  <Route element={<PublicRoute />}>
+    <Route path="login" element={<Login />} />
+    <Route path="signup" element={<Signup />} />
+  </Route>
+</Routes>
   )
 }
 
