@@ -5,9 +5,7 @@ import { AppError } from "../../utils/appError.js";
 export const createSectionService = async (data) => {
   // 1️⃣ Check course exists
   const course = await Course.findById(data.course);
-  if (!course) {
-    throw new AppError("Course not found", 404);
-  }
+  if (!course) throw new AppError("Course not found", 404);
 
   // 2️⃣ Ensure trainer owns the course
   if (course.trainer.toString() !== data.createdBy.toString()) {
@@ -27,6 +25,10 @@ export const createSectionService = async (data) => {
     order: nextOrder,
     isPublished: false,
   });
+
+  // 5️⃣ Push section into course.sections array
+  course.sections.push(section._id);
+  await course.save();
 
   return section;
 };

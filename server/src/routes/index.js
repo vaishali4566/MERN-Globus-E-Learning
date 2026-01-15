@@ -4,6 +4,7 @@ import courseRoutes from "../modules/courses/course.routes.js";
 import sectionRoutes from "../modules/sections/section.routes.js"
 import lessonRoutes from "../modules/lessons/lesson.routes.js";
 import assignmentRoutes from "../modules/assignments/assignment.routes.js"
+import uploadRoutes from "./uploadRoutes.js"
 
 // Function to load routes
 const loadRoutes = (app) => {
@@ -21,6 +22,8 @@ const loadRoutes = (app) => {
 
   // Assignment routes
   app.use("/api/assignments", assignmentRoutes);
+
+  app.use("/api/uploads", uploadRoutes);
 };
 
 export default loadRoutes;

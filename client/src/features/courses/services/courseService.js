@@ -11,6 +11,21 @@ export const createCourse = async (courseData) => {
   }
 };
 
+// ✅ Get course by ID (Builder / Edit)
+export const getCourseById = async (courseId) => {
+  try {
+    const response = await api.get(`/courses/${courseId}`);
+    return response.data; // { success, data }
+  } catch (error) {
+    console.error(
+      "Error fetching course:",
+      error.response || error
+    );
+    throw error;
+  }
+};
+
+
 // ✅ Update existing course
 export const updateCourse = async (courseId, courseData) => {
   try {

@@ -21,10 +21,10 @@ const LandingPage = () => {
           </h1>
 
           <div className="flex items-center gap-3">
-            <Link to="/login" className="text-sm px-4 py-2 rounded-lg border dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-darkHover">
+            <Link to="/auth/login" className="text-sm px-4 py-2 rounded-lg border dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-darkHover">
               Login
             </Link>
-            <Link to="/signup" className="text-sm px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700">
+            <Link to="/auth/signup" className="text-sm px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700">
               Sign Up
             </Link>
           </div>

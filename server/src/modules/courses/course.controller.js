@@ -1,6 +1,7 @@
 import asyncHandler from "../../utils/asyncHandler.js";
 import { AppError } from "../../utils/appError.js";
 import { createCourseService } from "./course.service.js";
+import { getCourseByIdService } from "./course.service.js";
 
 export const createCourse = asyncHandler(async (req, res) => {
   const {
@@ -40,5 +41,22 @@ export const createCourse = asyncHandler(async (req, res) => {
       slug: course.slug,
       status: course.status,
     },
+  });
+});
+
+
+export const getCourseById = asyncHandler(async (req, res) => {
+  const { courseId } = req.params;
+  const trainerId = req.user.id;
+
+  const course = await getCourseByIdService(courseId, trainerId);
+
+  if (!course) {
+    throw new AppError("Course not found", 404);
+  }
+
+  res.status(200).json({
+    success: true,
+    data: course,
   });
 });

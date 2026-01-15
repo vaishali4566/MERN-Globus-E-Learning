@@ -5,20 +5,29 @@ import ContentTypeButtons from "./ContentTypeButtons";
 export default function SectionCard({
   section,
   setCourse,
-  addContent,
+  openAddContentModal,
   removeContent,
 }) {
+
+  // ── DEBUG LOGS ──
+  console.log(`[DEBUG: SectionCard] Rendering section: "${section.title}"`);
+  console.log(`[DEBUG: SectionCard] Section ID: ${section._id || "(no _id)"}`);
+  console.log(`[DEBUG: SectionCard] Contents type:`, Array.isArray(section.contents) ? "array" : typeof section.contents);
+  console.log(`[DEBUG: SectionCard] Contents length:`, section.contents?.length ?? "undefined");
+  console.log(`[DEBUG: SectionCard] Full contents:`, section.contents);
+
   const updateTitle = (title) => {
     setCourse((c) => ({
       ...c,
       sections: c.sections.map((s) =>
-        s.id === section.id ? { ...s, title } : s
+        s._id === section._id ? { ...s, title } : s
       ),
     }));
   };
 
   return (
-    <div className="bg-white dark:bg-[#1f2337]
+    <div
+      className="bg-white dark:bg-[#1f2337]
       rounded-xl p-4 shadow-sm hover:shadow-md transition"
     >
       {/* Header */}
@@ -39,9 +48,9 @@ export default function SectionCard({
         <div className="space-y-2">
           {section.contents.map((item) => (
             <ContentCard
-              key={item.id}
+              key={item._id || item.id || `content-${section._id}-${index}`}
               content={item}
-              sectionId={section.id}
+              sectionId={section._id}
               onRemove={removeContent}
             />
           ))}
@@ -52,7 +61,10 @@ export default function SectionCard({
         </p>
       )}
 
-      <ContentTypeButtons sectionId={section.id} addContent={addContent} />
+      <ContentTypeButtons
+        sectionId={section._id}
+        openAddContentModal={openAddContentModal}
+      />
     </div>
   );
 }
