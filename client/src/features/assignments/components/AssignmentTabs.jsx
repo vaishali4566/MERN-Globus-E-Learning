@@ -9,7 +9,7 @@ const AssignmentTabs = ({ active, setActive }) => {
           onClick={() => setActive(tab)}
           className={`px-5 py-2 text-sm rounded-lg transition
             ${active === tab
-              ? "bg-white shadow text-blue-600"
+              ? "bg-white shadow text-blue-500"
               : "text-gray-500 hover:bg-white/70"}`}
         >
           {tab}

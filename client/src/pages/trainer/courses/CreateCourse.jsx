@@ -177,7 +177,7 @@ const handleSubmit = async (e) => {
     transition
     text-white px-6 py-2.5 rounded-lg
     text-sm font-medium
-    disabled:opacity-50 disabled:cursor-not-allowed
+    disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed
   "
             >
               {loading ? "Creating..." : "Create Course"}

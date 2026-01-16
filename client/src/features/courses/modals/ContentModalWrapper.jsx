@@ -9,12 +9,6 @@ export default function ContentModalWrapper({
   onClose,
   onSubmit,
 }) {
-  // 👇 yahan modal.open bilkul use nahi karna
-
-  console.log("[DEBUG: ContentModalWrapper] Rendering for type:", type);
-  console.log("[DEBUG: ContentModalWrapper] sectionId:", sectionId);
-  console.log("[DEBUG: ContentModalWrapper] courseId:", courseId);
-
   switch (type) {
     case "lesson":
       return (
@@ -23,7 +17,6 @@ export default function ContentModalWrapper({
         courseId={courseId} 
           onClose={onClose}
           onSubmit={(newContent) => {
-            console.log("[DEBUG: ContentModalWrapper] Lesson onSubmit called with:", newContent);
             onSubmit(newContent);
           }}
         />
@@ -32,6 +25,8 @@ export default function ContentModalWrapper({
     case "quiz":
       return (
         <QuizModal
+        sectionId={sectionId}
+        courseId={courseId} 
           onClose={onClose}
           onSubmit={onSubmit}
         />
@@ -40,6 +35,8 @@ export default function ContentModalWrapper({
     case "assignment":
       return (
         <AssignmentModal
+        sectionId={sectionId}
+        courseId={courseId} 
           onClose={onClose}
           onSubmit={onSubmit}
         />

@@ -5,7 +5,7 @@ const typeConfig = {
   lesson: {
     label: "Lesson",
     icon: BookOpen,
-    badge: "bg-blue-100 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400",
+    badge: "bg-blue-100 text-blue-500 dark:bg-blue-500/20 dark:text-blue-400",
   },
   assignment: {
     label: "Assignment",
@@ -22,7 +22,7 @@ const typeConfig = {
   video: {
     label: "Video Lesson",
     icon: Video,
-    badge: "bg-blue-100 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400",
+    badge: "bg-blue-100 text-blue-500 dark:bg-blue-500/20 dark:text-blue-400",
   },
   article: {
     label: "Article",

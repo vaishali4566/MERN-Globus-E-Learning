@@ -54,7 +54,6 @@ export default function LessonModal({
 
         const uploadRes = await uploadLessonVideo(formData);
 
-        console.log("[DEBUG: LessonModal] Video upload response:", uploadRes);
 
         videoData = {
           url: uploadRes.url,
@@ -74,23 +73,23 @@ export default function LessonModal({
       if (form.type === "video") lessonData.video = videoData;
       if (form.type === "article") lessonData.content = form.content.trim();
 
-      console.log("[DEBUG: LessonModal] Creating lesson with data:", lessonData);
+      
 
       const createdLesson = await createLesson(lessonData);
 
-      console.log("[DEBUG: LessonModal] Created lesson response:", createdLesson);
+      
 
       // 3. Notify parent (CourseBuilderPage / SectionCard)
-     if (onSubmit) {
-  const cleanLesson = createdLesson?.data || createdLesson; // backend wrapper hata do
-  console.log("[DEBUG: LessonModal] Sending clean lesson to parent:", cleanLesson);
-  onSubmit(cleanLesson);
-}
+      if (onSubmit) {
+        const cleanLesson = createdLesson?.data || createdLesson; // backend wrapper hata do
+       
+        onSubmit(cleanLesson);
+      }
 
       // 4. Success → close modal
       onClose();
     } catch (err) {
-      console.error("[DEBUG: LessonModal] Lesson creation failed:", err);
+      
 
       const errorMessage =
         err.response?.data?.message ||
@@ -109,7 +108,11 @@ export default function LessonModal({
         {/* Header */}
         <div className="flex justify-between items-center">
           <h2 className="text-lg font-semibold">Add Lesson</h2>
-          <button onClick={onClose} disabled={saving}>
+          <button
+            className="cursor-pointer"
+            onClick={onClose}
+            disabled={saving}
+          >
             <X size={20} />
           </button>
         </div>
@@ -126,13 +129,13 @@ export default function LessonModal({
           placeholder="Lesson title"
           value={form.title}
           onChange={(e) => setForm({ ...form, title: e.target.value })}
-          className="w-full border rounded-lg p-2"
+          className="w-full border placeholder:text-sm rounded-md p-2"
           disabled={saving}
         />
 
         {/* Type */}
         <select
-          className="w-full border rounded-lg p-2"
+          className="w-full border text-sm rounded-md p-2"
           value={form.type}
           onChange={(e) => setForm({ ...form, type: e.target.value })}
           disabled={saving}
@@ -148,7 +151,7 @@ export default function LessonModal({
             type="file"
             accept="video/*"
             onChange={(e) => setVideoFile(e.target.files?.[0] || null)}
-            className="w-full border rounded-lg p-2"
+            className="w-full text-sm border rounded-lg p-2"
             disabled={saving}
           />
         )}
@@ -167,7 +170,7 @@ export default function LessonModal({
         <div className="flex justify-end gap-3 pt-4">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-sm border rounded-lg"
+            className="px-4 cursor-pointer py-2 text-sm border rounded-lg"
             disabled={saving}
           >
             Cancel
@@ -175,7 +178,7 @@ export default function LessonModal({
 
           <button
             onClick={handleSave}
-            className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg"
+            className="px-4 py-2 text-sm bg-blue-600 text-white cursor-pointer rounded-lg"
             disabled={saving}
           >
             {saving ? "Saving..." : "Save Lesson"}

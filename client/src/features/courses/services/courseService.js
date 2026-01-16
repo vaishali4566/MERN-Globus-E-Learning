@@ -57,3 +57,18 @@ export const saveDraft = async (courseData) => {
     return await createCourse(courseData);
   }
 };
+
+// ✅ Get logged-in trainer's courses
+export const getMyCourses = async () => {
+  try {
+    const response = await api.get("/courses/my-courses");
+    return response.data; 
+  } catch (error) {
+    console.error(
+      "Error fetching my courses:",
+      error.response || error
+    );
+    throw error;
+  }
+};
+

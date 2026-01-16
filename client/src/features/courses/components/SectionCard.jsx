@@ -8,12 +8,17 @@ export default function SectionCard({
   openAddContentModal,
   removeContent,
 }) {
-
   // ── DEBUG LOGS ──
   console.log(`[DEBUG: SectionCard] Rendering section: "${section.title}"`);
   console.log(`[DEBUG: SectionCard] Section ID: ${section._id || "(no _id)"}`);
-  console.log(`[DEBUG: SectionCard] Contents type:`, Array.isArray(section.contents) ? "array" : typeof section.contents);
-  console.log(`[DEBUG: SectionCard] Contents length:`, section.contents?.length ?? "undefined");
+  console.log(
+    `[DEBUG: SectionCard] Contents type:`,
+    Array.isArray(section.contents) ? "array" : typeof section.contents
+  );
+  console.log(
+    `[DEBUG: SectionCard] Contents length:`,
+    section.contents?.length ?? "undefined"
+  );
   console.log(`[DEBUG: SectionCard] Full contents:`, section.contents);
 
   const updateTitle = (title) => {
@@ -46,7 +51,7 @@ export default function SectionCard({
       {/* Content List */}
       {section.contents.length > 0 ? (
         <div className="space-y-2">
-          {section.contents.map((item) => (
+          {section.contents.map((item, index) => (
             <ContentCard
               key={item._id || item.id || `content-${section._id}-${index}`}
               content={item}

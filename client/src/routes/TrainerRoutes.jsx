@@ -6,6 +6,7 @@ import TrainerDashboard from "@/pages/trainer/dashboard/TrainerDashboard";
 import CreateCourse from "@/pages/trainer/courses/CreateCourse";
 import MyCourses from "@/features/courses/pages/MyCourses";
 import CourseBuilderPage from "@/pages/trainer/courses/CourseBuilderPage";
+import { CoursePlayerPage } from "@/features/coursePlayer";
 
 const TrainerRoutes = () => {
   return (
@@ -22,6 +23,7 @@ const TrainerRoutes = () => {
         <Route path="my-courses" element={<MyCourses />} />
         <Route path="courses/:courseId/builder" element={<CourseBuilderPage />} />
       </Route>
+        <Route path="/courses/courseId/player" element={<CoursePlayerPage />} />
     </Routes>
   );
 };
