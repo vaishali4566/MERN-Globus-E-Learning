@@ -1,5 +1,5 @@
 import Question from "./question.model.js";
-import Quiz from "../quiz/quiz.model.js";
+import Quiz from "./quiz.model.js";
 import { AppError } from "../../utils/appError.js";
 
 export const createQuestionService = async (data) => {

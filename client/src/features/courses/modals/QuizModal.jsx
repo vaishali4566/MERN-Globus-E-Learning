@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { X } from "lucide-react";
-import { createQuiz } from "../services/quizService";
+import { createQuiz, createQuestion } from "../services/quizService";
 
 export default function QuizModal({ sectionId, courseId, onClose, onSubmit }) {
   const [step, setStep] = useState(1);
@@ -8,7 +8,9 @@ export default function QuizModal({ sectionId, courseId, onClose, onSubmit }) {
     title: "",
     timeLimit: "",
     totalMarks: "",
-    _id: null, // <-- Backend _id after create
+    passMarks: "",
+    allowedAttempts: "",
+    _id: null,
   });
 
   const [loading, setLoading] = useState(false);
@@ -31,46 +33,86 @@ export default function QuizModal({ sectionId, courseId, onClose, onSubmit }) {
     setQuestionForm({ ...questionForm, options: newOptions });
   };
 
-  // 👇 Step 1 → Create quiz API call
   const handleNext = async () => {
     setError(null);
+
     if (!quiz.title.trim()) return setError("Quiz title required");
+    if (!quiz.totalMarks || quiz.totalMarks <= 0)
+      return setError("Total marks must be > 0");
+    if (!quiz.passMarks && quiz.passMarks !== 0)
+      return setError("Pass marks required");
+    if (Number(quiz.passMarks) > Number(quiz.totalMarks))
+      return setError("Pass marks cannot exceed total marks");
 
     setLoading(true);
-    try {
-      // ✅ Send both sectionId and courseId
-      const response = await createQuiz({ ...quiz, sectionId, courseId });
-      console.log("[DEBUG] Quiz created:", response);
 
-      setQuiz((prev) => ({ ...prev, _id: response._id }));
+    try {
+      const payload = {
+        ...quiz,
+        totalMarks: Number(quiz.totalMarks),
+        passMarks: Number(quiz.passMarks),
+        timeLimit: quiz.timeLimit ? Number(quiz.timeLimit) : undefined,
+        allowedAttempts: quiz.allowedAttempts
+          ? Number(quiz.allowedAttempts)
+          : undefined,
+        sectionId,
+        courseId,
+      };
+
+      const response = await createQuiz(payload);
+
+      setQuiz((prev) => ({ ...prev, _id: response.data.id }));
       setStep(2);
     } catch (err) {
-      console.error("Quiz creation failed:", err);
       setError(err.response?.data?.message || "Failed to create quiz");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleAddQuestion = () => {
+  const handleAddQuestion = async () => {
     setError(null);
-    if (!questionForm.question.trim() || !questionForm.correctAnswer.trim()) {
-      return setError("Question and correct answer required");
+
+    if (!questionForm.question.trim())
+      return setError("Question is required");
+
+    if (!quiz._id) return setError("Quiz not created yet");
+
+    try {
+      const payload = {
+        text: questionForm.question,
+        type: "mcq",
+        options: questionForm.options.map((opt) => ({
+          text: opt,
+          isCorrect: opt === questionForm.correctAnswer,
+        })),
+        marks: 1,
+      };
+
+      await createQuestion(quiz._id, payload);
+
+      setQuestions((prev) => [
+        ...prev,
+        {
+          question: questionForm.question,
+          options: questionForm.options,
+          correctAnswer: questionForm.correctAnswer,
+        },
+      ]);
+
+      setQuestionForm({
+        question: "",
+        options: ["", "", "", ""],
+        correctAnswer: "",
+      });
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to add question");
     }
-    setQuestions([...questions, { ...questionForm }]);
-    setQuestionForm({
-      question: "",
-      options: ["", "", "", ""],
-      correctAnswer: "",
-    });
   };
 
   const handleFinish = () => {
-    if (questions.length === 0) return setError("Add at least 1 question");
-    onSubmit({ ...quiz, questions });
     onClose();
   };
-
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
       <div className="bg-white dark:bg-[#1f2337] rounded-xl w-full max-w-lg p-6 space-y-4 max-h-[90vh] overflow-y-auto">

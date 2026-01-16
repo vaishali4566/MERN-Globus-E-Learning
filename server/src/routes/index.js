@@ -7,6 +7,7 @@ import assignmentRoutes from "../modules/assignments/assignment.routes.js"
 import quizRoutes from "../modules/quizzes/quiz.routes.js"
 import userRoutes from "../modules/users/user.routes.js"
 import uploadRoutes from "./uploadRoutes.js"
+import paymentRoutes from "../modules/payment/payment.route.js";
 
 // Function to load routes
 const loadRoutes = (app) => {
@@ -28,6 +29,9 @@ const loadRoutes = (app) => {
   app.use("/api/user", userRoutes);
   //Quiz routes
   app.use("/api/quizzes", quizRoutes);
+
+  //Payment routes
+  app.use("/api/payment", paymentRoutes);
 
   app.use("/api/uploads", uploadRoutes);
 };

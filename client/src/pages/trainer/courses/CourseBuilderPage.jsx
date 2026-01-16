@@ -1,16 +1,11 @@
 import { useEffect, useState } from "react";
 import { Plus } from "lucide-react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 import SectionCard from "../../../features/courses/components/SectionCard";
 import ContentModalWrapper from "../../../features/courses/modals/ContentModalWrapper";
 
-import {
-  getCourseById,
-  saveDraft,
-  publishCourse,
-} from "../../../features/courses/services/courseService";
-
+import { getCourseById, publishCourse } from "../../../features/courses/services/courseService";
 import { createSection } from "@/features/courses/services/sectionService";
 
 /* ================= HELPERS ================= */
@@ -18,18 +13,17 @@ const normalizeSection = (section) => ({
   _id: section._id || null,
   tempId: section.tempId || crypto.randomUUID(),
   title: section.title || "Untitled Section",
-  contents: Array.isArray(section.contents) ? section.contents : [], // ✅ use contents
+  contents: Array.isArray(section.contents) ? section.contents : [],
 });
-
-
 
 /* ================= COMPONENT ================= */
 export default function CourseBuilderPage() {
   const { courseId } = useParams();
+  const navigate = useNavigate();
 
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false); // ← missing tha
+  const [saving, setSaving] = useState(false);
 
   const [modal, setModal] = useState({
     open: false,
@@ -45,28 +39,17 @@ export default function CourseBuilderPage() {
       try {
         setLoading(true);
         const res = await getCourseById(courseId);
-
-        console.log("[DEBUG: fetchCourse] Raw response from backend:", res);
-        console.log("[DEBUG: fetchCourse] Course data:", res.data);
-        console.log("[DEBUG: fetchCourse] Sections in data:", res.data.sections);
-
         if (!isMounted) return;
 
         const normalizedSections = Array.isArray(res.data.sections)
           ? res.data.sections.map((s) => normalizeSection({ ...s }))
           : [];
 
-        console.log("[DEBUG: fetchCourse] Normalized sections:", normalizedSections);
-        normalizedSections.forEach((sec, idx) => {
-          console.log(`[DEBUG: fetchCourse] Section ${idx + 1} contents:`, sec.contents);
-        });
-
         setCourse({
           ...res.data,
           sections: normalizedSections,
         });
       } catch (error) {
-        console.error("[DEBUG: fetchCourse] Failed to load course:", error);
         setCourse(null);
       } finally {
         if (isMounted) setLoading(false);
@@ -86,7 +69,6 @@ export default function CourseBuilderPage() {
 
     try {
       const res = await createSection(courseId, { title: "New Section" });
-
       setCourse((prev) => {
         if (!prev) return prev;
         return {
@@ -98,7 +80,6 @@ export default function CourseBuilderPage() {
         };
       });
     } catch (error) {
-      console.error("Add section error:", error);
       alert("Failed to add section");
     }
   };
@@ -111,46 +92,35 @@ export default function CourseBuilderPage() {
     });
   };
 
-const handleContentCreated = async (sectionId, newContent) => {
-  console.log("[DEBUG: handleContentCreated] Called with sectionId:", sectionId);
-  console.log("[DEBUG: handleContentCreated] Raw newContent:", newContent);
+  const handleContentCreated = async (sectionId, newContent) => {
+    const actualLesson = newContent?.data || newContent;
+    if (!actualLesson) return;
 
-  const actualLesson = newContent?.data || newContent;
-
-  if (!actualLesson) return;
-
-  // === 1️⃣ Call API to create assignment ===
-  try {
-    const response = await createAssignment({
-      ...actualLesson,
-      sectionId,
-      courseId: course._id,
-    });
-
-    console.log("[DEBUG: Assignment created via API]", response.data);
-
-    // === 2️⃣ Update course state ===
-    setCourse((prevCourse) => {
-      if (!prevCourse) return prevCourse;
-
-      const updatedSections = prevCourse.sections.map((sec) => {
-        if (sec._id.toString() === sectionId.toString()) {
-          const newContents = [...(sec.contents || []), response.data.assignment];
-          return { ...sec, contents: newContents };
-        }
-        return sec;
+    // Assuming createAssignment API exists
+    try {
+      const response = await createAssignment({
+        ...actualLesson,
+        sectionId,
+        courseId: course._id,
       });
 
-      return { ...prevCourse, sections: updatedSections };
-    });
-  } catch (err) {
-    console.error("[DEBUG: createAssignment API error]", err);
-    alert("Failed to create assignment");
-  }
-};
+      setCourse((prevCourse) => {
+        if (!prevCourse) return prevCourse;
 
+        const updatedSections = prevCourse.sections.map((sec) => {
+          if (sec._id.toString() === sectionId.toString()) {
+            const newContents = [...(sec.contents || []), response.data.assignment];
+            return { ...sec, contents: newContents };
+          }
+          return sec;
+        });
 
-
+        return { ...prevCourse, sections: updatedSections };
+      });
+    } catch (err) {
+      alert("Failed to create assignment");
+    }
+  };
 
   /* ================= PUBLISH ================= */
   const handlePublish = async () => {
@@ -165,9 +135,9 @@ const handleContentCreated = async (sectionId, newContent) => {
         status: "published",
       }));
 
-      alert("Course published successfully");
+      // Redirect to trainer courses page
+      navigate("/trainer/my-courses");
     } catch (error) {
-      console.error("Publish error:", error);
       alert("Publish failed");
     } finally {
       setSaving(false);
@@ -216,31 +186,28 @@ const handleContentCreated = async (sectionId, newContent) => {
 
       {/* FOOTER */}
       <div className="flex justify-end gap-3 pt-4 border-t">
-        
-
         <button
           onClick={handlePublish}
-          disabled={saving}
+          disabled={saving || course.status === "published"}
           className="bg-green-600 text-white cursor-pointer py-2 px-6 text-sm rounded-md disabled:opacity-50"
         >
-          Publish
+          {saving ? "Publishing..." : "Publish"}
         </button>
       </div>
 
       {/* CONTENT MODAL */}
       {modal.open && course?._id && (
-  <ContentModalWrapper
-    type={modal.type}
-    sectionId={modal.sectionId}
-    courseId={course._id}
-    onClose={() => setModal({ open: false, type: null, sectionId: null })}
-    onSubmit={(newContent) => {
-      handleContentCreated(modal.sectionId, newContent);
-      setModal({ open: false, type: null, sectionId: null });
-    }}
-  />
-)}
-
+        <ContentModalWrapper
+          type={modal.type}
+          sectionId={modal.sectionId}
+          courseId={course._id}
+          onClose={() => setModal({ open: false, type: null, sectionId: null })}
+          onSubmit={(newContent) => {
+            handleContentCreated(modal.sectionId, newContent);
+            setModal({ open: false, type: null, sectionId: null });
+          }}
+        />
+      )}
     </div>
   );
 }

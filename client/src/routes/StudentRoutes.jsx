@@ -10,6 +10,7 @@ import LiveClasses from "@/pages/student/liveclass/Page";
 import Progress from "@/pages/student/progress/Page";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import ProtectedRoute from "@/routes/gaurds/ProtectedRoute";
+import AllCoursesPage from "@/features/courses/pages/AllCoursesPage";
 
 const StudentRoutes = () => {
   return (
@@ -23,6 +24,7 @@ const StudentRoutes = () => {
       >
         {/* default: /student */}
         <Route path="dashboard" element={<StudentDashboard />} />
+        <Route path="explore-courses" element={<AllCoursesPage />} />
 
         {/* /student/my-courses */}
         <Route path="my-courses" element={<MyCoursesPage />} />
