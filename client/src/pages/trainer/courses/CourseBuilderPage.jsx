@@ -18,8 +18,10 @@ const normalizeSection = (section) => ({
   _id: section._id || null,
   tempId: section.tempId || crypto.randomUUID(),
   title: section.title || "Untitled Section",
-  contents: Array.isArray(section.contents) ? section.contents : [],
+  contents: Array.isArray(section.contents) ? section.contents : [], // ✅ use contents
 });
+
+
 
 /* ================= COMPONENT ================= */
 export default function CourseBuilderPage() {
@@ -109,65 +111,46 @@ export default function CourseBuilderPage() {
     });
   };
 
-const handleContentCreated = (sectionId, newContent) => {
+const handleContentCreated = async (sectionId, newContent) => {
   console.log("[DEBUG: handleContentCreated] Called with sectionId:", sectionId);
   console.log("[DEBUG: handleContentCreated] Raw newContent:", newContent);
 
-  // ← Yeh line update karo
   const actualLesson = newContent?.data || newContent;
 
-  // ID check ko flexible banao (id ya _id dono accept karo)
-  const lessonId = actualLesson?._id || actualLesson?.id;
+  if (!actualLesson) return;
 
-  if (!actualLesson || !lessonId) {
-    console.error("[DEBUG: handleContentCreated] Invalid lesson data (missing ID):", actualLesson);
-    return; // prevent crash
-  }
-
-  console.log("[DEBUG: handleContentCreated] Valid lesson extracted:", actualLesson);
-
-  setCourse((prevCourse) => {
-    if (!prevCourse) return prevCourse;
-
-    const updatedSections = prevCourse.sections.map((sec) => {
-      const isMatch = sec._id === sectionId;
-      if (isMatch) {
-        const newContents = [...(sec.contents || []), actualLesson];
-        console.log(`[DEBUG: handleContentCreated] Updating section ${sec._id} - New contents length: ${newContents.length}`);
-        console.log("[DEBUG: handleContentCreated] Updated contents:", newContents);
-        return { ...sec, contents: newContents };
-      }
-      return sec;
+  // === 1️⃣ Call API to create assignment ===
+  try {
+    const response = await createAssignment({
+      ...actualLesson,
+      sectionId,
+      courseId: course._id,
     });
 
-    console.log("[DEBUG: handleContentCreated] Updated course sections:", updatedSections);
+    console.log("[DEBUG: Assignment created via API]", response.data);
 
-    return {
-      ...prevCourse,
-      sections: updatedSections,
-    };
-  });
+    // === 2️⃣ Update course state ===
+    setCourse((prevCourse) => {
+      if (!prevCourse) return prevCourse;
+
+      const updatedSections = prevCourse.sections.map((sec) => {
+        if (sec._id.toString() === sectionId.toString()) {
+          const newContents = [...(sec.contents || []), response.data.assignment];
+          return { ...sec, contents: newContents };
+        }
+        return sec;
+      });
+
+      return { ...prevCourse, sections: updatedSections };
+    });
+  } catch (err) {
+    console.error("[DEBUG: createAssignment API error]", err);
+    alert("Failed to create assignment");
+  }
 };
 
-  /* ================= SAVE DRAFT ================= */
-  const handleSaveDraft = async () => {
-    if (!course) return;
 
-    try {
-      setSaving(true);
-      await saveDraft({
-        _id: course._id,
-        title: course.title,
-        sections: course.sections,
-      });
-      alert("Draft saved successfully");
-    } catch (error) {
-      console.error("Save draft error:", error);
-      alert("Failed to save draft");
-    } finally {
-      setSaving(false);
-    }
-  };
+
 
   /* ================= PUBLISH ================= */
   const handlePublish = async () => {
@@ -225,7 +208,7 @@ const handleContentCreated = (sectionId, newContent) => {
       {/* ADD SECTION */}
       <button
         onClick={addSection}
-        className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800"
+        className="flex items-center gap-2 px-4 py-2 border rounded-lg text-sm hover:bg-gray-50 cursor-pointer dark:hover:bg-gray-800"
       >
         <Plus size={16} />
         Add Section
@@ -233,38 +216,31 @@ const handleContentCreated = (sectionId, newContent) => {
 
       {/* FOOTER */}
       <div className="flex justify-end gap-3 pt-4 border-t">
-        <button
-          onClick={handleSaveDraft}
-          disabled={saving}
-          className="px-4 py-2 border rounded-lg disabled:opacity-50"
-        >
-          Save Draft
-        </button>
+        
 
         <button
           onClick={handlePublish}
           disabled={saving}
-          className="bg-green-600 text-white px-4 py-2 rounded-lg disabled:opacity-50"
+          className="bg-green-600 text-white cursor-pointer py-2 px-6 text-sm rounded-md disabled:opacity-50"
         >
           Publish
         </button>
       </div>
 
       {/* CONTENT MODAL */}
-      {modal.open && (
-        <ContentModalWrapper
-          type={modal.type}
-          sectionId={modal.sectionId}
-          courseId={course._id}
-          onClose={() => setModal({ open: false, type: null, sectionId: null })}
-          onSubmit={(newContent) => {
-            if (modal.sectionId) {
-              handleContentCreated(modal.sectionId, newContent);
-            }
-            setModal({ open: false, type: null, sectionId: null });
-          }}
-        />
-      )}
+      {modal.open && course?._id && (
+  <ContentModalWrapper
+    type={modal.type}
+    sectionId={modal.sectionId}
+    courseId={course._id}
+    onClose={() => setModal({ open: false, type: null, sectionId: null })}
+    onSubmit={(newContent) => {
+      handleContentCreated(modal.sectionId, newContent);
+      setModal({ open: false, type: null, sectionId: null });
+    }}
+  />
+)}
+
     </div>
   );
 }

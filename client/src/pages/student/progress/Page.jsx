@@ -117,7 +117,7 @@ const LearningProgress = () => {
 
               <div className="w-full h-2 bg-gray-200 dark:bg-[#515268] rounded-full">
                 <div
-                  className="h-2 bg-blue-600 rounded-full"
+                  className="h-2 bg-blue-500 rounded-full"
                   style={{ width: `${course.progress}%` }}
                 />
               </div>
@@ -140,7 +140,7 @@ const SummaryCard = ({ icon, label, value }) => {
       className="bg-white dark:bg-[#1f2337]
       rounded-xl shadow-sm p-4 flex items-center gap-3"
     >
-      <div className="text-blue-600 dark:text-blue-400 text-lg">
+      <div className="text-blue-500 dark:text-blue-400 text-lg">
         {icon}
       </div>
 

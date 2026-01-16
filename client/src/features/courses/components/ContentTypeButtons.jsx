@@ -5,7 +5,7 @@ const contentTypes = [
     type: "lesson",
     label: "Lesson",
     icon: BookOpen,
-    color: "text-blue-600 dark:text-blue-400",
+    color: "text-blue-500 dark:text-blue-400",
   },
   {
     type: "assignment",
@@ -21,20 +21,19 @@ const contentTypes = [
   },
 ];
 
-export default function ContentTypeButtons({
-  sectionId,
-  openAddContentModal,
-}) {
+export default function ContentTypeButtons({ sectionId, openAddContentModal }) {
   return (
     <div className="mt-4 flex gap-3 flex-wrap">
       {contentTypes.map(({ type, label, icon: Icon, color }) => (
         <button
           key={type}
           onClick={() => {
-            console.log(`[DEBUG: ContentTypeButtons] Opening modal for type: ${type}, sectionId: ${sectionId}`);
+            console.log(
+              `[DEBUG: ContentTypeButtons] Opening modal for type: ${type}, sectionId: ${sectionId}`
+            );
             openAddContentModal(sectionId, type);
           }}
-          className="flex items-center gap-2 px-4 py-2 text-xs font-medium
+          className="flex items-center gap-2 px-4 py-2 text-xs font-medium cursor-pointer
           rounded-lg border border-gray-200 dark:border-gray-700
           bg-white dark:bg-[#1f2337]
           hover:bg-gray-100 dark:hover:bg-darkHover
@@ -46,9 +45,7 @@ export default function ContentTypeButtons({
             <Icon size={14} />
           </span>
 
-          <span className="text-gray-700 dark:text-gray-300">
-            Add {label}
-          </span>
+          <span className="text-gray-700 dark:text-gray-300">Add {label}</span>
 
           <Plus size={12} className="ml-1 text-gray-400" />
         </button>

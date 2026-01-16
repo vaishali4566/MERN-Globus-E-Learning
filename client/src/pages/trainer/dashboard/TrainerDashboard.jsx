@@ -53,7 +53,7 @@ const TrainerDashboard = () => {
                   className="bg-blue-50 dark:bg-[#252c45] p-4 rounded-xl shadow flex items-center gap-4"
                 >
                   <div className="flex flex-col items-center justify-center w-16 h-16 rounded-lg bg-blue-100 dark:bg-blue-900">
-                    <FiBookOpen className="text-blue-600" size={24} />
+                    <FiBookOpen className="text-blue-500" size={24} />
                   </div>
                   <div className="flex-1">
                     <h4 className="font-semibold text-gray-900 dark:text-white">
@@ -62,7 +62,7 @@ const TrainerDashboard = () => {
                     <p className="text-xs text-gray-500 dark:text-gray-400">
                       Duration: {course.duration} · {course.students} Students
                     </p>
-                    <button className="mt-2 text-sm bg-blue-600 text-white px-3 py-1.5 rounded-md">
+                    <button className="mt-2 text-sm bg-blue-500 text-white px-3 py-1.5 rounded-md">
                       Manage Course
                     </button>
                   </div>
@@ -80,7 +80,7 @@ const TrainerDashboard = () => {
                   key={i}
                   className="bg-white dark:bg-[#252c45] rounded-xl p-4 shadow space-y-2"
                 >
-                  <p className="text-xs text-blue-600">
+                  <p className="text-xs text-blue-500">
                     {cls.course} · {cls.students} Students
                   </p>
                   <h4 className="font-semibold text-sm">{cls.topic}</h4>
@@ -185,7 +185,7 @@ const TrainerDashboard = () => {
           {/* Quick Actions */}
           <div className="bg-white dark:bg-[#1f2337] rounded-xl p-4 shadow space-y-2">
             <h3 className="font-semibold mb-2">Quick Actions</h3>
-            <button className="w-full bg-blue-600 text-white px-4 py-2 rounded-lg text-sm flex items-center gap-2 justify-center">
+            <button className="w-full bg-blue-500 text-white px-4 py-2 rounded-lg text-sm flex items-center gap-2 justify-center">
               <FiPlay /> Start Live Class
             </button>
             <button className="w-full bg-green-500 text-white px-4 py-2 rounded-lg text-sm flex items-center gap-2 justify-center">
@@ -200,7 +200,7 @@ const TrainerDashboard = () => {
           <div className="bg-white dark:bg-[#1f2337] rounded-xl p-4 shadow">
             <h3 className="font-semibold mb-2">Weekly Goal</h3>
             <div className="w-full h-2 bg-gray-200 rounded-full">
-              <div className="h-2 bg-blue-600 rounded-full w-[70%]" />
+              <div className="h-2 bg-blue-500 rounded-full w-[70%]" />
             </div>
             <p className="text-xs text-gray-500 mt-1">7 of 10 classes completed</p>
           </div>
