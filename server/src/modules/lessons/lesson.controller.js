@@ -5,31 +5,53 @@ import { createLessonService } from "./lesson.service.js";
 export const createLesson = asyncHandler(async (req, res) => {
   const {
     title,
-    description,
+    description = "",
     courseId,
     sectionId,
     type,
     video,
     content,
     liveClass,
-    isPreview,
+    isPreview = false,
   } = req.body;
 
-  if (!title?.trim()) {
+  /* ------------------ BASIC VALIDATIONS ------------------ */
+
+  if (!title || !title.trim()) {
     throw new AppError("Lesson title is required", 400);
   }
 
-  if (!courseId || !sectionId) {
-    throw new AppError("Course and section are required", 400);
+  if (!courseId) {
+    throw new AppError("Course ID is required", 400);
+  }
+
+  if (!sectionId) {
+    throw new AppError("Section ID is required", 400);
   }
 
   if (!type) {
     throw new AppError("Lesson type is required", 400);
   }
 
+  /* ------------------ TYPE BASED VALIDATION ------------------ */
+
+  if (type === "video" && !video?.url) {
+    throw new AppError("Video data is required for video lesson", 400);
+  }
+
+  if (type === "article" && !content?.trim()) {
+    throw new AppError("Content is required for article lesson", 400);
+  }
+
+  if (type === "live" && !liveClass) {
+    throw new AppError("Live class details are required", 400);
+  }
+
+  /* ------------------ SERVICE CALL ------------------ */
+
   const lesson = await createLessonService({
     title: title.trim(),
-    description,
+    description: description.trim(),
     course: courseId,
     section: sectionId,
     type,
@@ -37,18 +59,14 @@ export const createLesson = asyncHandler(async (req, res) => {
     content,
     liveClass,
     isPreview: Boolean(isPreview),
-    createdBy: req.user.id, // trainer from token
+    createdBy: req.user.id, // trainer from JWT
   });
+
+  /* ------------------ RESPONSE ------------------ */
 
   res.status(201).json({
     success: true,
     message: "Lesson created successfully",
-    data: {
-      id: lesson._id,
-      title: lesson.title,
-      type: lesson.type,
-      order: lesson.order,
-      isPublished: lesson.isPublished,
-    },
+    data: lesson
   });
 });

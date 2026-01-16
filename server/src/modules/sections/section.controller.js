@@ -15,7 +15,6 @@ export const createSection = asyncHandler(async (req, res) => {
 
   const section = await createSectionService({
     title: title.trim(),
-    description,
     course: courseId,
     createdBy: req.user.id, // trainer from token
   });
@@ -23,11 +22,6 @@ export const createSection = asyncHandler(async (req, res) => {
   res.status(201).json({
     success: true,
     message: "Section created successfully",
-    data: {
-      id: section._id,
-      title: section.title,
-      order: section.order,
-      isPublished: section.isPublished,
-    },
+    data: section,
   });
 });

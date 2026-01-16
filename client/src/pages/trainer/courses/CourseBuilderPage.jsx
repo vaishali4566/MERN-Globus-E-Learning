@@ -1,165 +1,270 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Plus } from "lucide-react";
-import SectionCard from "../../../features/courses/components/SectionCard";
-import { saveDraft, publishCourse } from "../../../features/courses/services/courseService";
+import { useParams } from "react-router-dom";
 
+import SectionCard from "../../../features/courses/components/SectionCard";
+import ContentModalWrapper from "../../../features/courses/modals/ContentModalWrapper";
+
+import {
+  getCourseById,
+  saveDraft,
+  publishCourse,
+} from "../../../features/courses/services/courseService";
+
+import { createSection } from "@/features/courses/services/sectionService";
+
+/* ================= HELPERS ================= */
+const normalizeSection = (section) => ({
+  _id: section._id || null,
+  tempId: section.tempId || crypto.randomUUID(),
+  title: section.title || "Untitled Section",
+  contents: Array.isArray(section.contents) ? section.contents : [],
+});
+
+/* ================= COMPONENT ================= */
 export default function CourseBuilderPage() {
-  const [course, setCourse] = useState({
-    title: "Untitled Course",
-    description: "",
-    sections: [],
+  const { courseId } = useParams();
+
+  const [course, setCourse] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false); // ← missing tha
+
+  const [modal, setModal] = useState({
+    open: false,
+    type: null,
+    sectionId: null,
   });
 
-  const addSection = () => {
-    setCourse((c) => ({
-      ...c,
-      sections: [
-        ...c.sections,
-        { id: Date.now(), title: "New Section", contents: [] },
-      ],
-    }));
+  /* ================= FETCH COURSE ================= */
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchCourse = async () => {
+      try {
+        setLoading(true);
+        const res = await getCourseById(courseId);
+
+        console.log("[DEBUG: fetchCourse] Raw response from backend:", res);
+        console.log("[DEBUG: fetchCourse] Course data:", res.data);
+        console.log("[DEBUG: fetchCourse] Sections in data:", res.data.sections);
+
+        if (!isMounted) return;
+
+        const normalizedSections = Array.isArray(res.data.sections)
+          ? res.data.sections.map((s) => normalizeSection({ ...s }))
+          : [];
+
+        console.log("[DEBUG: fetchCourse] Normalized sections:", normalizedSections);
+        normalizedSections.forEach((sec, idx) => {
+          console.log(`[DEBUG: fetchCourse] Section ${idx + 1} contents:`, sec.contents);
+        });
+
+        setCourse({
+          ...res.data,
+          sections: normalizedSections,
+        });
+      } catch (error) {
+        console.error("[DEBUG: fetchCourse] Failed to load course:", error);
+        setCourse(null);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    };
+
+    fetchCourse();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [courseId]);
+
+  /* ================= ADD SECTION ================= */
+  const addSection = async () => {
+    if (!courseId) return;
+
+    try {
+      const res = await createSection(courseId, { title: "New Section" });
+
+      setCourse((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          sections: [
+            ...prev.sections,
+            normalizeSection(res.data.section || res.data),
+          ],
+        };
+      });
+    } catch (error) {
+      console.error("Add section error:", error);
+      alert("Failed to add section");
+    }
   };
 
-  const addContent = (sectionId, type) => {
-    setCourse((c) => ({
-      ...c,
-      sections: c.sections.map((s) =>
-        s.id === sectionId
-          ? {
-              ...s,
-              contents: [
-                ...s.contents,
-                { id: Date.now(), type, title: `New ${type}` },
-              ],
-            }
-          : s
-      ),
-    }));
+  const openAddContentModal = (sectionId, type) => {
+    setModal({
+      open: true,
+      type,
+      sectionId,
+    });
   };
 
-  const removeContent = (sectionId, contentId) => {
-  setCourse((c) => ({
-    ...c,
-    sections: c.sections.map((s) =>
-      s.id === sectionId
-        ? {
-            ...s,
-            contents: s.contents.filter(
-              (item) => item.id !== contentId
-            ),
-          }
-        : s
-    ),
-  }));
+const handleContentCreated = (sectionId, newContent) => {
+  console.log("[DEBUG: handleContentCreated] Called with sectionId:", sectionId);
+  console.log("[DEBUG: handleContentCreated] Raw newContent:", newContent);
+
+  // ← Yeh line update karo
+  const actualLesson = newContent?.data || newContent;
+
+  // ID check ko flexible banao (id ya _id dono accept karo)
+  const lessonId = actualLesson?._id || actualLesson?.id;
+
+  if (!actualLesson || !lessonId) {
+    console.error("[DEBUG: handleContentCreated] Invalid lesson data (missing ID):", actualLesson);
+    return; // prevent crash
+  }
+
+  console.log("[DEBUG: handleContentCreated] Valid lesson extracted:", actualLesson);
+
+  setCourse((prevCourse) => {
+    if (!prevCourse) return prevCourse;
+
+    const updatedSections = prevCourse.sections.map((sec) => {
+      const isMatch = sec._id === sectionId;
+      if (isMatch) {
+        const newContents = [...(sec.contents || []), actualLesson];
+        console.log(`[DEBUG: handleContentCreated] Updating section ${sec._id} - New contents length: ${newContents.length}`);
+        console.log("[DEBUG: handleContentCreated] Updated contents:", newContents);
+        return { ...sec, contents: newContents };
+      }
+      return sec;
+    });
+
+    console.log("[DEBUG: handleContentCreated] Updated course sections:", updatedSections);
+
+    return {
+      ...prevCourse,
+      sections: updatedSections,
+    };
+  });
 };
 
-
-  // Save Draft
+  /* ================= SAVE DRAFT ================= */
   const handleSaveDraft = async () => {
+    if (!course) return;
+
     try {
-      const res = await saveDraft(course);
-      alert("Draft saved successfully!");
-      setCourse((prev) => ({ ...prev, _id: res.data._id }));
-    } catch (err) {
-      console.error(err);
+      setSaving(true);
+      await saveDraft({
+        _id: course._id,
+        title: course.title,
+        sections: course.sections,
+      });
+      alert("Draft saved successfully");
+    } catch (error) {
+      console.error("Save draft error:", error);
       alert("Failed to save draft");
+    } finally {
+      setSaving(false);
     }
   };
 
-  // Publish
+  /* ================= PUBLISH ================= */
   const handlePublish = async () => {
+    if (!courseId) return;
+
     try {
-      if (!course._id) {
-        const res = await saveDraft(course);
-        setCourse((prev) => ({ ...prev, _id: res.data._id }));
-      }
-      await publishCourse(course._id);
-      alert("Course published successfully!");
-    } catch (err) {
-      console.error(err);
-      alert("Failed to publish course");
+      setSaving(true);
+      await publishCourse(courseId);
+
+      setCourse((prev) => ({
+        ...prev,
+        status: "published",
+      }));
+
+      alert("Course published successfully");
+    } catch (error) {
+      console.error("Publish error:", error);
+      alert("Publish failed");
+    } finally {
+      setSaving(false);
     }
   };
+
+  if (loading) return <p className="text-center">Loading course...</p>;
+  if (!course) return <p className="text-center">Course not found</p>;
 
   return (
-    <div className="">
-      <div
-        className="max-w-4xl mx-auto
-        bg-white dark:bg-[#1f2337]
-        rounded-2xl shadow-sm p-6 space-y-8"
+    <div className="max-w-4xl mx-auto bg-white dark:bg-[#1f2337] rounded-2xl p-6 space-y-6">
+      {/* COURSE TITLE */}
+      <input
+        value={course.title}
+        onChange={(e) =>
+          setCourse((prev) => ({ ...prev, title: e.target.value }))
+        }
+        placeholder="Course title"
+        className="text-2xl font-semibold bg-transparent w-full outline-none border-b pb-2"
+      />
+
+      {/* SECTIONS */}
+      <div className="space-y-4">
+        {course.sections.length ? (
+          course.sections.map((section) => (
+            <SectionCard
+              key={section._id}
+              section={section}
+              setCourse={setCourse}
+              openAddContentModal={openAddContentModal}
+            />
+          ))
+        ) : (
+          <p className="text-sm text-gray-400">No sections yet</p>
+        )}
+      </div>
+
+      {/* ADD SECTION */}
+      <button
+        onClick={addSection}
+        className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800"
       >
-        {/* ===== Course Basics ===== */}
-        <div>
-          <input
-            value={course.title}
-            onChange={(e) =>
-              setCourse({ ...course, title: e.target.value })
-            }
-            placeholder="Course title"
-            className="w-full text-2xl font-semibold
-            bg-transparent outline-none
-            border-b border-gray-200 dark:border-gray-700
-            text-gray-900 dark:text-white
-            pb-2"
-          />
+        <Plus size={16} />
+        Add Section
+      </button>
 
-        </div>
-
-        {/* ===== Sections ===== */}
-        <div className="space-y-4">
-          {course.sections.length > 0 ? (
-            course.sections.map((section) => (
-              <SectionCard
-                key={section.id}
-                section={section}
-                setCourse={setCourse}
-                addContent={addContent}
-                removeContent={removeContent}
-              />
-            ))
-          ) : (
-            <p className="text-sm text-gray-400 dark:text-gray-500">
-              No sections added yet
-            </p>
-          )}
-        </div>
-
-        {/* ===== Add Section CTA ===== */}
+      {/* FOOTER */}
+      <div className="flex justify-end gap-3 pt-4 border-t">
         <button
-          onClick={addSection}
-          className="flex items-center gap-2
-          px-4 py-2 rounded-xl text-sm font-medium
-          border border-blue-600 text-blue-600
-          hover:bg-blue-600 hover:text-white
-          transition"
+          onClick={handleSaveDraft}
+          disabled={saving}
+          className="px-4 py-2 border rounded-lg disabled:opacity-50"
         >
-          <Plus size={16} />
-          Add Section
+          Save Draft
         </button>
 
-        {/* ===== Footer Actions ===== */}
-        <div className="flex justify-end gap-3 pt-6 border-t dark:border-gray-700">
-          <button
-            onClick={handleSaveDraft}
-            className="px-5 py-2 rounded-lg text-sm font-medium
-            border border-gray-300 dark:border-gray-600
-            text-gray-700 dark:text-gray-300
-            hover:bg-gray-100 dark:hover:bg-darkHover
-            transition"
-          >
-            Save Draft
-          </button>
-
-          <button
-            onClick={handlePublish}
-            className="px-5 py-2 rounded-lg text-sm font-medium
-            bg-green-600 text-white
-            hover:bg-green-700 transition"
-          >
-            Publish Course
-          </button>
-        </div>
+        <button
+          onClick={handlePublish}
+          disabled={saving}
+          className="bg-green-600 text-white px-4 py-2 rounded-lg disabled:opacity-50"
+        >
+          Publish
+        </button>
       </div>
+
+      {/* CONTENT MODAL */}
+      {modal.open && (
+        <ContentModalWrapper
+          type={modal.type}
+          sectionId={modal.sectionId}
+          courseId={course._id}
+          onClose={() => setModal({ open: false, type: null, sectionId: null })}
+          onSubmit={(newContent) => {
+            if (modal.sectionId) {
+              handleContentCreated(modal.sectionId, newContent);
+            }
+            setModal({ open: false, type: null, sectionId: null });
+          }}
+        />
+      )}
     </div>
   );
 }

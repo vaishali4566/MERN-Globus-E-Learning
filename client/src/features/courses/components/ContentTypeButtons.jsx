@@ -21,13 +21,19 @@ const contentTypes = [
   },
 ];
 
-export default function ContentTypeButtons({ sectionId, addContent }) {
+export default function ContentTypeButtons({
+  sectionId,
+  openAddContentModal,
+}) {
   return (
     <div className="mt-4 flex gap-3 flex-wrap">
       {contentTypes.map(({ type, label, icon: Icon, color }) => (
         <button
           key={type}
-          onClick={() => addContent(sectionId, type)}
+          onClick={() => {
+            console.log(`[DEBUG: ContentTypeButtons] Opening modal for type: ${type}, sectionId: ${sectionId}`);
+            openAddContentModal(sectionId, type);
+          }}
           className="flex items-center gap-2 px-4 py-2 text-xs font-medium
           rounded-lg border border-gray-200 dark:border-gray-700
           bg-white dark:bg-[#1f2337]

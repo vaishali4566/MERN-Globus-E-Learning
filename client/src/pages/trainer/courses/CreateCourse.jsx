@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { createCourse } from "../../../features/courses/services/courseService";
 import { useNavigate } from "react-router-dom";
@@ -29,10 +30,12 @@ const handleSubmit = async (e) => {
 
   try {
     const res = await createCourse(form); // API call
-    const courseId = res.data.id; // backend se id
+    const courseId = res.data._id || res.data.id; // backend se id
+    console.log(courseId)
 
     // Redirect to course builder page
-    navigate(`/trainer/courses/${courseId}/builder`);
+    navigate(`/trainer/courses/${courseId}/builder`, { state: { course: res.data } });
+
   } catch (err) {
     setError(err?.response?.data?.message || "Something went wrong");
   } finally {

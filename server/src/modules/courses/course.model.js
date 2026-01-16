@@ -33,6 +33,21 @@ const courseSchema = new mongoose.Schema(
       default: "",
     },
 
+    // ===== RELATION =====
+    trainer: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+      index: true,
+    },
+
+    sections: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Section",
+      },
+    ],
+
     // ===== PRICING =====
     price: {
       type: Number,

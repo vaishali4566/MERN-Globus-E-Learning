@@ -9,12 +9,6 @@ const sectionSchema = new mongoose.Schema(
       maxlength: 100,
     },
 
-    description: {
-      type: String,
-      default: "",
-      maxlength: 500,
-    },
-
     course: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Course",

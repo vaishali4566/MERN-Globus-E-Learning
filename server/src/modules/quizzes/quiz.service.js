@@ -1,6 +1,6 @@
 import Quiz from "./quiz.model.js";
-import Course from "../course/course.model.js";
-import Section from "../section/section.model.js";
+import Course from "../courses/course.model.js";
+import Section from "../sections/section.model.js";
 import { AppError } from "../../utils/appError.js";
 
 export const createQuizService = async (data) => {
