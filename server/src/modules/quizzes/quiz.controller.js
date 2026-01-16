@@ -15,12 +15,34 @@ export const createQuiz = asyncHandler(async (req, res) => {
     shuffleQuestions,
   } = req.body;
 
+  // 🔁 Convert to numbers (VERY IMPORTANT)
+  const total = Number(totalMarks);
+  const pass = Number(passMarks);
+  const time = timeLimit !== undefined ? Number(timeLimit) : undefined;
+  const attempts =
+    allowedAttempts !== undefined ? Number(allowedAttempts) : undefined;
+
   // 1️⃣ Basic validations
-  if (!title?.trim()) throw new AppError("Quiz title is required", 400);
-  if (!courseId || !sectionId) throw new AppError("Course and section are required", 400);
-  if (!totalMarks || totalMarks <= 0) throw new AppError("Total marks must be > 0", 400);
-  if (!passMarks && passMarks !== 0) throw new AppError("Pass marks required", 400);
-  if (passMarks > totalMarks) throw new AppError("Pass marks cannot exceed total marks", 400);
+  if (!title?.trim())
+    throw new AppError("Quiz title is required", 400);
+
+  if (!courseId || !sectionId)
+    throw new AppError("Course and section are required", 400);
+
+  if (!Number.isFinite(total) || total <= 0)
+    throw new AppError("Total marks must be greater than 0", 400);
+
+  if (!Number.isFinite(pass))
+    throw new AppError("Pass marks required", 400);
+
+  if (pass > total)
+    throw new AppError("Pass marks cannot exceed total marks", 400);
+
+  if (time !== undefined && (!Number.isFinite(time) || time <= 0))
+    throw new AppError("Time limit must be a positive number", 400);
+
+  if (attempts !== undefined && (!Number.isFinite(attempts) || attempts <= 0))
+    throw new AppError("Allowed attempts must be a positive number", 400);
 
   // 2️⃣ Call service
   const quiz = await createQuizService({
@@ -28,14 +50,15 @@ export const createQuiz = asyncHandler(async (req, res) => {
     description,
     course: courseId,
     section: sectionId,
-    timeLimit,
-    totalMarks,
-    passMarks,
-    allowedAttempts,
-    shuffleQuestions,
+    timeLimit: time,
+    totalMarks: total,
+    passMarks: pass,
+    allowedAttempts: attempts,
+    shuffleQuestions: Boolean(shuffleQuestions),
     createdBy: req.user.id,
   });
 
+  // 3️⃣ Response
   res.status(201).json({
     success: true,
     message: "Quiz created successfully",

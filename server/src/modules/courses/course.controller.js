@@ -1,6 +1,6 @@
 import asyncHandler from "../../utils/asyncHandler.js";
 import { AppError } from "../../utils/appError.js";
-import { createCourseService,getCourseByIdService, getMyCoursesService, } from "./course.service.js";
+import { createCourseService,getCourseByIdService, getMyCoursesService,publishCourseService, getAllCoursesService } from "./course.service.js";
 
 export const createCourse = asyncHandler(async (req, res) => {
   const {
@@ -73,5 +73,50 @@ export const getMyCourses = asyncHandler(async (req, res) => {
     success: true,
     count: courses.length,
     data: courses,
+  });
+});
+
+export const getAllCourses = asyncHandler(async (req, res) => {
+  // Optional query params: category, level, language, search
+  const { category, level, language, search } = req.query;
+
+  const filter = { status: "published" }; // Only published courses
+
+  if (category) filter.category = category;
+  if (level) filter.level = level;
+  if (language) filter.language = language;
+  if (search) filter.title = { $regex: search, $options: "i" };
+
+  const courses = await getAllCoursesService(filter);
+
+  if (!courses || courses.length === 0) {
+    throw new AppError("No courses found", 404);
+  }
+
+  res.status(200).json({
+    success: true,
+    count: courses.length,
+    data: courses,
+  });
+});
+
+export const publishCourse = asyncHandler(async (req, res) => {
+  const { courseId } = req.params;
+  const trainerId = req.user.id;
+
+  const course = await publishCourseService(courseId, trainerId);
+
+  if (!course) {
+    throw new AppError("Course not found or you don't have permission", 404);
+  }
+
+  res.status(200).json({
+    success: true,
+    message: "Course published successfully",
+    data: {
+      id: course._id,
+      title: course.title,
+      status: course.status,
+    },
   });
 });

@@ -4,7 +4,7 @@ import api from "../../../services/api"
 export const createCourse = async (courseData) => {
   try {
     const response = await api.post("/courses", courseData);
-    return response.data; // backend se jo JSON aayega
+    return response.data;
   } catch (error) {
     console.error("Error creating course:", error.response || error);
     throw error;
@@ -15,16 +15,12 @@ export const createCourse = async (courseData) => {
 export const getCourseById = async (courseId) => {
   try {
     const response = await api.get(`/courses/${courseId}`);
-    return response.data; // { success, data }
+    return response.data;
   } catch (error) {
-    console.error(
-      "Error fetching course:",
-      error.response || error
-    );
+    console.error("Error fetching course:", error.response || error);
     throw error;
   }
 };
-
 
 // ✅ Update existing course
 export const updateCourse = async (courseId, courseData) => {
@@ -50,7 +46,6 @@ export const publishCourse = async (courseId) => {
 
 // ✅ Save draft
 export const saveDraft = async (courseData) => {
-  // Agar backend me create draft aur update draft same endpoint se hota hai
   if (courseData._id) {
     return await updateCourse(courseData._id, courseData);
   } else {
@@ -64,11 +59,18 @@ export const getMyCourses = async () => {
     const response = await api.get("/courses/my-courses");
     return response.data; 
   } catch (error) {
-    console.error(
-      "Error fetching my courses:",
-      error.response || error
-    );
+    console.error("Error fetching my courses:", error.response || error);
     throw error;
   }
 };
 
+// ✅ Get all published courses (public / student)
+export const getAllCourses = async () => {
+  try {
+    const response = await api.get("/courses/all");
+    return response.data; // { success, count, data: [courses] }
+  } catch (error) {
+    console.error("Error fetching all courses:", error.response || error);
+    throw error;
+  }
+};

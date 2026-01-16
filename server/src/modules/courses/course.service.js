@@ -18,6 +18,12 @@ export const createCourseService = async (data) => {
   return await Course.create(data);
 };
 
+export const getAllCoursesService = async (filter = {}) => {
+  return await Course.find(filter)
+    .populate("trainer", "name email") // optional: include trainer info
+    .sort({ createdAt: -1 }); // latest courses first
+};
+
 export const getCourseByIdService = async (courseId, trainerId) => {
   if (!mongoose.Types.ObjectId.isValid(courseId)) return null;
 
@@ -77,4 +83,18 @@ export const getMyCoursesService = async (trainerId) => {
       "title slug thumbnail price level language status createdAt updatedAt"
     )
     .sort({ createdAt: -1 });
+};
+
+export const publishCourseService = async (courseId, trainerId) => {
+  // Find the course by ID and trainer
+  const course = await Course.findOne({ _id: courseId, trainer: trainerId });
+
+  if (!course) return null;
+
+  // Update status to 'published'
+  course.status = "published";
+
+  await course.save();
+
+  return course;
 };

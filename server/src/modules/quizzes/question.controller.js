@@ -3,19 +3,29 @@ import { AppError } from "../../utils/appError.js";
 import { createQuestionService } from "./question.service.js";
 
 export const createQuestion = asyncHandler(async (req, res) => {
-  const { quizId, text, type, options, marks } = req.body;
+  const { quizId } = req.params; // ✅ params se lo
+  const { text, type, options, marks } = req.body;
 
+  // 1️⃣ Validations
   if (!quizId) throw new AppError("Quiz ID is required", 400);
   if (!text?.trim()) throw new AppError("Question text is required", 400);
   if (!type) throw new AppError("Question type is required", 400);
-  if (!marks || marks <= 0) throw new AppError("Marks must be > 0", 400);
-
-  // MCQ / multi_select should have options
-  if ((type === "mcq" || type === "multi_select") && (!options || options.length < 2)) {
-    throw new AppError("At least 2 options required for MCQ / Multi-select", 400);
+  if (marks === undefined || marks <= 0) {
+    throw new AppError("Marks must be greater than 0", 400);
   }
 
-  // true_false options optional
+  // 2️⃣ MCQ / Multi-select validation
+  if (
+    (type === "mcq" || type === "multi_select") &&
+    (!Array.isArray(options) || options.length < 2)
+  ) {
+    throw new AppError(
+      "At least 2 options are required for MCQ or Multi-select questions",
+      400
+    );
+  }
+
+  // 3️⃣ Create question
   const question = await createQuestionService({
     quiz: quizId,
     text: text.trim(),
