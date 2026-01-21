@@ -1,7 +1,15 @@
 import asyncHandler from "../../utils/asyncHandler.js";
 import { AppError } from "../../utils/appError.js";
-import { createCourseService,getCourseByIdService, getMyCoursesService,publishCourseService, getAllCoursesService } from "./course.service.js";
+import {
+  createCourseService,
+  getCourseByIdService,
+  getMyCoursesService,
+  publishCourseService,
+  getAllCoursesService,
+} from "./course.service.js";
+import Enrollment from "../enrollments/enrollment.model.js";
 
+// ================= CREATE COURSE =================
 export const createCourse = asyncHandler(async (req, res) => {
   const {
     title,
@@ -43,12 +51,13 @@ export const createCourse = asyncHandler(async (req, res) => {
   });
 });
 
-
+// ================= GET COURSE BY ID (TRAINER) =================
 export const getCourseById = asyncHandler(async (req, res) => {
+  console.log("USER 👉", req.user);
+  console.log("COURSE ID 👉", req.params.courseId);
   const { courseId } = req.params;
-  const trainerId = req.user.id;
 
-  const course = await getCourseByIdService(courseId, trainerId);
+  const course = await getCourseByIdService(courseId, req.user);
 
   if (!course) {
     throw new AppError("Course not found", 404);
@@ -60,27 +69,25 @@ export const getCourseById = asyncHandler(async (req, res) => {
   });
 });
 
+// ================= GET MY COURSES =================
 export const getMyCourses = asyncHandler(async (req, res) => {
-  const trainerId = req.user.id;
-
-  const courses = await getMyCoursesService(trainerId);
-
-  if (!courses || courses.length === 0) {
-    throw new AppError("No courses found", 404);
-  }
+  const courses = await getMyCoursesService(req.user.id);
 
   res.status(200).json({
     success: true,
     count: courses.length,
-    data: courses,
+    data: courses, // 🔥 empty array allowed
   });
 });
 
+// ================= GET ALL PUBLISHED COURSES =================
 export const getAllCourses = asyncHandler(async (req, res) => {
-  // Optional query params: category, level, language, search
+  const userId = req.user?.id;
+  const role = req.user?.role;
+
   const { category, level, language, search } = req.query;
 
-  const filter = { status: "published" }; // Only published courses
+  const filter = { status: "published" };
 
   if (category) filter.category = category;
   if (level) filter.level = level;
@@ -89,25 +96,48 @@ export const getAllCourses = asyncHandler(async (req, res) => {
 
   const courses = await getAllCoursesService(filter);
 
-  if (!courses || courses.length === 0) {
-    throw new AppError("No courses found", 404);
+  // 🔥 Enrollment check
+  let enrolledCourseIds = [];
+
+  if (userId && role === "student") {
+    const enrollments = await Enrollment.find({
+      student: userId, // ✅ FIXED
+      status: "active",
+    }).select("course");
+
+    enrolledCourseIds = enrollments.map((e) => e.course.toString());
   }
+
+  const formattedCourses = courses.map((course) => {
+    const isTrainerView =
+      role === "trainer" && course.trainer?._id?.toString() === userId;
+
+    const isEnrolled = enrolledCourseIds.includes(course._id.toString());
+
+    return {
+      ...course.toObject(),
+      isTrainerView,
+      isEnrolled,
+      isPurchased: isEnrolled, // frontend friendly
+      canEdit: isTrainerView,
+    };
+  });
 
   res.status(200).json({
     success: true,
-    count: courses.length,
-    data: courses,
+    count: formattedCourses.length,
+    data: formattedCourses,
   });
 });
 
+// ================= PUBLISH COURSE =================
 export const publishCourse = asyncHandler(async (req, res) => {
   const { courseId } = req.params;
-  const trainerId = req.user.id;
 
-  const course = await publishCourseService(courseId, trainerId);
+  const course = await publishCourseService(courseId, req.user.id);
 
   if (!course) {
-    throw new AppError("Course not found or you don't have permission", 404);
+    throw new AppError("Course not found or permission denied", 404);
   }
 
   res.status(200).json({

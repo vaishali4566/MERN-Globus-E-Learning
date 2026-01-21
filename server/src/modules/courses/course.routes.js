@@ -7,7 +7,7 @@ const router = express.Router();
 router.get("/all", getAllCourses);
 router.post("/", protect, allowedRoles("trainer"), createCourse);
 router.get("/my-courses", protect, allowedRoles("trainer"), getMyCourses);
-router.get("/:courseId", protect, allowedRoles("trainer"), getCourseById);
+router.get("/:courseId", protect, getCourseById);
 router.patch("/:courseId/publish", protect, allowedRoles("trainer"), publishCourse);
 
 

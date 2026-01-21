@@ -5,6 +5,7 @@ import Lesson from "../lessons/lesson.model.js";
 import Assignment from "../assignments/assignment.model.js";
 import Quiz from "../quizzes/quiz.model.js";
 
+// ================= CREATE COURSE =================
 export const createCourseService = async (data) => {
   const exists = await Course.findOne({
     title: data.title,
@@ -15,22 +16,26 @@ export const createCourseService = async (data) => {
     throw new AppError("Course with this title already exists", 409);
   }
 
-  return await Course.create(data);
+  return Course.create(data);
 };
 
+// ================= GET ALL COURSES =================
 export const getAllCoursesService = async (filter = {}) => {
-  return await Course.find(filter)
-    .populate("trainer", "name email") // optional: include trainer info
-    .sort({ createdAt: -1 }); // latest courses first
+  return Course.find(filter)
+    .populate("trainer", "name email")
+    .sort({ createdAt: -1 });
 };
 
-export const getCourseByIdService = async (courseId, trainerId) => {
+// ================= GET COURSE BY ID =================
+export const getCourseByIdService = async (courseId, user) => {
   if (!mongoose.Types.ObjectId.isValid(courseId)) return null;
 
-  const course = await Course.findOne({
-    _id: courseId,
-    trainer: trainerId,
-  })
+  const query =
+    user.role === "trainer"
+      ? { _id: courseId, trainer: user.id }
+      : { _id: courseId, status: "published" };
+
+  const course = await Course.findOne(query)
     .select("-__v")
     .populate({
       path: "sections",
@@ -40,60 +45,47 @@ export const getCourseByIdService = async (courseId, trainerId) => {
 
   if (!course) return null;
 
-  console.log("[DEBUG] Fetched course:", course.title);
-  console.log("[DEBUG] Number of sections:", course.sections.length);
-
-  // 👇 Attach lessons, assignments, quizzes
-  for (let i = 0; i < course.sections.length; i++) {
-    const section = course.sections[i];
-    console.log(`\n[DEBUG] Processing section: ${section.title} (${section._id})`);
-
-    // LESSONS
+  for (const section of course.sections) {
     const lessons = await Lesson.find({ section: section._id })
       .sort({ order: 1 })
       .lean();
-    console.log(`[DEBUG] Found ${lessons.length} lessons`);
-    section.lessons = lessons;
 
-    // ASSIGNMENTS
     const assignments = await Assignment.find({ section: section._id })
       .sort({ dueDate: 1 })
       .lean();
     assignments.forEach((a) => (a.type = "assignment"));
-    console.log(`[DEBUG] Found ${assignments.length} assignments`);
 
-    // QUIZZES
     const quizzes = await Quiz.find({ section: section._id })
       .sort({ order: 1 })
       .lean();
     quizzes.forEach((q) => (q.type = "quiz"));
-    console.log(`[DEBUG] Found ${quizzes.length} quizzes`);
 
-    // Merge into contents array for frontend
     section.contents = [...lessons, ...assignments, ...quizzes];
-    console.log(`[DEBUG] Total contents in section: ${section.contents.length}`);
   }
 
   return course;
 };
 
+// ================= GET MY COURSES =================
 export const getMyCoursesService = async (trainerId) => {
-  return await Course.find({ trainer: trainerId })
+  return Course.find({ trainer: trainerId })
     .select(
       "title slug thumbnail price level language status createdAt updatedAt"
     )
     .sort({ createdAt: -1 });
 };
 
+// ================= PUBLISH COURSE =================
 export const publishCourseService = async (courseId, trainerId) => {
-  // Find the course by ID and trainer
   const course = await Course.findOne({ _id: courseId, trainer: trainerId });
 
   if (!course) return null;
 
-  // Update status to 'published'
-  course.status = "published";
+  if (!course.sections?.length) {
+    throw new AppError("Add at least one section before publishing", 400);
+  }
 
+  course.status = "published";
   await course.save();
 
   return course;

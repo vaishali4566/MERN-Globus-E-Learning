@@ -78,14 +78,6 @@ const courseSchema = new mongoose.Schema(
       },
     ],
 
-    // ===== RELATION =====
-    trainer: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-      index: true,
-    },
-
     // ===== STATUS =====
     status: {
       type: String,
