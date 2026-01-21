@@ -21,9 +21,12 @@ const TrainerRoutes = () => {
         <Route path="dashboard" element={<TrainerDashboard />} />
         <Route path="courses/create" element={<CreateCourse />} />
         <Route path="my-courses" element={<MyCourses />} />
-        <Route path="courses/:courseId/builder" element={<CourseBuilderPage />} />
+        <Route
+          path="courses/:courseId/builder"
+          element={<CourseBuilderPage />}
+        />
       </Route>
-        <Route path="/courses/courseId/player" element={<CoursePlayerPage />} />
+      <Route path="/courses/courseId/player" element={<CoursePlayerPage />} />
     </Routes>
   );
 };

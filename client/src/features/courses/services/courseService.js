@@ -15,7 +15,7 @@ export const createCourse = async (courseData) => {
 export const getCourseById = async (courseId) => {
   try {
     const response = await api.get(`/courses/${courseId}`);
-    return response.data;
+    return response.data.data;
   } catch (error) {
     console.error("Error fetching course:", error.response || error);
     throw error;

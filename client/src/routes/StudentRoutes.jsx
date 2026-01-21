@@ -11,6 +11,7 @@ import Progress from "@/pages/student/progress/Page";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import ProtectedRoute from "@/routes/gaurds/ProtectedRoute";
 import AllCoursesPage from "@/features/courses/pages/AllCoursesPage";
+import CheckoutPage from "@/features/payment/pages/CheckoutPage";
 
 const StudentRoutes = () => {
   return (
@@ -36,6 +37,7 @@ const StudentRoutes = () => {
         <Route path="schedule" element={<SchedulePage />} />
         <Route path="live-classes" element={<LiveClasses />} />
         <Route path="progress" element={<Progress />} />
+        <Route path="checkout/:courseId" element={<CheckoutPage />} />
       </Route>
     </Routes>
   );

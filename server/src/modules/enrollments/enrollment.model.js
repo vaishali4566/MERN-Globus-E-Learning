@@ -25,11 +25,14 @@ const enrollmentSchema = new mongoose.Schema(
       type: String,
       enum: ["active", "completed", "cancelled", "expired"],
       default: "active",
+      index: true,
     },
 
     progressPercentage: {
       type: Number,
       default: 0,
+      min: 0,
+      max: 100,
     },
 
     completedAt: {
@@ -55,10 +58,15 @@ const enrollmentSchema = new mongoose.Schema(
   }
 );
 
-// Prevent duplicate enrollment
-enrollmentSchema.index(
-  { student: 1, course: 1 },
-  { unique: true }
-);
+// 🚫 Prevent duplicate enrollment
+enrollmentSchema.index({ student: 1, course: 1 }, { unique: true });
+
+enrollmentSchema.pre("save", function () {
+  if (this.status === "completed" && !this.completedAt) {
+    this.completedAt = new Date();
+    this.progressPercentage = 100;
+  }
+});
+
 
 export default mongoose.model("Enrollment", enrollmentSchema);
