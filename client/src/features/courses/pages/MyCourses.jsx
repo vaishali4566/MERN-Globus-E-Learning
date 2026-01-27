@@ -1,24 +1,25 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 import CourseCard from "../components/CourseCard";
 import { getMyCourses } from "@/features/courses/services/courseService";
-import { getUserRole } from "@/utils/getUser";
 
 const MyCourses = () => {
-  const role = getUserRole();
   const navigate = useNavigate();
+
+  // ✅ Get role from Redux
+  const role = useSelector((state) => state.auth.user?.role) || "student";
 
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
 
   useEffect(() => {
     const fetchMyCourses = async () => {
       try {
         setLoading(true);
-        const res = await getMyCourses(); // ✅ API call
+        const res = await getMyCourses(); // API call
         setCourses(res?.data || []);
       } catch (err) {
         setError("Failed to load courses");
@@ -50,33 +51,24 @@ const MyCourses = () => {
       </div>
 
       {/* ===== Loading ===== */}
-      {loading && (
-        <p className="text-sm text-gray-500">Loading courses...</p>
-      )}
+      {loading && <p className="text-sm text-gray-500">Loading courses...</p>}
 
       {/* ===== Error ===== */}
-      {error && (
-        <p className="text-sm text-red-500">{error}</p>
-      )}
+      {error && <p className="text-sm text-red-500">{error}</p>}
 
       {/* ===== Empty State ===== */}
       {!loading && courses.length === 0 && (
-        <div className="text-sm text-gray-500 mt-6">
-          No courses found.
-        </div>
+        <div className="text-sm text-gray-500 mt-6">No courses found.</div>
       )}
 
       {/* ===== Courses Grid ===== */}
       {!loading && courses.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {courses.map((course) => (
-            <CourseCard key={course._id} course={course} role={role} />
+            <CourseCard key={course._id} course={course} />
           ))}
         </div>
       )}
-
-      {/* ===== Pagination (future ready) ===== */}
-      {/* Backend pagination lagane ke baad yahan wire karenge */}
     </div>
   );
 };
