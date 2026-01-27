@@ -37,7 +37,7 @@ const loadRoutes = (app) => {
   app.use("/api/payments", paymentRoutes);
 
   // Enrollment routes
-  app.use("/api/enrollments", enrollmentRoutes)
+  app.use("/api/enrollments", enrollmentRoutes);
 
   app.use("/api/uploads", uploadRoutes);
 };
