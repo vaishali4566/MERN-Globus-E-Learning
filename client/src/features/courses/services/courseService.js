@@ -67,7 +67,7 @@ export const getMyCourses = async () => {
 // ✅ Get all published courses (public / student)
 export const getAllCourses = async () => {
   try {
-    const response = await api.get("/courses/all");
+    const response = await api.get("/courses");
     return response.data; // { success, count, data: [courses] }
   } catch (error) {
     console.error("Error fetching all courses:", error.response || error);

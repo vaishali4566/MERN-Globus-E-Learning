@@ -82,7 +82,7 @@ export const getMyCourses = asyncHandler(async (req, res) => {
 
 // ================= GET ALL PUBLISHED COURSES =================
 export const getAllCourses = asyncHandler(async (req, res) => {
-  const userId = req.user?.id;
+  const userId = req.user?._id?.toString();
   const role = req.user?.role;
 
   const { category, level, language, search } = req.query;
@@ -96,29 +96,35 @@ export const getAllCourses = asyncHandler(async (req, res) => {
 
   const courses = await getAllCoursesService(filter);
 
-  // 🔥 Enrollment check
   let enrolledCourseIds = [];
 
   if (userId && role === "student") {
     const enrollments = await Enrollment.find({
-      student: userId, // ✅ FIXED
+      student: userId,
       status: "active",
-    }).select("course");
+    })
+      .select("course")
+      .lean();
 
     enrolledCourseIds = enrollments.map((e) => e.course.toString());
   }
 
   const formattedCourses = courses.map((course) => {
-    const isTrainerView =
-      role === "trainer" && course.trainer?._id?.toString() === userId;
+    const courseId = course._id.toString();
 
-    const isEnrolled = enrolledCourseIds.includes(course._id.toString());
+    const isTrainerView =
+      role === "trainer" &&
+      course.trainer?._id?.toString() === userId;
+
+    const isEnrolled =
+      role === "student" &&
+      enrolledCourseIds.includes(courseId);
 
     return {
       ...course.toObject(),
       isTrainerView,
       isEnrolled,
-      isPurchased: isEnrolled, // frontend friendly
+      isPurchased: isEnrolled, 
       canEdit: isTrainerView,
     };
   });
