@@ -6,28 +6,6 @@ import {
 } from "./enrollment.service.js";
 
 /**
- * POST /api/enrollments/:courseId
- * Enroll user (fake payment / direct)
- */
-export const enrollCourse = asyncHandler(async (req, res) => {
-  console.log("PARAMS 👉", req.params);
-  console.log("COURSE ID 👉", req.params.courseId);
-  const studentId = req.user.id;
-  const { courseId } = req.params;
-
-  const enrollment = await enrollCourseService({
-    studentId,
-    courseId,
-  });
-
-  res.status(201).json({
-    success: true,
-    message: "Successfully enrolled in course",
-    data: enrollment,
-  });
-});
-
-/**
  * GET /api/enrollments/my
  */
 export const getMyEnrollments = asyncHandler(async (req, res) => {
