@@ -1,4 +1,4 @@
-import { useStripe, useElements } from "@stripe/react-stripe-js";
+import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
 import { useState } from "react";
 import CardField from "./CardField";
 import { enrollCourse } from "../services/enrollmentService";
@@ -9,25 +9,48 @@ export default function CheckoutForm({ clientSecret, courseId }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-const handlePay = async () => {
-  if (!stripe || !elements || !courseId) return;
+  const handlePay = async () => {
+    if (!stripe || !elements || !clientSecret || !courseId) {
+      console.warn("❌ Missing Stripe data", {
+        stripe,
+        elements,
+        clientSecret,
+        courseId,
+      });
+      return;
+    }
 
-  try {
-    setLoading(true);
-    setError(null);
+    try {
+      setLoading(true);
+      setError(null);
 
-    await enrollCourse(courseId);
+      // ✅ 1️⃣ Confirm payment with Stripe
+      const result = await stripe.confirmCardPayment(clientSecret, {
+        payment_method: {
+          card: elements.getElement(CardElement),
+        },
+      });
 
-    alert("Course enrolled successfully");
-  } catch (err) {
-    setError(
-      err.response?.data?.message || "Enrollment failed"
-    );
-  } finally {
-    setLoading(false);
-  }
-};
+      if (result.error) {
+        throw new Error(result.error.message);
+      }
 
+      // ✅ 2️⃣ Extract paymentIntentId
+      const paymentIntentId = result.paymentIntent.id;
+      console.log("✅ Payment success:", paymentIntentId);
+
+      // ✅ 3️⃣ Call backend confirm + enroll API
+      const response = await enrollCourse(courseId, paymentIntentId);
+      console.log("✅ Enrollment success:", response);
+
+      alert("Payment successful & Course enrolled 🎉");
+    } catch (err) {
+      console.error("❌ Payment / Enrollment failed", err);
+      setError(err.message || "Payment failed");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="space-y-4">

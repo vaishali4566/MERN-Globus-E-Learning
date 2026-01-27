@@ -1,33 +1,69 @@
-import { FiCalendar, FiEdit3 } from "react-icons/fi";
+import { FiCalendar } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 
 const CourseCard = ({ course, user }) => {
   const navigate = useNavigate();
 
-  const status = course?.status || "draft"; // safe default
-  const isDraft = status === "draft";
+  // ===== BASIC VALUES =====
+  const status = course?.status || "draft";
+  const role = user?.role;
 
-  // 🔥 DEFAULT (student who hasn't bought)
+  const isDraft = status === "draft";
+  const isTrainer = role === "trainer";
+  const isStudent = role === "student";
+
+  // VERY IMPORTANT FLAG
+  const isEnrolled =
+    course?.isEnrolled === true || course?.isPurchased === true;
+
+  // ================= DEBUG LOGS =================
+  console.group("🧪 CourseCard DEBUG");
+  console.log("Course ID:", course?._id);
+  console.log("Course status:", status);
+  console.log("User role:", role);
+  console.log("course.isEnrolled:", course?.isEnrolled);
+  console.log("course.isPurchased:", course?.isPurchased);
+  console.log("FINAL isEnrolled:", isEnrolled);
+  console.log("isDraft:", isDraft);
+  console.log("isTrainer:", isTrainer);
+  console.log("isStudent:", isStudent);
+  console.groupEnd();
+  // =============================================
+
+  // ===== DEFAULT BUTTON (STUDENT NOT ENROLLED) =====
   let buttonLabel = "Buy Now";
   let buttonAction = () => navigate(`/student/checkout/${course._id}`);
-  let buttonClass = "bg-green-500 text-white cursor-pointer";
+  let buttonClass = "bg-green-500 text-white";
 
-  if (isDraft) {
-    buttonLabel = "Continue Editing";
-    buttonAction = () => navigate(`/trainer/courses/${course._id}/builder`);
-    buttonClass =
-      "border border-blue-500 hover:bg-blue-500 hover:text-white text-blue-500 cursor-pointer";
-  } else if (user?.role === "trainer") {
-    buttonLabel = "View Course";
-    buttonAction = () => navigate(`/trainer/courses/${course._id}/builder`);
-    buttonClass = "bg-blue-500 text-white cursor-pointer";
-  } else if (user?.role === "student") {
-    if (course?.isEnrolled === true || course?.isPurchased === true) {
+  // ===== TRAINER FLOW =====
+  if (isTrainer) {
+    console.log("👨‍🏫 Trainer view detected");
+    if (isDraft) {
+      buttonLabel = "Continue Editing";
+    } else {
+      buttonLabel = "View Course";
+    }
+    buttonAction = () =>
+      navigate(`/trainer/courses/${course._id}/builder`);
+    buttonClass = "bg-blue-500 text-white";
+  }
+
+  // ===== STUDENT FLOW =====
+  if (isStudent) {
+    console.log("🎓 Student view detected");
+
+    if (isEnrolled) {
+      console.log("✅ Student is enrolled → Showing Go to Course");
       buttonLabel = "Go to Course";
       buttonAction = () => navigate(`/courses/${course._id}`);
-      buttonClass = "bg-blue-500 text-white cursor-pointer";
+      buttonClass = "bg-blue-500 text-white";
+    } else {
+      console.log("❌ Student NOT enrolled → Showing Buy Now");
     }
   }
+
+  // ===== BLOCK STUDENT FROM DRAFT COURSES =====
+  const disableButton = isStudent && isDraft;
 
   return (
     <div className="bg-white dark:bg-[#1f2337] rounded-xl p-3 shadow-sm">
@@ -41,8 +77,8 @@ const CourseCard = ({ course, user }) => {
 
         <span
           className={`absolute top-2 right-2 text-[10px] font-medium
-          px-2 py-0.5 rounded-full
-          ${isDraft ? "bg-yellow-500" : "bg-green-500"} text-white`}
+          px-2 py-0.5 rounded-full text-white
+          ${isDraft ? "bg-yellow-500" : "bg-green-500"}`}
         >
           {status.toUpperCase()}
         </span>
@@ -66,15 +102,19 @@ const CourseCard = ({ course, user }) => {
           </span>
         </div>
 
-        <span>{course?.price === 0 ? "Free" : `₹${course?.price}`}</span>
+        <span>
+          {course?.price === 0 ? "Free" : `₹${course?.price}`}
+        </span>
       </div>
 
-      {/* 🔥 Dynamic Button */}
+      {/* ACTION BUTTON */}
       <button
         onClick={buttonAction}
-        className={`mt-3 w-full text-xs font-medium py-2 rounded-lg ${buttonClass}`}
+        disabled={disableButton}
+        className={`mt-3 w-full text-xs font-medium py-2 rounded-lg
+        ${disableButton ? "opacity-50 cursor-not-allowed" : buttonClass}`}
       >
-        {buttonLabel}
+        {disableButton ? "Unavailable" : buttonLabel}
       </button>
     </div>
   );
