@@ -13,6 +13,7 @@ app.use(
     credentials: true,               
   })
 );
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -25,8 +26,6 @@ app.get("/", (req, res) => {
 
 /* ---------- Routes ---------- */
 loadRoutes(app);
-
-              
 
 /* ---------- Error Handler (ALWAYS LAST) ---------- */
 app.use(errorHandler);
