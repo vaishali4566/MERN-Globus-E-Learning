@@ -9,7 +9,8 @@ const app = express();
 /* ---------- Global Middlewares ---------- */
 app.use(
   cors({
-    origin: "http://localhost:5173", 
+    origin: "http://localhost:5173",  
+    
     credentials: true,               
   })
 );
