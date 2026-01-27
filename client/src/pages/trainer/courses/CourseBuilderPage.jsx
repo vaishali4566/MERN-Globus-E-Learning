@@ -32,36 +32,39 @@ export default function CourseBuilderPage() {
   });
 
   /* ================= FETCH COURSE ================= */
-  useEffect(() => {
-    let isMounted = true;
+ useEffect(() => {
+  let isMounted = true;
 
-    const fetchCourse = async () => {
-      try {
-        setLoading(true);
-        const res = await getCourseById(courseId);
-        if (!isMounted) return;
+  const fetchCourse = async () => {
+    try {
+      setLoading(true);
 
-        const normalizedSections = Array.isArray(res.data.sections)
-          ? res.data.sections.map((s) => normalizeSection({ ...s }))
-          : [];
+      const res = await getCourseById(courseId);
+      if (!isMounted) return;
 
-        setCourse({
-          ...res.data,
-          sections: normalizedSections,
-        });
-      } catch (error) {
-        setCourse(null);
-      } finally {
-        if (isMounted) setLoading(false);
-      }
-    };
+      const normalizedSections = Array.isArray(res.sections)
+        ? res.sections.map((s) => normalizeSection({ ...s }))
+        : [];
 
-    fetchCourse();
+      setCourse({
+        ...res,
+        sections: normalizedSections,
+      });
+    } catch (error) {
+      console.error("Fetch course failed:", error);
+      setCourse(null);
+    } finally {
+      if (isMounted) setLoading(false);
+    }
+  };
 
-    return () => {
-      isMounted = false;
-    };
-  }, [courseId]);
+  if (courseId) fetchCourse();
+
+  return () => {
+    isMounted = false;
+  };
+}, [courseId]);
+
 
   /* ================= ADD SECTION ================= */
   const addSection = async () => {
