@@ -1,7 +1,7 @@
 import { FiCalendar } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 
-const CourseCard = ({ course, role }) => {
+const CourseCard = ({ course, role = "student" }) => {
   const navigate = useNavigate();
 
   const status = course?.status || "draft";
@@ -10,9 +10,8 @@ const CourseCard = ({ course, role }) => {
   const isTrainer = role === "trainer";
   const isStudent = role === "student";
 
-  const isEnrolled =
-    course?.isEnrolled === true || course?.isPurchased === true;
-
+  // ✅ Student enrollment / purchase check
+  const isEnrolled = course?.isEnrolled === true || course?.isPurchased === true;
 
   // ================= DEBUG LOGS =================
   console.group("🧪 CourseCard DEBUG");
@@ -35,28 +34,25 @@ const CourseCard = ({ course, role }) => {
 
   // ===== TRAINER FLOW =====
   if (isTrainer) {
-    console.log("👨‍🏫 Trainer view detected");
     if (isDraft) {
       buttonLabel = "Continue Editing";
     } else {
       buttonLabel = "View Course";
     }
-    buttonAction = () =>
-      navigate(`/trainer/courses/${course._id}/builder`);
+    buttonAction = () => navigate(`/trainer/courses/${course._id}/builder`);
     buttonClass = "bg-blue-500 text-white";
   }
 
   // ===== STUDENT FLOW =====
   if (isStudent) {
-    console.log("🎓 Student view detected");
-
     if (isEnrolled) {
-      console.log("✅ Student is enrolled → Showing Go to Course");
       buttonLabel = "Go to Course";
       buttonAction = () => navigate(`/courses/${course._id}`);
       buttonClass = "bg-blue-500 text-white";
     } else {
-      console.log("❌ Student NOT enrolled → Showing Buy Now");
+      buttonLabel = "Buy Now";
+      buttonAction = () => navigate(`/student/checkout/${course._id}`);
+      buttonClass = "bg-green-500 text-white";
     }
   }
 
@@ -72,11 +68,10 @@ const CourseCard = ({ course, role }) => {
           alt={course?.title || "Course"}
           className="w-full h-36 object-cover"
         />
-
         <span
-          className={`absolute top-2 right-2 text-[10px] font-medium
-          px-2 py-0.5 rounded-full text-white
-          ${isDraft ? "bg-yellow-500" : "bg-green-500"}`}
+          className={`absolute top-2 right-2 text-[10px] font-medium px-2 py-0.5 rounded-full text-white ${
+            isDraft ? "bg-yellow-500" : "bg-green-500"
+          }`}
         >
           {status.toUpperCase()}
         </span>
@@ -99,18 +94,16 @@ const CourseCard = ({ course, role }) => {
               : "—"}
           </span>
         </div>
-
-        <span>
-          {course?.price === 0 ? "Free" : `₹${course?.price}`}
-        </span>
+        <span>{course?.price === 0 ? "Free" : `₹${course?.price}`}</span>
       </div>
 
       {/* ACTION BUTTON */}
       <button
         onClick={buttonAction}
         disabled={disableButton}
-        className={`mt-3 w-full text-xs font-medium py-2 rounded-lg
-        ${disableButton ? "opacity-50 cursor-not-allowed" : buttonClass}`}
+        className={`mt-3 w-full text-xs font-medium py-2 rounded-lg ${
+          disableButton ? "opacity-50 cursor-not-allowed" : buttonClass
+        }`}
       >
         {disableButton ? "Unavailable" : buttonLabel}
       </button>
