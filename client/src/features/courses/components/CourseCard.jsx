@@ -1,20 +1,18 @@
 import { FiCalendar } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 
-const CourseCard = ({ course, user }) => {
+const CourseCard = ({ course, role }) => {
   const navigate = useNavigate();
 
-  // ===== BASIC VALUES =====
   const status = course?.status || "draft";
-  const role = user?.role;
 
   const isDraft = status === "draft";
   const isTrainer = role === "trainer";
   const isStudent = role === "student";
 
-  // VERY IMPORTANT FLAG
   const isEnrolled =
     course?.isEnrolled === true || course?.isPurchased === true;
+
 
   // ================= DEBUG LOGS =================
   console.group("🧪 CourseCard DEBUG");
