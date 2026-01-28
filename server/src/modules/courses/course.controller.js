@@ -11,14 +11,17 @@ import Enrollment from "../enrollments/enrollment.model.js";
 
 // ================= CREATE COURSE =================
 export const createCourse = asyncHandler(async (req, res) => {
+  console.log("BODY 👉", req.body);
+  console.log("FILE 👉", req.file);
+
   const {
     title,
     description,
-    thumbnail,
-    price = 0,
     level = "beginner",
     language = "English",
   } = req.body;
+
+  const price = Number(req.body.price || 0);
 
   if (!title?.trim() || !description?.trim()) {
     throw new AppError("Title and description are required", 400);
@@ -28,10 +31,17 @@ export const createCourse = asyncHandler(async (req, res) => {
     throw new AppError("Price cannot be negative", 400);
   }
 
+  let thumbnailUrl = "";
+
+  // ✅ Multer saves file in req.file
+  if (req.file) {
+    thumbnailUrl = `/uploads/thumbnails/${req.file.filename}`;
+  }
+
   const course = await createCourseService({
     title: title.trim(),
     description: description.trim(),
-    thumbnail,
+    thumbnail: thumbnailUrl,
     price,
     level,
     language,
@@ -72,7 +82,7 @@ export const getCourseById = asyncHandler(async (req, res) => {
 // ================= GET MY COURSES =================
 export const getMyCourses = asyncHandler(async (req, res) => {
   const courses = await getMyCoursesService(req.user.id);
-
+ 
   res.status(200).json({
     success: true,
     count: courses.length,
