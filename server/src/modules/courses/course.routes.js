@@ -1,11 +1,18 @@
 import express from "express";
-import { createCourse, getCourseById , getMyCourses, publishCourse, getAllCourses} from "./course.controller.js";
-import {protect} from "../../middlewares/auth.middleware.js"
+import { createCourse, getCourseById, getMyCourses, publishCourse, getAllCourses } from "./course.controller.js";
+import { protect } from "../../middlewares/auth.middleware.js"
 import { allowedRoles } from "../../middlewares/role.middleware.js";
+import { uploadThumbnail } from "../../middlewares/uploadThumbnail.middleware.js";
 const router = express.Router();
 
-router.get("/", protect, getAllCourses);
-router.post("/", protect, allowedRoles("trainer"), createCourse);
+router.get("/", getAllCourses);
+router.post(
+  "/",
+  protect,
+  allowedRoles("trainer"),
+  uploadThumbnail.single("thumbnail"), // this middleware
+  createCourse
+);
 router.get("/my-courses", protect, allowedRoles("trainer"), getMyCourses);
 router.get("/:courseId", protect, getCourseById);
 router.patch("/:courseId/publish", protect, allowedRoles("trainer"), publishCourse);
