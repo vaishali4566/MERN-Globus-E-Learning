@@ -2,14 +2,18 @@ import api from "../../../services/api"
 
 // ✅ Create a new course
 export const createCourse = async (courseData) => {
-  try {
-    const response = await api.post("/courses", courseData);
-    return response.data;
-  } catch (error) {
-    console.error("Error creating course:", error.response || error);
-    throw error;
-  }
+  const formData = new FormData();
+
+  Object.entries(courseData).forEach(([key, value]) => {
+    if (value !== null && value !== undefined && value !== "") {
+      formData.append(key, value);
+    }
+  });
+
+  const response = await api.post("/courses", formData);
+  return response.data;
 };
+
 
 // ✅ Get course by ID (Builder / Edit)
 export const getCourseById = async (courseId) => {
