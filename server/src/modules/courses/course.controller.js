@@ -91,20 +91,26 @@ export const getMyCourses = asyncHandler(async (req, res) => {
 });
 
 // ================= GET ALL PUBLISHED COURSES =================
+// ================= GET ALL PUBLISHED COURSES =================
 export const getAllCourses = asyncHandler(async (req, res) => {
-  const userId = req.user?._id?.toString();
+  const userId = req.user?.id?.toString(); // ✔
   const role = req.user?.role;
+
+  console.log("🟢 getAllCourses called");
+  console.log("User ID:", userId);
+  console.log("Role:", role);
 
   const { category, level, language, search } = req.query;
 
   const filter = { status: "published" };
-
   if (category) filter.category = category;
   if (level) filter.level = level;
   if (language) filter.language = language;
   if (search) filter.title = { $regex: search, $options: "i" };
 
   const courses = await getAllCoursesService(filter);
+  console.log("Total courses fetched:", courses.length);
+  console.log("Course IDs:", courses.map(c => c._id.toString()));
 
   let enrolledCourseIds = [];
 
@@ -115,6 +121,9 @@ export const getAllCourses = asyncHandler(async (req, res) => {
     })
       .select("course")
       .lean();
+
+    console.log("Enrollments found:", enrollments.length);
+    enrollments.forEach(e => console.log("Enrolled course ID:", e.course.toString()));
 
     enrolledCourseIds = enrollments.map((e) => e.course.toString());
   }
@@ -130,11 +139,13 @@ export const getAllCourses = asyncHandler(async (req, res) => {
       role === "student" &&
       enrolledCourseIds.includes(courseId);
 
+    console.log(`Course ${courseId} → isEnrolled:`, isEnrolled);
+
     return {
       ...course.toObject(),
       isTrainerView,
       isEnrolled,
-      isPurchased: isEnrolled, 
+      isPurchased: isEnrolled,
       canEdit: isTrainerView,
     };
   });
@@ -145,6 +156,8 @@ export const getAllCourses = asyncHandler(async (req, res) => {
     data: formattedCourses,
   });
 });
+
+
 
 // ================= PUBLISH COURSE =================
 export const publishCourse = asyncHandler(async (req, res) => {

@@ -65,7 +65,6 @@ export default function CourseBuilderPage() {
   };
 }, [courseId]);
 
-
   /* ================= ADD SECTION ================= */
   const addSection = async () => {
     if (!courseId) return;

@@ -67,13 +67,27 @@ export const getCourseByIdService = async (courseId, user) => {
 };
 
 // ================= GET MY COURSES =================
-export const getMyCoursesService = async (trainerId) => {
-  return Course.find({ trainer: trainerId })
-    .select(
-      "title slug thumbnail price level language status createdAt updatedAt"
-    )
-    .sort({ createdAt: -1 });
+export const getMyCoursesService = async (userId, role) => {
+  if (role === "trainer") {
+    return Course.find({ trainer: userId })
+      .select("title slug thumbnail price level language status createdAt updatedAt")
+      .sort({ createdAt: -1 });
+  } else if (role === "student") {
+    const enrollments = await Enrollment.find({
+      student: userId,
+      status: "active",
+    }).select("course").lean();
+
+    const courseIds = enrollments.map(e => e.course);
+
+    return Course.find({ _id: { $in: courseIds } })
+      .select("title slug thumbnail price level language status createdAt updatedAt")
+      .sort({ createdAt: -1 });
+  }
+
+  return [];
 };
+
 
 // ================= PUBLISH COURSE =================
 export const publishCourseService = async (courseId, trainerId) => {
