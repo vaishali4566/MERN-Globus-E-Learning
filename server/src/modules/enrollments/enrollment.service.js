@@ -54,7 +54,7 @@ export const enrollCourseService = async ({ studentId, courseId }) => {
  */
 export const getMyEnrollmentsService = async (studentId) => {
   return await Enrollment.find({ student: studentId })
-    .populate("course", "title thumbnail status price level language")
+    .populate("course", "title description createdAt thumbnail status price level language")
     .sort({ createdAt: -1 });
 };
 
@@ -62,12 +62,13 @@ export const getMyEnrollmentsService = async (studentId) => {
  * Check enrollment (used by guards / UI flags)
  */
 export const checkEnrollmentService = async (studentId, courseId) => {
-  return await Enrollment.findOne({
+  return await Enrollment.exists({
     student: studentId,
     course: courseId,
     status: "active",
   });
 };
+
 
 export const getMyEnrollmentCoursesService = async (studentId) => {
   return Enrollment.find({
@@ -76,7 +77,7 @@ export const getMyEnrollmentCoursesService = async (studentId) => {
   })
     .populate({
       path: "course",
-      select: "title slug thumbnail price level language trainer",
+      select: "title createdAt description slug thumbnail price level language trainer",
     })
     .sort({ createdAt: -1 });
 };

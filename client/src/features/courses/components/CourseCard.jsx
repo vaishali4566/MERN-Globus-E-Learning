@@ -2,6 +2,7 @@ import { FiCalendar } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 
 const CourseCard = ({ course, role = "student" }) => {
+  console.log(course.thumbnail, "thumbnail")
   const navigate = useNavigate();
 
   const status = course?.status || "draft";
@@ -50,7 +51,7 @@ const CourseCard = ({ course, role = "student" }) => {
       {/* Thumbnail */}
       <div className="relative mb-3 overflow-hidden rounded-lg">
         <img
-          src={course?.thumbnail || "/placeholder-course.jpg"}
+          src={`http://localhost:4000${course.thumbnail}` || "/placeholder-course.jpg"}
           alt={course?.title || "Course"}
           className="w-full h-36 object-cover"
         />
