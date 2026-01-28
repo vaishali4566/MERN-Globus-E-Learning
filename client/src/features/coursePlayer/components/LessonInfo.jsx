@@ -1,6 +1,6 @@
 export default function LessonInfo() {
   return (
-    <div className="p-6 bg-white flex-1">
+    <div className="p-10 ">
       <h2 className="text-2xl font-semibold mb-2">
         1. Introduction to MERN Stack
       </h2>

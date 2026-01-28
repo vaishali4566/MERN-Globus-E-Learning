@@ -4,6 +4,7 @@ import {
   getMyEnrollmentsService,
   checkEnrollmentService,
 } from "./enrollment.service.js";
+import { getMyEnrollmentCoursesService } from "./enrollment.service.js";
 
 /**
  * GET /api/enrollments/my
@@ -34,3 +35,20 @@ export const checkEnrollment = asyncHandler(async (req, res) => {
     isEnrolled: !!enrolled,
   });
 });
+
+
+export const getMyEnrolledCourses = async (req, res, next) => {
+  const user = req.user;
+
+  if (user.role !== "student") {
+    return next(new AppError("Only students can access enrolled courses", 403));
+  }
+
+  const enrollments = await getMyEnrollmentCoursesService(user.id);
+
+  res.status(200).json({
+    success: true,
+    count: enrollments.length,
+    data: enrollments,
+  });
+};

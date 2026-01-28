@@ -26,7 +26,7 @@ const TrainerRoutes = () => {
           element={<CourseBuilderPage />}
         />
       </Route>
-      <Route path="/courses/courseId/player" element={<CoursePlayerPage />} />
+      <Route path="/courses/courseId" element={<CoursePlayerPage />} />
     </Routes>
   );
 };

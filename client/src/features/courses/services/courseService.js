@@ -22,6 +22,19 @@ export const getCourseById = async (courseId) => {
   }
 };
 
+// ===== TRAINER: Created courses =====
+export const getTrainerCourses = async () => {
+  const response = await api.get("/courses/my-courses");
+  console.log(response.data)
+  return response.data; // { success, data }
+};
+
+// ===== STUDENT: Enrolled courses =====
+export const getStudentCourses = async () => {
+  const response = await api.get("/enrollments/my-courses");
+  return response.data; // { success, data }
+};
+
 // ✅ Update existing course
 export const updateCourse = async (courseId, courseData) => {
   try {

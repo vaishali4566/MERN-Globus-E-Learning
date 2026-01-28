@@ -12,10 +12,12 @@ import DashboardLayout from "@/components/layout/DashboardLayout";
 import ProtectedRoute from "@/routes/gaurds/ProtectedRoute";
 import AllCoursesPage from "@/features/courses/pages/AllCoursesPage";
 import CheckoutPage from "@/features/payment/pages/CheckoutPage";
+import { CoursePlayerPage } from "@/features/coursePlayer";
 
 const StudentRoutes = () => {
   return (
     <Routes>
+      <Route path="courses/:courseId" element={<CoursePlayerPage />} />
       <Route
         element={
           <ProtectedRoute allowedRoles={["student"]}>
@@ -38,6 +40,7 @@ const StudentRoutes = () => {
         <Route path="live-classes" element={<LiveClasses />} />
         <Route path="progress" element={<Progress />} />
         <Route path="checkout/:courseId" element={<CheckoutPage />} />
+        
       </Route>
     </Routes>
   );
