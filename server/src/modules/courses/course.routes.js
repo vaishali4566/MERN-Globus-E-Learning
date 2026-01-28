@@ -5,6 +5,9 @@ import { allowedRoles } from "../../middlewares/role.middleware.js";
 import { uploadThumbnail } from "../../middlewares/uploadThumbnail.middleware.js";
 const router = express.Router();
 
+router.get("/", protect, getAllCourses);
+router.post("/", protect, allowedRoles("trainer"), createCourse);
+router.get("/my-courses", protect, getMyCourses);
 router.get("/", getAllCourses);
 router.post(
   "/",

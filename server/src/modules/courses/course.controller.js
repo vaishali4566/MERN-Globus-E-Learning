@@ -80,17 +80,21 @@ export const getCourseById = asyncHandler(async (req, res) => {
 });
 
 // ================= GET MY COURSES =================
-export const getMyCourses = asyncHandler(async (req, res) => {
-  const courses = await getMyCoursesService(req.user.id);
- 
+export const getMyCourses = async (req, res) => {
+
+  const userId = req.user.id;
+
+  const role = req.user.role; // 👈 YAHI MISSING THA
+
+  const courses = await getMyCoursesService(userId, role);
+
   res.status(200).json({
     success: true,
-    count: courses.length,
-    data: courses, // 🔥 empty array allowed
+    data: courses,
   });
-});
+};
 
-// ================= GET ALL PUBLISHED COURSES =================
+
 // ================= GET ALL PUBLISHED COURSES =================
 export const getAllCourses = asyncHandler(async (req, res) => {
   const userId = req.user?.id?.toString(); // ✔

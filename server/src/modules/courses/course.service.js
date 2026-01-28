@@ -69,24 +69,38 @@ export const getCourseByIdService = async (courseId, user) => {
 // ================= GET MY COURSES =================
 export const getMyCoursesService = async (userId, role) => {
   if (role === "trainer") {
-    return Course.find({ trainer: userId })
-      .select("title slug thumbnail price level language status createdAt updatedAt")
-      .sort({ createdAt: -1 });
-  } else if (role === "student") {
+
+    const courses = await Course.find({ trainer: userId })
+      .select("title slug thumbnail price level language status createdAt updatedAt trainer")
+      .sort({ createdAt: -1 })
+      .lean();
+    return courses;
+  }
+
+  if (role === "student") {
+
     const enrollments = await Enrollment.find({
       student: userId,
       status: "active",
-    }).select("course").lean();
+    })
+      .select("course")
+      .lean();
 
-    const courseIds = enrollments.map(e => e.course);
+    const courseIds = enrollments.map((e) => e.course);
 
-    return Course.find({ _id: { $in: courseIds } })
+    const courses = await Course.find({
+      _id: { $in: courseIds },
+    })
       .select("title slug thumbnail price level language status createdAt updatedAt")
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .lean();
+
+    return courses;
   }
 
   return [];
 };
+
 
 
 // ================= PUBLISH COURSE =================

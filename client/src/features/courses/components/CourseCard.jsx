@@ -13,20 +13,6 @@ const CourseCard = ({ course, role = "student" }) => {
   // ✅ Student enrollment / purchase check
   const isEnrolled = course?.isEnrolled === true || course?.isPurchased === true;
 
-  // ================= DEBUG LOGS =================
-  console.group("🧪 CourseCard DEBUG");
-  console.log("Course ID:", course?._id);
-  console.log("Course status:", status);
-  console.log("User role:", role);
-  console.log("course.isEnrolled:", course?.isEnrolled);
-  console.log("course.isPurchased:", course?.isPurchased);
-  console.log("FINAL isEnrolled:", isEnrolled);
-  console.log("isDraft:", isDraft);
-  console.log("isTrainer:", isTrainer);
-  console.log("isStudent:", isStudent);
-  console.groupEnd();
-  // =============================================
-
   // ===== DEFAULT BUTTON (STUDENT NOT ENROLLED) =====
   let buttonLabel = "Buy Now";
   let buttonAction = () => navigate(`/student/checkout/${course._id}`);
@@ -47,7 +33,7 @@ const CourseCard = ({ course, role = "student" }) => {
   if (isStudent) {
     if (isEnrolled) {
       buttonLabel = "Go to Course";
-      buttonAction = () => navigate(`/courses/${course._id}`);
+      buttonAction = () => navigate(`/student/courses/${course._id}`);
       buttonClass = "bg-blue-500 text-white";
     } else {
       buttonLabel = "Buy Now";

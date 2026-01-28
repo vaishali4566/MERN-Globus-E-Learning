@@ -54,7 +54,7 @@ export const enrollCourseService = async ({ studentId, courseId }) => {
  */
 export const getMyEnrollmentsService = async (studentId) => {
   return await Enrollment.find({ student: studentId })
-    .populate("course", "title thumbnail price level language")
+    .populate("course", "title thumbnail status price level language")
     .sort({ createdAt: -1 });
 };
 
@@ -67,4 +67,16 @@ export const checkEnrollmentService = async (studentId, courseId) => {
     course: courseId,
     status: "active",
   });
+};
+
+export const getMyEnrollmentCoursesService = async (studentId) => {
+  return Enrollment.find({
+    student: studentId,
+    status: "active",
+  })
+    .populate({
+      path: "course",
+      select: "title slug thumbnail price level language trainer",
+    })
+    .sort({ createdAt: -1 });
 };
