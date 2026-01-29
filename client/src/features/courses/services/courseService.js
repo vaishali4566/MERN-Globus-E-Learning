@@ -29,7 +29,6 @@ export const getCourseById = async (courseId) => {
 // ===== TRAINER: Created courses =====
 export const getTrainerCourses = async () => {
   const response = await api.get("/courses/my-courses");
-  console.log(response.data)
   return response.data; // { success, data }
 };
 

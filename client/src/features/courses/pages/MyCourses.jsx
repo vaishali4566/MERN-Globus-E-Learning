@@ -29,17 +29,15 @@ const MyCourses = () => {
           setCourses(res?.data || []);
         } else {
           res = await getStudentCourses();
-          console.log("🟡 Raw student enrollments:", res?.data);
 
           const enrolledCourses =
             res?.data?.map((enrollment) => {
-              console.log("🟢 Enrollment:", enrollment);
 
               return {
                 ...enrollment.course, // real course data
-                isEnrolled: true, // 🔥 important
+                isEnrolled: true,
                 progressPercentage: enrollment.progressPercentage,
-                status: "active", // 🔥 manually set for student
+                status: "active", 
               };
             }) || [];
 

@@ -3,6 +3,7 @@ import cors from "cors";
 
 import loadRoutes from "./routes/index.js";
 import { errorHandler } from "./middlewares/error.middleware.js";
+import path from "path"
 
 const app = express();
 
@@ -16,6 +17,7 @@ app.use(
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use("/uploads", express.static(path.join(path.resolve(), "uploads")));
 
 app.get("/", (req, res) => {
   res.status(200).json({

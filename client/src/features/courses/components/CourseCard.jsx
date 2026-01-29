@@ -50,7 +50,7 @@ const CourseCard = ({ course, role = "student" }) => {
       {/* Thumbnail */}
       <div className="relative mb-3 overflow-hidden rounded-lg">
         <img
-          src={course?.thumbnail || "/placeholder-course.jpg"}
+          src={`http://localhost:4000${course.thumbnail}` || "/placeholder-course.jpg"}
           alt={course?.title || "Course"}
           className="w-full h-36 object-cover"
         />

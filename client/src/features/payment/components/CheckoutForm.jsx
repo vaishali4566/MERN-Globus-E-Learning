@@ -37,11 +37,9 @@ export default function CheckoutForm({ clientSecret, courseId }) {
 
       // ✅ 2️⃣ Extract paymentIntentId
       const paymentIntentId = result.paymentIntent.id;
-      console.log("✅ Payment success:", paymentIntentId);
 
       // ✅ 3️⃣ Call backend confirm + enroll API
       const response = await enrollCourse(courseId, paymentIntentId);
-      console.log("✅ Enrollment success:", response);
 
       alert("Payment successful & Course enrolled 🎉");
     } catch (err) {

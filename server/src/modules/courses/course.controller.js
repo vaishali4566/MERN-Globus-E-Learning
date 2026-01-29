@@ -6,13 +6,12 @@ import {
   getMyCoursesService,
   publishCourseService,
   getAllCoursesService,
+  getCoursePlayerDataService
 } from "./course.service.js";
 import Enrollment from "../enrollments/enrollment.model.js";
 
 // ================= CREATE COURSE =================
 export const createCourse = asyncHandler(async (req, res) => {
-  console.log("BODY 👉", req.body);
-  console.log("FILE 👉", req.file);
 
   const {
     title,
@@ -63,8 +62,6 @@ export const createCourse = asyncHandler(async (req, res) => {
 
 // ================= GET COURSE BY ID (TRAINER) =================
 export const getCourseById = asyncHandler(async (req, res) => {
-  console.log("USER 👉", req.user);
-  console.log("COURSE ID 👉", req.params.courseId);
   const { courseId } = req.params;
 
   const course = await getCourseByIdService(courseId, req.user);
@@ -84,7 +81,7 @@ export const getMyCourses = async (req, res) => {
 
   const userId = req.user.id;
 
-  const role = req.user.role; // 👈 YAHI MISSING THA
+  const role = req.user.role; 
 
   const courses = await getMyCoursesService(userId, role);
 
@@ -100,10 +97,6 @@ export const getAllCourses = asyncHandler(async (req, res) => {
   const userId = req.user?.id?.toString(); // ✔
   const role = req.user?.role;
 
-  console.log("🟢 getAllCourses called");
-  console.log("User ID:", userId);
-  console.log("Role:", role);
-
   const { category, level, language, search } = req.query;
 
   const filter = { status: "published" };
@@ -113,8 +106,6 @@ export const getAllCourses = asyncHandler(async (req, res) => {
   if (search) filter.title = { $regex: search, $options: "i" };
 
   const courses = await getAllCoursesService(filter);
-  console.log("Total courses fetched:", courses.length);
-  console.log("Course IDs:", courses.map(c => c._id.toString()));
 
   let enrolledCourseIds = [];
 
@@ -125,9 +116,6 @@ export const getAllCourses = asyncHandler(async (req, res) => {
     })
       .select("course")
       .lean();
-
-    console.log("Enrollments found:", enrollments.length);
-    enrollments.forEach(e => console.log("Enrolled course ID:", e.course.toString()));
 
     enrolledCourseIds = enrollments.map((e) => e.course.toString());
   }
@@ -142,8 +130,6 @@ export const getAllCourses = asyncHandler(async (req, res) => {
     const isEnrolled =
       role === "student" &&
       enrolledCourseIds.includes(courseId);
-
-    console.log(`Course ${courseId} → isEnrolled:`, isEnrolled);
 
     return {
       ...course.toObject(),
@@ -175,7 +161,7 @@ export const publishCourse = asyncHandler(async (req, res) => {
 
   res.status(200).json({
     success: true,
-    message: "Course published successfully",
+    message: "Course published successfully with all sections and lessons",
     data: {
       id: course._id,
       title: course.title,
@@ -183,3 +169,25 @@ export const publishCourse = asyncHandler(async (req, res) => {
     },
   });
 });
+
+
+// ================= COURSE PLAYER =================
+export const getCoursePlayerData = async (req, res, next) => {
+  try {
+    const { courseId } = req.params;
+    const userId = req.user.id;
+
+    const data = await getCoursePlayerDataService(courseId, userId);
+
+    if (!data) {
+      return next(new AppError("Course not found", 404));
+    }
+
+    res.status(200).json({
+      success: true,
+      data
+    });
+  } catch (error) {
+    next(error);
+  }
+};

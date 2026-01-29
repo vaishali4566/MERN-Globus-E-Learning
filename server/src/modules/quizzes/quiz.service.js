@@ -2,6 +2,7 @@ import Quiz from "./quiz.model.js";
 import Course from "../courses/course.model.js";
 import Section from "../sections/section.model.js";
 import { AppError } from "../../utils/appError.js";
+import Question from "./question.model.js";
 
 export const createQuizService = async (data) => {
   // 1️⃣ Validate course exists
@@ -32,4 +33,39 @@ export const createQuizService = async (data) => {
   });
 
   return quiz;
+};
+
+export const getQuizForStudentService = async (quizId) => {
+  const quiz = await Quiz.findOne({
+    _id: quizId,
+    isPublished: true,
+  }).select(
+    "title description timeLimit totalMarks passMarks allowedAttempts shuffleQuestions"
+  );
+
+  if (!quiz) {
+    throw new AppError("Quiz not found", 404);
+  }
+
+  const questions = await Question.find({ quiz: quizId })
+    .sort({ order: 1 })
+    .select("text options marks order")
+    .lean();
+
+  // 🔒 REMOVE correct answers
+  const safeQuestions = questions.map((q) => ({
+    _id: q._id,
+    text: q.text,
+    marks: q.marks,
+    order: q.order,
+    options: q.options.map((o) => ({
+      _id: o._id,
+      text: o.text,
+    })),
+  }));
+
+  return {
+    quiz,
+    questions: safeQuestions,
+  };
 };

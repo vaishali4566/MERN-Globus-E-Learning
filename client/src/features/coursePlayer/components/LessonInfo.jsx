@@ -1,12 +1,13 @@
-export default function LessonInfo() {
+export default function LessonInfo({ lesson }) {
   return (
-    <div className="p-10 ">
+    <div className="p-10">
       <h2 className="text-2xl font-semibold mb-2">
-        1. Introduction to MERN Stack
+        {lesson.title}
       </h2>
+
       <p className="text-gray-600">
-        Is lesson me hum MERN Stack ka overview dekhenge – MongoDB, Express,
-        React aur Node ka role.
+        {/* future text lesson content */}
+        Lesson description will appear here.
       </p>
     </div>
   );

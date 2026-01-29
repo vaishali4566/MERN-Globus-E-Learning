@@ -28,9 +28,6 @@ export default function ContentTypeButtons({ sectionId, openAddContentModal }) {
         <button
           key={type}
           onClick={() => {
-            console.log(
-              `[DEBUG: ContentTypeButtons] Opening modal for type: ${type}, sectionId: ${sectionId}`
-            );
             openAddContentModal(sectionId, type);
           }}
           className="flex items-center gap-2 px-4 py-2 text-xs font-medium cursor-pointer
