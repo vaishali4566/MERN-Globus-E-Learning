@@ -31,8 +31,8 @@ export default function VideoPlayer({ videoUrl }) {
   };
 
   return (
-    <div className="p-6">
-      <div className="bg-black rounded-lg flex flex-col">
+    <div className="p-6 bg-white dark:bg-[#26283e]">
+      <div className="bg-black dark:bg-black rounded-lg flex flex-col">
 
         {/* VIDEO */}
         <div className="relative w-full h-[360px] bg-black rounded-t-lg">

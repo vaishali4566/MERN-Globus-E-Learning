@@ -1,18 +1,21 @@
 import { useState, useEffect } from 'react';
 
 export const useTheme = () => {
-  const [theme, setTheme] = useState('light');
-
-  useEffect(() => {
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme) setTheme(savedTheme);
-    else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      setTheme('dark');
+  // Initialize with stored theme or system preference to prevent flash
+  const [theme, setTheme] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme) return savedTheme;
+      if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        return 'dark';
+      }
     }
-  }, []);
+    return 'light';
+  });
 
+  // Apply theme to DOM immediately
   useEffect(() => {
-    document.documentElement.className = theme; // Tailwind class
+    document.documentElement.className = theme;
     localStorage.setItem('theme', theme);
   }, [theme]);
 

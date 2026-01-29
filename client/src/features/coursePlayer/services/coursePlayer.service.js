@@ -24,3 +24,12 @@ export const getQuizById = async (quizId) => {
   console.log(res)
   return res.data.data;
 };
+
+/**
+ * ✅ Get quiz with answers (for results)
+ */
+export const getQuizResultsById = async (quizId) => {
+  const res = await api.get(`/quizzes/${quizId}/results`);
+  console.log(res)
+  return res.data.data;
+};

@@ -3,6 +3,7 @@ import Course from "../courses/course.model.js";
 import Section from "../sections/section.model.js";
 import { AppError } from "../../utils/appError.js";
 import Question from "./question.model.js";
+import mongoose from "mongoose";
 
 export const createQuizService = async (data) => {
   // 1️⃣ Validate course exists
@@ -36,6 +37,11 @@ export const createQuizService = async (data) => {
 };
 
 export const getQuizForStudentService = async (quizId) => {
+  // 🛑 HARD GUARD
+  if (!quizId || !mongoose.Types.ObjectId.isValid(quizId)) {
+    throw new AppError("Invalid or missing quiz ID", 400);
+  }
+
   const quiz = await Quiz.findOne({
     _id: quizId,
     isPublished: true,
@@ -44,7 +50,7 @@ export const getQuizForStudentService = async (quizId) => {
   );
 
   if (!quiz) {
-    throw new AppError("Quiz not found", 404);
+    throw new AppError("Quiz not found or not published", 404);
   }
 
   const questions = await Question.find({ quiz: quizId })
@@ -67,5 +73,45 @@ export const getQuizForStudentService = async (quizId) => {
   return {
     quiz,
     questions: safeQuestions,
+  };
+};
+
+export const getQuizWithAnswersService = async (quizId) => {
+  // 🛑 HARD GUARD
+  if (!quizId || !mongoose.Types.ObjectId.isValid(quizId)) {
+    throw new AppError("Invalid or missing quiz ID", 400);
+  }
+
+  const quiz = await Quiz.findOne({
+    _id: quizId,
+    isPublished: true,
+  }).select(
+    "title description timeLimit totalMarks passMarks allowedAttempts shuffleQuestions"
+  );
+
+  if (!quiz) {
+    throw new AppError("Quiz not found or not published", 404);
+  }
+
+  const questions = await Question.find({ quiz: quizId })
+    .sort({ order: 1 })
+    .select("text options marks order")
+    .lean();
+
+  // ✅ INCLUDE correct answers (only for showing results)
+  const questionsWithAnswers = questions.map((q) => ({
+    _id: q._id,
+    text: q.text,
+    marks: q.marks,
+    order: q.order,
+    options: q.options.map((o) => ({
+      text: o.text,
+      isCorrect: o.isCorrect,
+    })),
+  }));
+
+  return {
+    quiz,
+    questions: questionsWithAnswers,
   };
 };
