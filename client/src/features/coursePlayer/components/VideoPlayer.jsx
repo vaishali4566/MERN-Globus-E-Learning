@@ -1,57 +1,60 @@
-import { useState, useEffect } from "react";
+import { useRef, useState } from "react";
 import { Play, Pause } from "lucide-react";
 
-export default function VideoPlayer() {
+export default function VideoPlayer({ videoUrl }) {
+  const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
 
-  // ⏱️ Fake video progress
-  useEffect(() => {
-    if (!isPlaying) return;
+  // ▶️ Play / Pause
+  const togglePlay = () => {
+    if (!videoRef.current) return;
+    if (isPlaying) videoRef.current.pause();
+    else videoRef.current.play();
+    setIsPlaying(!isPlaying);
+  };
 
-    const interval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          return 100;
-        }
-        return prev + 1;
-      });
-    }, 500); // speed of progress
+  // ⏱️ Update progress
+  const handleTimeUpdate = () => {
+    const video = videoRef.current;
+    if (!video.duration) return;
+    const percent = (video.currentTime / video.duration) * 100;
+    setProgress(percent);
+  };
 
-    return () => clearInterval(interval);
-  }, [isPlaying]);
-
-  // 🎯 Click to seek
+  // 🎯 Seek video
   const handleSeek = (e) => {
-    const bar = e.currentTarget;
-    const rect = bar.getBoundingClientRect();
+    const rect = e.currentTarget.getBoundingClientRect();
     const clickX = e.clientX - rect.left;
     const width = rect.width;
-
-    const newProgress = (clickX / width) * 100;
-    setProgress(Math.min(Math.max(newProgress, 0), 100));
+    videoRef.current.currentTime = (clickX / width) * videoRef.current.duration;
   };
 
   return (
-    <div className="p-10">
-      <div className="bg-black rounded-lg h-[60vh] flex flex-col justify-between">
+    <div className="p-6">
+      <div className="bg-black rounded-lg flex flex-col">
 
-        {/* VIDEO AREA */}
-        <div className="flex-1 flex items-center justify-center text-white">
-          {isPlaying ? (
-            <Pause
-              size={80}
-              className="cursor-pointer opacity-80"
-              onClick={() => setIsPlaying(false)}
-            />
-          ) : (
-            <Play
-              size={80}
-              className="cursor-pointer opacity-80"
-              onClick={() => setIsPlaying(true)}
-            />
-          )}
+        {/* VIDEO */}
+        <div className="relative w-full h-[360px] bg-black rounded-t-lg">
+          <video
+            ref={videoRef}
+            src={videoUrl}
+            className="w-full h-full object-contain"
+            onTimeUpdate={handleTimeUpdate}
+            onEnded={() => setIsPlaying(false)}
+          />
+
+          {/* Play/Pause Overlay */}
+          <div
+            className="absolute inset-0 flex items-center justify-center cursor-pointer"
+            onClick={togglePlay}
+          >
+            {isPlaying ? (
+              <Pause size={80} className="text-white opacity-70" />
+            ) : (
+              <Play size={80} className="text-white opacity-70" />
+            )}
+          </div>
         </div>
 
         {/* CONTROLS */}
@@ -67,13 +70,9 @@ export default function VideoPlayer() {
             />
           </div>
 
-          <div className="flex justify-between items-center text-gray-300 text-sm">
-            <span>{Math.floor((progress / 100) * 600)}s / 600s</span>
-
-            <button
-              onClick={() => setIsPlaying(!isPlaying)}
-              className="text-white"
-            >
+          {/* Play/Pause Button */}
+          <div className="flex justify-end">
+            <button onClick={togglePlay} className="text-white">
               {isPlaying ? <Pause size={20} /> : <Play size={20} />}
             </button>
           </div>

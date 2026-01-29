@@ -1,6 +1,6 @@
 import asyncHandler from "../../utils/asyncHandler.js";
 import { AppError } from "../../utils/appError.js";
-import { createQuizService } from "./quiz.service.js";
+import { createQuizService, getQuizForStudentService } from "./quiz.service.js";
 
 export const createQuiz = asyncHandler(async (req, res) => {
   const {
@@ -68,5 +68,16 @@ export const createQuiz = asyncHandler(async (req, res) => {
       order: quiz.order,
       isPublished: quiz.isPublished,
     },
+  });
+});
+
+export const getQuizForStudent = asyncHandler(async (req, res) => {
+  const { quizId } = req.params;
+
+  const data = await getQuizForStudentService(quizId);
+
+  res.status(200).json({
+    success: true,
+    data,
   });
 });

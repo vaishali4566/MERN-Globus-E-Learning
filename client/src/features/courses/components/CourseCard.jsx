@@ -2,7 +2,6 @@ import { FiCalendar } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 
 const CourseCard = ({ course, role = "student" }) => {
-  console.log(course.thumbnail, "thumbnail")
   const navigate = useNavigate();
 
   const status = course?.status || "draft";

@@ -6,18 +6,20 @@ const paymentSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
-      index: true,
     },
     course: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Course",
       required: true,
-      index: true,
     },
     paymentIntentId: {
       type: String,
       required: true,
-      unique: true,
+      unique: true, // Stripe safety
+    },
+    clientSecret: {
+      type: String,
+      required: true,
     },
     amount: {
       type: Number,
@@ -29,11 +31,24 @@ const paymentSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["succeeded", "failed", "pending"],
+      enum: ["pending", "success", "failed"], // 👈 align naming
       default: "pending",
+      index: true,
     },
   },
   { timestamps: true }
+);
+
+/**
+ * 🔐 Allow only ONE pending payment
+ * per student per course
+ */
+paymentSchema.index(
+  { student: 1, course: 1, status: 1 },
+  {
+    unique: true,
+    partialFilterExpression: { status: "pending" },
+  }
 );
 
 export default mongoose.model("Payment", paymentSchema);

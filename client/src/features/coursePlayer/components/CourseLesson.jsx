@@ -1,4 +1,4 @@
-import { Lock } from "lucide-react";
+import { Lock, FileText, Edit3 } from "lucide-react";
 
 export default function CourseLesson({
   title,
@@ -6,7 +6,14 @@ export default function CourseLesson({
   active,
   isLocked,
   onClick,
+  type = "lesson", // default type
 }) {
+  const renderIcon = () => {
+    if (type === "assignment") return <Edit3 size={14} />;
+    if (type === "quiz") return <FileText size={14} />;
+    return null; 
+  };
+
   return (
     <div
       onClick={!isLocked ? onClick : undefined}
@@ -17,6 +24,7 @@ export default function CourseLesson({
     >
       <span className="flex items-center gap-2">
         {isLocked && <Lock size={14} />}
+        {renderIcon()}
         {title}
       </span>
 

@@ -41,8 +41,6 @@ export default function AssignmentModal({ onClose, courseId, sectionId }) {
 
       const res = await createAssignment(payload);
 
-      console.log("Assignment created:", res.data);
-
       onClose(); // close modal after success
     } catch (err) {
       console.error("Failed to create assignment:", err);

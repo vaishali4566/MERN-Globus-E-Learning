@@ -12,8 +12,6 @@ import Enrollment from "../enrollments/enrollment.model.js";
 
 // ================= CREATE COURSE =================
 export const createCourse = asyncHandler(async (req, res) => {
-  console.log("BODY 👉", req.body);
-  console.log("FILE 👉", req.file);
 
   const {
     title,
@@ -64,8 +62,6 @@ export const createCourse = asyncHandler(async (req, res) => {
 
 // ================= GET COURSE BY ID (TRAINER) =================
 export const getCourseById = asyncHandler(async (req, res) => {
-  console.log("USER 👉", req.user);
-  console.log("COURSE ID 👉", req.params.courseId);
   const { courseId } = req.params;
 
   const course = await getCourseByIdService(courseId, req.user);
@@ -120,7 +116,6 @@ export const getAllCourses = asyncHandler(async (req, res) => {
     })
       .select("course")
       .lean();
-    enrollments.forEach(e => console.log("Enrolled course ID:", e.course.toString()));
 
     enrolledCourseIds = enrollments.map((e) => e.course.toString());
   }
@@ -183,7 +178,6 @@ export const getCoursePlayerData = async (req, res, next) => {
     const userId = req.user.id;
 
     const data = await getCoursePlayerDataService(courseId, userId);
-    console.log(data)
 
     if (!data) {
       return next(new AppError("Course not found", 404));
