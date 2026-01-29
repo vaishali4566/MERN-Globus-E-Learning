@@ -1,6 +1,6 @@
 import asyncHandler from "../../utils/asyncHandler.js";
 import { AppError } from "../../utils/appError.js";
-import { createQuizService, getQuizForStudentService } from "./quiz.service.js";
+import { createQuizService, getQuizForStudentService, getQuizWithAnswersService } from "./quiz.service.js";
 
 export const createQuiz = asyncHandler(async (req, res) => {
   const {
@@ -74,7 +74,28 @@ export const createQuiz = asyncHandler(async (req, res) => {
 export const getQuizForStudent = asyncHandler(async (req, res) => {
   const { quizId } = req.params;
 
+  // 🛑 HARD GUARD (very important)
+  if (!quizId) {
+    throw new AppError("Quiz ID is required", 400);
+  } 
+
   const data = await getQuizForStudentService(quizId);
+
+  res.status(200).json({
+    success: true,
+    data,
+  });
+});
+
+export const getQuizWithAnswers = asyncHandler(async (req, res) => {
+  const { quizId } = req.params;
+
+  // 🛑 HARD GUARD (very important)
+  if (!quizId) {
+    throw new AppError("Quiz ID is required", 400);
+  } 
+
+  const data = await getQuizWithAnswersService(quizId);
 
   res.status(200).json({
     success: true,

@@ -28,11 +28,11 @@ export default function QuizPlayer({ quizId, onSubmit }) {
     loadQuiz();
   }, [quizId]);
 
-  const handleSelect = (questionId, optionId) => {
+  const handleSelect = (questionId, optionIndex) => {
     if (submitted) return;
     setAnswers((prev) => ({
       ...prev,
-      [questionId]: optionId,
+      [questionId]: optionIndex,
     }));
   };
 
@@ -51,8 +51,8 @@ export default function QuizPlayer({ quizId, onSubmit }) {
     handleSubmit();
   };
 
-  if (loading) return <div className="p-10">Loading quiz...</div>;
-  if (!quiz) return <div className="p-10">Quiz not found</div>;
+  if (loading) return <div className="p-10 text-gray-900 dark:text-white">Loading quiz...</div>;
+  if (!quiz) return <div className="p-10 text-gray-900 dark:text-white">Quiz not found</div>;
 
   const attemptedCount = Object.keys(answers).length;
 
@@ -60,10 +60,10 @@ export default function QuizPlayer({ quizId, onSubmit }) {
     <div className="max-w-4xl mx-auto p-8">
       {/* HEADER */}
       {!showResult && (
-        <div className="border-b pb-6 mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="border-b border-gray-300 dark:border-gray-700 pb-6 mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-semibold text-gray-900">{quiz.title}</h1>
-            <p className="text-gray-600 mt-1">{quiz.description}</p>
+            <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">{quiz.title}</h1>
+            <p className="text-gray-600 dark:text-gray-400 mt-1">{quiz.description}</p>
           </div>
 
           <div className="flex items-center gap-4">
@@ -75,24 +75,24 @@ export default function QuizPlayer({ quizId, onSubmit }) {
       {/* QUIZ META */}
       {!showResult && (
         <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-          <div className="border rounded-md p-3 text-center">
-            <p className="text-xs text-gray-500">Questions</p>
-            <p className="font-semibold text-gray-900">{quiz.questions.length}</p>
+          <div className="border border-gray-300 dark:border-gray-700 rounded-md p-3 text-center bg-white dark:bg-[#1f2337]">
+            <p className="text-xs text-gray-500 dark:text-gray-400">Questions</p>
+            <p className="font-semibold text-gray-900 dark:text-white">{quiz.questions.length}</p>
           </div>
 
-          <div className="border rounded-md p-3 text-center">
-            <p className="text-xs text-gray-500">Total Marks</p>
-            <p className="font-semibold text-gray-900">{quiz.totalMarks}</p>
+          <div className="border border-gray-300 dark:border-gray-700 rounded-md p-3 text-center bg-white dark:bg-[#1f2337]">
+            <p className="text-xs text-gray-500 dark:text-gray-400">Total Marks</p>
+            <p className="font-semibold text-gray-900 dark:text-white">{quiz.totalMarks}</p>
           </div>
 
-          <div className="border rounded-md p-3 text-center">
-            <p className="text-xs text-gray-500">Pass Marks</p>
-            <p className="font-semibold text-gray-900">{quiz.passMarks}</p>
+          <div className="border border-gray-300 dark:border-gray-700 rounded-md p-3 text-center bg-white dark:bg-[#1f2337]">
+            <p className="text-xs text-gray-500 dark:text-gray-400">Pass Marks</p>
+            <p className="font-semibold text-gray-900 dark:text-white">{quiz.passMarks}</p>
           </div>
 
-          <div className="border rounded-md p-3 text-center">
-            <p className="text-xs text-gray-500">Answered</p>
-            <p className="font-semibold text-gray-900">{attemptedCount} / {quiz.questions.length}</p>
+          <div className="border border-gray-300 dark:border-gray-700 rounded-md p-3 text-center bg-white dark:bg-[#1f2337]">
+            <p className="text-xs text-gray-500 dark:text-gray-400">Answered</p>
+            <p className="font-semibold text-gray-900 dark:text-white">{attemptedCount} / {quiz.questions.length}</p>
           </div>
         </div>
       )}
@@ -103,32 +103,32 @@ export default function QuizPlayer({ quizId, onSubmit }) {
           {quiz.questions.map((q, index) => (
             <div
               key={q._id}
-              className={`border rounded-lg p-5 transition ${submitted ? "bg-gray-50" : "hover:shadow-sm"}`}
+              className={`border border-gray-300 dark:border-gray-700 rounded-lg p-5 transition ${submitted ? "bg-gray-50 dark:bg-[#1f2337]" : "hover:shadow-sm bg-white dark:bg-[#1f2337]"}`}
             >
               <div className="flex items-start gap-3">
-                <span className="font-medium text-gray-400">{index + 1}.</span>
-                <p className="font-medium text-gray-900">{q.text}</p>
+                <span className="font-medium text-gray-400 dark:text-gray-500">{index + 1}.</span>
+                <p className="font-medium text-gray-900 dark:text-white">{q.text}</p>
               </div>
 
               <div className="mt-4 ml-6 space-y-3">
-                {q.options.map((opt) => {
-                  const selected = answers[q._id] === opt._id;
+                {q.options.map((opt, optionIndex) => {
+                  const selected = answers[q._id] === optionIndex;
                   const correct = submitted && opt.isCorrect;
 
                   return (
                     <label
-                      key={opt._id}
+                      key={optionIndex}
                       className={`flex items-center gap-3 p-3 rounded border cursor-pointer transition
                         ${
                           submitted
                             ? correct
-                              ? "border-green-500 bg-green-100"
+                              ? "border-green-500 bg-green-100 dark:bg-green-900/50 dark:border-green-600"
                               : selected
-                              ? "border-red-500 bg-red-100"
-                              : "border-gray-200 bg-gray-50"
+                              ? "border-red-500 bg-red-100 dark:bg-red-900/50 dark:border-red-600"
+                              : "border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-[#1a1d2e]"
                             : selected
-                            ? "border-black bg-gray-100"
-                            : "border-gray-200 hover:bg-gray-50"
+                            ? "border-black dark:border-blue-500 bg-gray-100 dark:bg-blue-900/30"
+                            : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-[#2a2d40]"
                         }
                       `}
                     >
@@ -136,11 +136,11 @@ export default function QuizPlayer({ quizId, onSubmit }) {
                         type="radio"
                         name={q._id}
                         checked={selected}
-                        onChange={() => handleSelect(q._id, opt._id)}
-                        className="accent-black"
+                        onChange={() => handleSelect(q._id, optionIndex)}
+                        className="accent-black dark:accent-blue-500"
                         disabled={submitted}
                       />
-                      <span className="text-sm text-gray-800">{opt.text}</span>
+                      <span className="text-sm text-gray-800 dark:text-gray-200">{opt.text}</span>
                     </label>
                   );
                 })}
@@ -153,7 +153,7 @@ export default function QuizPlayer({ quizId, onSubmit }) {
       {/* SUBMIT BUTTON */}
       {!showResult && (
         <div className="mt-10 flex items-center justify-between">
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-gray-500 dark:text-gray-400">
             {submitted
               ? "Quiz Submitted"
               : `Answered ${attemptedCount} / ${quiz.questions.length}`}
@@ -165,8 +165,8 @@ export default function QuizPlayer({ quizId, onSubmit }) {
             className={`px-6 py-2 rounded text-sm font-medium transition
               ${
                 attemptedCount === quiz.questions.length && !submitted
-                  ? "bg-black text-white hover:bg-gray-900"
-                  : "bg-gray-200 text-gray-500 cursor-not-allowed"
+                  ? "bg-black dark:bg-blue-600 text-white hover:bg-gray-900 dark:hover:bg-blue-700"
+                  : "bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
               }
             `}
           >

@@ -22,7 +22,7 @@ export default function QuizTimer({ timeLimitMinutes = 10, onTimeUp }) {
   const seconds = secondsLeft % 60;
 
   return (
-    <div className="p-2 text-sm font-medium text-white bg-black rounded w-28 text-center">
+    <div className="p-2 text-sm font-medium text-white bg-black dark:bg-red-600 rounded w-28 text-center">
       ⏱ {minutes.toString().padStart(2, "0")}:
       {seconds.toString().padStart(2, "0")}
     </div>
