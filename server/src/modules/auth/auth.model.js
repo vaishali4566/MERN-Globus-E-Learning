@@ -11,11 +11,13 @@ const userSchema = new mongoose.Schema({
     default: "student" 
   },
 
-  // Trainer-specific fields
   bio: { type: String },
   skills: { type: [String], default: [] },
 
-  // Admin-specific fields
+  linkedin: { type: String },   // added
+  github: { type: String },     // added
+  twitter: { type: String },    // added
+
   permissions: { type: [String], default: [] }, 
 
   // Profile photo
@@ -28,10 +30,9 @@ userSchema.pre("save", async function () {
   this.password = await bcrypt.hash(this.password, 10);
 });
 
-
 // Compare password
 userSchema.methods.comparePassword = async function (candidatePassword) {
-    return await bcrypt.compare(candidatePassword, this.password);
+  return await bcrypt.compare(candidatePassword, this.password);
 }
 
 export default mongoose.model("User", userSchema);

@@ -6,5 +6,6 @@ const router = express.Router();
 
 router.get("/", getUsers);
 router.get("/profile", protect, getProfile);
+router.put("/profile", protect, editProfile);
 
 export default router;
