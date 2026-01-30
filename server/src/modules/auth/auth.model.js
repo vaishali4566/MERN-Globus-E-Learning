@@ -19,6 +19,9 @@ const userSchema = new mongoose.Schema({
   twitter: { type: String },    // added
 
   permissions: { type: [String], default: [] }, 
+
+  // Profile photo
+  profilePhoto: { type: String, default: null },
 }, { timestamps: true });
 
 // Hash password before saving

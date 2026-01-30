@@ -1,16 +1,14 @@
 import CourseSection from "./CourseSection";
 import CourseLesson from "./CourseLesson";
-import { useTheme } from "../../../hooks/useTheme";
 
 export default function CourseSidebar({
   sections,
   activeItemId, // renamed to generic "item"
   onSelectItem,
 }) {
-  const { theme } = useTheme();
 
   return (
-    <div className={`w-[340px] bg-white dark:bg-[#1f2337] border-l border-gray-300 dark:border-gray-700 overflow-y-auto ${theme === "dark" ? "dark" : ""}`}>
+    <div className="w-[340px] bg-white dark:bg-[#1f2337] border-l border-gray-300 dark:border-gray-700 overflow-y-auto">
       <h3 className="p-4 font-semibold text-lg border-b border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white">Course Content</h3>
 
       {sections.map((section) => (

@@ -13,6 +13,7 @@ import { RiArrowDropDownLine } from "react-icons/ri";
 import { useTheme } from "@/hooks/useTheme";
 import logout from "@/utils/logout";
 import { getUserName ,getUserRole } from "@/utils/getUser";
+import { getUserAvatar } from "@/utils/getUserAvatar";
 
 const Navbar = ({ toggleSidebar, isSidebarOpen }) => {
   const [openProfile, setOpenProfile] = useState(false);
@@ -110,7 +111,7 @@ const Navbar = ({ toggleSidebar, isSidebarOpen }) => {
               </div>
             </div>
             <img
-              src={user.avatar || "/avatar.jpg"}
+              src={getUserAvatar(user.avatar)}
               className="w-9 h-9 rounded-full"
             />
           </button>

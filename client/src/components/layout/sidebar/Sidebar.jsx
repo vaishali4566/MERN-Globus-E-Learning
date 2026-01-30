@@ -5,31 +5,72 @@ import { getUserRole } from "@/utils/getUser";
 // Role-based links configuration
 const sidebarConfig = {
   student: [
-    { section: "Core", items: [
-      { to: "/student/dashboard", label: "Dashboard", icon: "FiGrid" },
-      { to: "/student/my-courses", label: "My Courses", icon: "FiBookOpen" },
-      { to: "/student/assignments", label: "Assignments", icon: "FiClipboard" },
-      { to: "/student/quizzes", label: "Quizzes & Tests", icon: "FiCheckSquare" },
-      { to: "/student/schedule", label: "Schedule", icon: "FiCalendar" },
-      { to: "/student/live-classes", label: "Live Classes", icon: "FiVideo" },
-    ]},
-    { section: "Learning", items: [
-      { to: "/student/progress", label: "Learning Progress", icon: "FiTrendingUp" },
-      { to: "/student/certificates", label: "Certificates", icon: "FiCheckSquare" },
-    ]},
-    { section: "Communication", items: [
-      { to: "/student/chat", label: "Messages", icon: "FiMessageSquare" },
-      { to: "/student/announcements", label: "Announcements", icon: "FiBell" },
-    ]},
-    { section: "Discover", items: [
-      { to: "/student/explore-courses", label: "Explore Courses", icon: "FiSearch" },
-      { to: "/student/wishlist", label: "Wishlist", icon: "FiHeart" },
-    ]},
-    { section: "Account", items: [
-      { to: "/student/profile", label: "Profile", icon: "FiUser" },
-      { to: "/student/settings", label: "Settings", icon: "FiSettings" },
-      { to: "/student/help", label: "Help & Support", icon: "FiHelpCircle" },
-    ]}
+    {
+      section: "Core",
+      items: [
+        { to: "/student/dashboard", label: "Dashboard", icon: "FiGrid" },
+        { to: "/student/my-courses", label: "My Courses", icon: "FiBookOpen" },
+        {
+          to: "/student/assignments",
+          label: "Assignments",
+          icon: "FiClipboard",
+        },
+        {
+          to: "/student/quizzes",
+          label: "Quizzes & Tests",
+          icon: "FiCheckSquare",
+        },
+        { to: "/student/schedule", label: "Schedule", icon: "FiCalendar" },
+        { to: "/student/live-classes", label: "Live Classes", icon: "FiVideo" },
+      ],
+    },
+    {
+      section: "Learning",
+      items: [
+        {
+          to: "/student/progress",
+          label: "Learning Progress",
+          icon: "FiTrendingUp",
+        },
+        {
+          to: "/student/certificates",
+          label: "Certificates",
+          icon: "FiCheckSquare",
+        },
+      ],
+    },
+    {
+      section: "Communication",
+      items: [
+        { to: "/student/chat", label: "Messages", icon: "FiMessageSquare" },
+        { to: "/student/find-people", label: "Find People", icon: "FiUsers" }, // 👈 NEW
+        {
+          to: "/student/announcements",
+          label: "Announcements",
+          icon: "FiBell",
+        },
+      ],
+    },
+
+    {
+      section: "Discover",
+      items: [
+        {
+          to: "/student/explore-courses",
+          label: "Explore Courses",
+          icon: "FiSearch",
+        },
+        { to: "/student/wishlist", label: "Wishlist", icon: "FiHeart" },
+      ],
+    },
+    {
+      section: "Account",
+      items: [
+        { to: "/student/profile", label: "Profile", icon: "FiUser" },
+        { to: "/student/settings", label: "Settings", icon: "FiSettings" },
+        { to: "/student/help", label: "Help & Support", icon: "FiHelpCircle" },
+      ],
+    },
   ],
 
   trainer: [
@@ -38,8 +79,16 @@ const sidebarConfig = {
       items: [
         { to: "/trainer/dashboard", label: "Dashboard", icon: "FiGrid" },
         { to: "/trainer/my-courses", label: "My Courses", icon: "FiBookOpen" },
-        { to: "/trainer/assignments", label: "Assignments", icon: "FiClipboard" },
-        { to: "/trainer/quizzes", label: "Quizzes & Tests", icon: "FiCheckSquare" },
+        {
+          to: "/trainer/assignments",
+          label: "Assignments",
+          icon: "FiClipboard",
+        },
+        {
+          to: "/trainer/quizzes",
+          label: "Quizzes & Tests",
+          icon: "FiCheckSquare",
+        },
         { to: "/trainer/schedule", label: "Schedule", icon: "FiCalendar" },
         { to: "/trainer/live-classes", label: "Live Classes", icon: "FiVideo" },
       ],
@@ -47,17 +96,31 @@ const sidebarConfig = {
     {
       section: "Learning",
       items: [
-        { to: "/trainer/progress", label: "Student Progress", icon: "FiTrendingUp" },
-        { to: "/trainer/certificates", label: "Certificates", icon: "FiCheckSquare" },
+        {
+          to: "/trainer/progress",
+          label: "Student Progress",
+          icon: "FiTrendingUp",
+        },
+        {
+          to: "/trainer/certificates",
+          label: "Certificates",
+          icon: "FiCheckSquare",
+        },
       ],
     },
     {
       section: "Communication",
       items: [
         { to: "/trainer/chat", label: "Messages", icon: "FiMessageSquare" },
-        { to: "/trainer/announcements", label: "Announcements", icon: "FiBell" },
+        { to: "/trainer/find-people", label: "Find People", icon: "FiUsers" }, 
+        {
+          to: "/trainer/announcements",
+          label: "Announcements",
+          icon: "FiBell",
+        },
       ],
     },
+
     {
       section: "Analytics & Revenue",
       items: [
@@ -103,9 +166,13 @@ const Sidebar = ({ isOpen }) => {
         {links.map((section, idx) => (
           <div key={idx}>
             {isOpen && (
-              <p className={`px-4 mt-4 mb-2 text-xs uppercase ${
-                section.section === "Account" ? "text-blue-500 dark:text-blue-400" : "text-gray-500 dark:text-gray-400"
-              }`}>
+              <p
+                className={`px-4 mt-4 mb-2 text-xs uppercase ${
+                  section.section === "Account"
+                    ? "text-blue-500 dark:text-blue-400"
+                    : "text-gray-500 dark:text-gray-400"
+                }`}
+              >
                 {section.section}
               </p>
             )}

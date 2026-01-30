@@ -9,6 +9,7 @@ import userRoutes from "../modules/users/user.routes.js"
 import uploadRoutes from "./uploadRoutes.js"
 import paymentRoutes from "../modules/payment/payment.routes.js";
 import enrollmentRoutes from "../modules/enrollments/enrollment.routes.js"
+import progressRoutes from "../modules/progress/progress.routes.js"
 
 // Function to load routes
 const loadRoutes = (app) => {
@@ -28,7 +29,7 @@ const loadRoutes = (app) => {
   app.use("/api/assignments", assignmentRoutes);
 
   // User routes
-  app.use("/api/user", userRoutes);
+  app.use("/api/users", userRoutes);
   
   //Quiz routes
   app.use("/api/quizzes", quizRoutes);
@@ -39,9 +40,27 @@ const loadRoutes = (app) => {
   // Enrollment routes
   app.use("/api/enrollments", enrollmentRoutes);
 
+  // Progress routes
+  app.use("/api/progress", progressRoutes);
+
   app.use("/api/uploads", uploadRoutes);
 };
 
 export default loadRoutes;
+
+
+// server/
+// ├── src/
+// │   ├── app.js
+// │   ├── server.js
+// │   ├── config/
+// │   ├── middlewares/
+// │   ├── controllers/
+// │   ├── modules/
+// │   │   └── users/
+// │   ├── routes/
+// │   │   └── index.js
+// │   └── utils/
+
 
 

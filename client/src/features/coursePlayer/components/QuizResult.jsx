@@ -1,9 +1,39 @@
 import React, { useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { updateQuizProgress } from "@/features/progress/services/progressService";
 
 export default function QuizResult({ quiz, answers }) {
+  const { courseId } = useParams();
+
   useEffect(() => {
-    console.log("QuizResult mounted:", quiz, answers);
-  }, [quiz, answers]);
+    // Track quiz result to progress
+    if (quiz && answers && courseId) {
+      trackQuizProgress();
+    }
+  }, [quiz, answers, courseId]);
+
+  const trackQuizProgress = async () => {
+    try {
+      let totalMarks = 0;
+      let obtainedMarks = 0;
+
+      quiz.questions.forEach((q) => {
+        totalMarks += q.marks || 1;
+        const selectedIndex = answers?.[q._id?.toString()];
+        const correctOptionIndex = q.options?.findIndex((o) => o.isCorrect);
+
+        if (selectedIndex === correctOptionIndex && selectedIndex !== undefined && selectedIndex !== -1) {
+          obtainedMarks += q.marks || 1;
+        }
+      });
+
+      const passed = totalMarks > 0 && obtainedMarks >= (totalMarks * 0.4); // 40% pass mark
+      
+      await updateQuizProgress(courseId, quiz._id, obtainedMarks, totalMarks, passed);
+    } catch (error) {
+      console.error("Error tracking quiz progress:", error);
+    }
+  };
 
   if (!quiz) return <div>Quiz data not found!</div>;
   if (!quiz.questions?.length)

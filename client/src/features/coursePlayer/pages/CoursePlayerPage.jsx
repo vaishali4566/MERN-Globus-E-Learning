@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { useTheme } from "../../../hooks/useTheme";
+import { useParams, useNavigate } from "react-router-dom";
+import { FiBarChart2 } from "react-icons/fi";
 
 import VideoPlayer from "../components/VideoPlayer";
 import LessonInfo from "../components/LessonInfo";
@@ -11,19 +11,36 @@ import QuizPlayer from "../components/QuizPlayer";
 import QuizResult from "../components/QuizResult";
 
 import { getCoursePlayerData, getQuizResultsById } from "../services/coursePlayer.service";
+import { getCourseProgress } from "@/features/progress/services/progressService";
 
 export default function CoursePlayerPage() {
   const { courseId } = useParams();
-  const { theme } = useTheme();
+  const navigate = useNavigate();
 
   const [sections, setSections] = useState([]);
   const [activeItem, setActiveItem] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [courseProgress, setCourseProgress] = useState(null);
 
   // ✅ Track quiz state
   const [quizStarted, setQuizStarted] = useState(false);
   const [quizAnswers, setQuizAnswers] = useState({}); // store student answers
   const [showQuizResult, setShowQuizResult] = useState(false);
+
+  // Fetch progress data
+  const fetchProgress = async () => {
+    try {
+      const data = await getCourseProgress(courseId);
+      setCourseProgress(data);
+    } catch (err) {
+      console.error("Error fetching progress:", err);
+    }
+  };
+
+  const handleProgressUpdate = () => {
+    // Refetch progress when a lesson is marked complete
+    fetchProgress();
+  };
 
   useEffect(() => {
     const loadCourse = async () => {
@@ -51,13 +68,14 @@ export default function CoursePlayerPage() {
     };
 
     loadCourse();
+    fetchProgress();
   }, [courseId]);
 
   if (loading) return <div className="p-10 text-gray-900 dark:text-white">Loading course...</div>;
   if (!activeItem) return <div className="p-10 text-gray-900 dark:text-white">No content found</div>;
 
   return (
-    <div className={`${theme === "dark" ? "dark" : ""} h-screen bg-gray-100 dark:bg-[#1a1d2e] flex`}>
+    <div className="h-screen bg-gray-100 dark:bg-[#1a1d2e] flex">
       {/* LEFT SIDEBAR */}
       <CourseSidebar
         sections={sections}
@@ -73,11 +91,35 @@ export default function CoursePlayerPage() {
 
       {/* RIGHT CONTENT */}
       <div className="flex-1 overflow-y-auto bg-white dark:bg-[#26283e] p-6">
+        {/* PROGRESS BUTTON */}
+        <div className="flex justify-end mb-4">
+          <div className="flex items-center gap-4">
+            {courseProgress && (
+              <div className="flex items-center gap-2 px-3 py-2 bg-gray-100 dark:bg-[#1f2337] rounded-lg">
+                <span className="text-sm font-medium text-gray-900 dark:text-white">
+                  Progress: <span className="font-bold text-blue-600 dark:text-blue-400">{courseProgress.completionPercentage || 0}%</span>
+                </span>
+              </div>
+            )}
+            <button
+              onClick={() => navigate(`/student/courses/${courseId}/progress`)}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white rounded-lg text-sm font-medium transition"
+            >
+              <FiBarChart2 size={16} />
+              View Progress
+            </button>
+          </div>
+        </div>
+
         {/* LESSON */}
         {activeItem.itemType === "lesson" && (
           <>
             <LessonInfo lesson={activeItem} />
-            <VideoPlayer videoUrl={activeItem?.video?.url} />
+            <VideoPlayer 
+              videoUrl={activeItem?.video?.url} 
+              lesson={activeItem}
+              onProgressUpdate={handleProgressUpdate}
+            />
           </>
         )}
 
@@ -85,7 +127,10 @@ export default function CoursePlayerPage() {
         {activeItem.itemType === "assignment" && (
           <>
             <AssignmentInfo assignment={activeItem} />
-            <AssignmentSubmission assignment={activeItem} />
+            <AssignmentSubmission 
+              assignment={activeItem}
+              onProgressUpdate={handleProgressUpdate}
+            />
           </>
         )}
 

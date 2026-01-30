@@ -1,10 +1,14 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { Play, Pause } from "lucide-react";
+import { markLessonComplete } from "../../progress/services/progressService";
 
-export default function VideoPlayer({ videoUrl }) {
+export default function VideoPlayer({ videoUrl, lesson, onProgressUpdate }) {
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
+  const { courseId } = useParams();
+  const [lessonCompleted, setLessonCompleted] = useState(false);
 
   // ▶️ Play / Pause
   const togglePlay = () => {
@@ -20,6 +24,28 @@ export default function VideoPlayer({ videoUrl }) {
     if (!video.duration) return;
     const percent = (video.currentTime / video.duration) * 100;
     setProgress(percent);
+  };
+
+  // 🎬 Handle video ended - mark lesson as complete
+  const handleVideoEnded = async () => {
+    setIsPlaying(false);
+    if (!lessonCompleted && lesson && courseId) {
+      try {
+        const watchedDuration = videoRef.current?.duration || 0;
+        await markLessonComplete(
+          courseId,
+          lesson._id,
+          watchedDuration
+        );
+        setLessonCompleted(true);
+        // Trigger progress update in parent component
+        if (onProgressUpdate) {
+          onProgressUpdate();
+        }
+      } catch (error) {
+        console.error("Error marking lesson as complete:", error);
+      }
+    }
   };
 
   // 🎯 Seek video
@@ -41,7 +67,7 @@ export default function VideoPlayer({ videoUrl }) {
             src={videoUrl}
             className="w-full h-full object-contain"
             onTimeUpdate={handleTimeUpdate}
-            onEnded={() => setIsPlaying(false)}
+            onEnded={handleVideoEnded}
           />
 
           {/* Play/Pause Overlay */}

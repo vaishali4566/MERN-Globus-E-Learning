@@ -1,6 +1,6 @@
 import asyncHandler from "../../utils/asyncHandler.js";
 import { AppError } from "../../utils/appError.js";
-import { createAssignmentService } from "./assignment.service.js";
+import { createAssignmentService, getStudentAssignmentsService } from "./assignment.service.js";
 
 export const createAssignment = asyncHandler(async (req, res) => {
   const {
@@ -49,5 +49,21 @@ export const createAssignment = asyncHandler(async (req, res) => {
       order: assignment.order,
       isPublished: assignment.isPublished,
     },
+  });
+});
+
+/**
+ * GET /api/assignments/my-assignments
+ * Get all assignments for logged-in student from their enrolled courses
+ */
+export const getStudentAssignments = asyncHandler(async (req, res) => {
+  const studentId = req.user.id;
+
+  const assignments = await getStudentAssignmentsService(studentId);
+
+  res.status(200).json({
+    success: true,
+    count: assignments.length,
+    data: assignments,
   });
 });

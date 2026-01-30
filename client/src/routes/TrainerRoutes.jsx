@@ -7,6 +7,8 @@ import CreateCourse from "@/pages/trainer/courses/CreateCourse";
 import MyCourses from "@/features/courses/pages/MyCourses";
 import CourseBuilderPage from "@/pages/trainer/courses/CourseBuilderPage";
 import { CoursePlayerPage } from "@/features/coursePlayer";
+import FindPeople from "@/features/chat/pages/FindPeople";
+import ChatPage from "@/features/chat/pages/ChatPage";
 
 const TrainerRoutes = () => {
   return (
@@ -19,6 +21,8 @@ const TrainerRoutes = () => {
         }
       >
         <Route path="dashboard" element={<TrainerDashboard />} />
+        <Route path="chat" element={<ChatPage />} />
+        <Route path="find-people" element={<FindPeople />} />
         <Route path="courses/create" element={<CreateCourse />} />
         <Route path="my-courses" element={<MyCourses />} />
         <Route

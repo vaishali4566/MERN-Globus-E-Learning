@@ -2,6 +2,7 @@ import Enrollment from "./enrollment.model.js";
 import Course from "../courses/course.model.js";
 import { AppError } from "../../utils/appError.js";
 import mongoose from "mongoose";
+import { initializeProgressService } from "../progress/progress.service.js";
 
 /**
  * Create enrollment (free OR paid – skip actual payment)
@@ -45,6 +46,9 @@ export const enrollCourseService = async ({ studentId, courseId }) => {
   // 🔢 Increment course students count
   course.totalStudents += 1;
   await course.save();
+
+  // 📊 Initialize progress tracking
+  await initializeProgressService(studentId, courseId);
 
   return enrollment;
 };
