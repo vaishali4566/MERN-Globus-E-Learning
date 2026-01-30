@@ -17,6 +17,9 @@ const userSchema = new mongoose.Schema({
 
   // Admin-specific fields
   permissions: { type: [String], default: [] }, 
+
+  // Profile photo
+  profilePhoto: { type: String, default: null },
 }, { timestamps: true });
 
 // Hash password before saving

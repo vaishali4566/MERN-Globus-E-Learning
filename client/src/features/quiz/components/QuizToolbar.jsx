@@ -2,33 +2,30 @@ import { FiSearch } from "react-icons/fi";
 
 const QuizToolbar = () => {
   return (
-    <div className="flex items-center justify-between mb-6">
-      <h2 className="text-lg font-semibold">Active Quizzes</h2>
+    <div className="mb-8">
+      {/* Heading */}
+      <div className="flex flex-col gap-1 mb-4">
+        <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
+          Quizzes & Tests
+        </h2>
+        <p className="text-sm text-gray-500 dark:text-gray-400">
+          Attempt quizzes and track your results
+        </p>
+      </div>
 
-      <div className="flex gap-3">
-        {/* Search */}
-        <div className="relative">
-          <FiSearch className="absolute left-3 top-2.5 text-gray-400 text-sm" />
-          <input
-            placeholder="Search here"
-            className="pl-9 pr-3 py-2 rounded-full text-sm
-              bg-gray-100 dark:bg-[#1f2035]
-              border border-gray-200 dark:border-white/10
-              focus:outline-none"
-          />
-        </div>
-
-        {/* Filter */}
-        <select
-          className="rounded-full px-4 py-2 text-sm
-            bg-gray-100 dark:bg-[#1f2035]
-            border border-gray-200 dark:border-white/10"
-        >
-          <option>All</option>
-          <option>Beginner</option>
-          <option>Intermediate</option>
-          <option>Advance</option>
-        </select>
+      {/* Search */}
+      <div className="relative max-w-md">
+        <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm" />
+        <input
+          placeholder="Search quizzes..."
+          className="w-full pl-11 pr-4 py-2.5 rounded-xl text-sm
+            bg-white dark:bg-[#1f2337]
+            border border-gray-200 dark:border-white/10
+            text-gray-900 dark:text-white
+            placeholder:text-gray-400
+            shadow-sm
+            focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
       </div>
     </div>
   );

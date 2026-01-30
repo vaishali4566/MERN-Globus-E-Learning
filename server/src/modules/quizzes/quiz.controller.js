@@ -1,6 +1,6 @@
 import asyncHandler from "../../utils/asyncHandler.js";
 import { AppError } from "../../utils/appError.js";
-import { createQuizService, getQuizForStudentService, getQuizWithAnswersService } from "./quiz.service.js";
+import { createQuizService, getQuizForStudentService, getQuizWithAnswersService, getStudentQuizzesService } from "./quiz.service.js";
 
 export const createQuiz = asyncHandler(async (req, res) => {
   const {
@@ -100,5 +100,20 @@ export const getQuizWithAnswers = asyncHandler(async (req, res) => {
   res.status(200).json({
     success: true,
     data,
+  });
+});
+
+/**
+ * GET /api/quizzes/my-quizzes
+ * Get all quizzes for logged-in student from their enrolled courses
+ */
+export const getStudentQuizzes = asyncHandler(async (req, res) => {
+  const studentId = req.user.id;
+
+  const quizzes = await getStudentQuizzesService(studentId);
+
+  res.status(200).json({
+    success: true,
+    data: quizzes,
   });
 });

@@ -1,44 +1,99 @@
+import { useState, useEffect } from "react";
 import QuizToolbar from "./QuizToolbar";
 import QuizCard from "./QuizCard";
+import { getStudentQuizzes } from "@/features/courses/services/quizService";
 
 const ActiveQuizzes = () => {
+  const [allQuizzes, setAllQuizzes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetchQuizzes();
+  }, []);
+
+  const fetchQuizzes = async () => {
+    try {
+      setLoading(true);
+      const data = await getStudentQuizzes();
+
+      const combined = [
+        ...(data.active || []).map(q => ({ ...q, completed: false })),
+        ...(data.completed || []).map(q => ({ ...q, completed: true })),
+      ];
+
+      setAllQuizzes(combined);
+    } catch (err) {
+      console.error("Error fetching quizzes:", err);
+      setError(err.message || "Failed to load quizzes");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <section>
+    <section className="space-y-6">
+      {/* Toolbar */}
       <QuizToolbar />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-        <QuizCard
-          icon="/icons/ai.png"
-          category="Machine Learning"
-          title="Introduction to machine learning"
-          time={15}
-          questions={24}
-          level="Advance"
-        />
+      {/* Content Container */}
+      <div className="bg-white dark:bg-[#1f2337] rounded-xl p-5 shadow-sm">
+        {/* States */}
+        {loading && (
+          <div className="py-12 text-center text-gray-500">
+            Loading quizzes…
+          </div>
+        )}
 
-        <QuizCard
-          icon="/icons/design.png"
-          category="Formal design methods"
-          title="Formal design methods: Formalism and..."
-          time={15}
-          questions={13}
-          level="Intermediate"
-        />
+        {error && (
+          <div className="py-12 text-center text-red-600">
+            {error}
+          </div>
+        )}
 
-        <QuizCard
-          icon="/icons/frontend.png"
-          category="Frontend"
-          title="Components and Properties"
-          time={15}
-          questions={24}
-          level="Advance"
-        />
-      </div>
+        {!loading && !error && allQuizzes.length === 0 && (
+          <div className="py-12 text-center text-gray-500">
+            No quizzes available at the moment
+          </div>
+        )}
 
-      <div className="text-center mt-6">
-        <button className="text-sm text-gray-500 hover:text-blue-600">
-          Show All Quizzes (12)
-        </button>
+        {/* Quiz List */}
+        {!loading && !error && allQuizzes.length > 0 && (
+          <div className="space-y-4">
+            {allQuizzes.map((quiz) => (
+              <QuizCard
+                key={quiz.id}
+                id={quiz.id}
+                category={quiz.course?.title || "Course"}
+                title={quiz.title}
+                time={quiz.timeLimit}
+                questions={quiz.totalMarks}
+                level={
+                  quiz.passMarks > quiz.totalMarks * 0.8
+                    ? "Advanced"
+                    : quiz.passMarks > quiz.totalMarks * 0.5
+                    ? "Intermediate"
+                    : "Beginner"
+                }
+                completed={quiz.completed}
+                score={quiz.lastAttemptScore}
+                passMarks={quiz.passMarks}
+                totalMarks={quiz.totalMarks}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* Summary */}
+        {!loading && !error && allQuizzes.length > 0 && (
+          <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              Total: {allQuizzes.length} quizzes •{" "}
+              Completed: {allQuizzes.filter(q => q.completed).length} •{" "}
+              Remaining: {allQuizzes.filter(q => !q.completed).length}
+            </p>
+          </div>
+        )}
       </div>
     </section>
   );

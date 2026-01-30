@@ -13,9 +13,17 @@ export const useTheme = () => {
     return 'light';
   });
 
-  // Apply theme to DOM immediately
+  // Apply theme to DOM and html element
   useEffect(() => {
-    document.documentElement.className = theme;
+    // Update html element class for Tailwind dark mode
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    
+    // Also store in data attribute as backup
+    document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('theme', theme);
   }, [theme]);
 

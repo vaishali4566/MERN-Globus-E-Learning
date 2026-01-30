@@ -1,5 +1,6 @@
 import { FiCalendar } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
+import ProgressBar from "@/components/common/ProgressBar";
 
 const CourseCard = ({ course, role = "student" }) => {
   const navigate = useNavigate();
@@ -70,6 +71,21 @@ const CourseCard = ({ course, role = "student" }) => {
       <p className="text-xs text-gray-500 line-clamp-2 mt-1">
         {course?.description || "No description"}
       </p>
+
+      {/* Progress bar for enrolled courses */}
+      {isStudent && isEnrolled && (
+        <div className="mt-3">
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
+              Progress
+            </span>
+            <span className="text-xs font-semibold text-gray-700 dark:text-gray-300">
+              {course?.progressPercentage || 0}%
+            </span>
+          </div>
+          <ProgressBar percentage={course?.progressPercentage || 0} size="sm" showLabel={false} />
+        </div>
+      )}
 
       <div className="flex items-center justify-between text-xs text-gray-400 mt-3">
         <div className="flex items-center gap-1">

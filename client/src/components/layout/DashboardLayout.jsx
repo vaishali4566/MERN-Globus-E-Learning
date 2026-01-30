@@ -2,14 +2,12 @@ import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import Sidebar from "./sidebar/Sidebar";
 import Navbar from "./Navbar";
-import { useTheme } from "@/hooks/useTheme";
 
 const DashboardLayout = ({ role = "student" }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const { theme } = useTheme();
 
   return (
-    <div className={`${theme === "dark" ? "dark" : ""} flex min-h-screen`}>
+    <div className="flex min-h-screen">
       {/* Sidebar */}
       <Sidebar isOpen={isSidebarOpen} role={role} />
 

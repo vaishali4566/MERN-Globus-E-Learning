@@ -1,6 +1,8 @@
 import Quiz from "./quiz.model.js";
 import Course from "../courses/course.model.js";
 import Section from "../sections/section.model.js";
+import Enrollment from "../enrollments/enrollment.model.js";
+import QuizAttempt from "./quizAttempt.model.js";
 import { AppError } from "../../utils/appError.js";
 import Question from "./question.model.js";
 import mongoose from "mongoose";
@@ -114,4 +116,95 @@ export const getQuizWithAnswersService = async (quizId) => {
     quiz,
     questions: questionsWithAnswers,
   };
+};
+
+/**
+ * Get quizzes for a student from their enrolled courses
+ */
+export const getStudentQuizzesService = async (studentId) => {
+  try {
+    // Get all enrolled courses for the student
+    const enrollments = await Enrollment.find({
+      student: new mongoose.Types.ObjectId(studentId),
+      status: "active",
+    }).select("course");
+
+    const enrolledCourseIds = enrollments.map((e) => e.course);
+
+    if (enrolledCourseIds.length === 0) {
+      return { active: [], completed: [] };
+    }
+
+    // Get all published quizzes from enrolled courses
+    const quizzes = await Quiz.find({
+      course: { $in: enrolledCourseIds },
+      isPublished: true,
+    })
+      .populate("course", "title")
+      .populate("section", "title")
+      .sort({ createdAt: -1 })
+      .lean();
+
+    // Get all quiz attempts for the student to determine status
+    const studentAttempts = await QuizAttempt.find({
+      student: new mongoose.Types.ObjectId(studentId),
+      quiz: { $in: quizzes.map((q) => q._id) },
+    })
+      .select("quiz status totalMarksObtained submittedAt")
+      .lean();
+
+    // Create a map of quiz attempts
+    const attemptsMap = {};
+    studentAttempts.forEach((attempt) => {
+      const quizId = attempt.quiz.toString();
+      if (!attemptsMap[quizId]) {
+        attemptsMap[quizId] = [];
+      }
+      attemptsMap[quizId].push(attempt);
+    });
+
+    // Separate active and completed quizzes
+    const active = [];
+    const completed = [];
+
+    quizzes.forEach((quiz) => {
+      const quizId = quiz._id.toString();
+      const attempts = attemptsMap[quizId] || [];
+      const completedAttempts = attempts.filter((a) => a.status === "submitted" || a.status === "evaluated");
+      const isCompleted = completedAttempts.length > 0;
+
+      const quizData = {
+        id: quiz._id,
+        title: quiz.title,
+        description: quiz.description,
+        course: quiz.course,
+        section: quiz.section,
+        timeLimit: quiz.timeLimit,
+        totalMarks: quiz.totalMarks,
+        passMarks: quiz.passMarks,
+        allowedAttempts: quiz.allowedAttempts,
+        attemptsTaken: completedAttempts.length,
+        bestScore: completedAttempts.length > 0 
+          ? Math.max(...completedAttempts.map((a) => a.totalMarksObtained))
+          : null,
+        lastAttemptScore: completedAttempts.length > 0 
+          ? completedAttempts[completedAttempts.length - 1].totalMarksObtained
+          : null,
+        lastAttemptDate: completedAttempts.length > 0 
+          ? completedAttempts[completedAttempts.length - 1].submittedAt
+          : null,
+        createdAt: quiz.createdAt,
+      };
+
+      if (isCompleted) {
+        completed.push(quizData);
+      } else {
+        active.push(quizData);
+      }
+    });
+
+    return { active, completed };
+  } catch (error) {
+    throw error;
+  }
 };
