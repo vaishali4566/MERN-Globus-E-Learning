@@ -10,6 +10,7 @@ import uploadRoutes from "./uploadRoutes.js"
 import paymentRoutes from "../modules/payment/payment.routes.js";
 import enrollmentRoutes from "../modules/enrollments/enrollment.routes.js"
 import progressRoutes from "../modules/progress/progress.routes.js"
+import friendRequestRoutes from "../modules/friendRequest/friendRequest.routes.js";
 
 // Function to load routes
 const loadRoutes = (app) => {
@@ -42,6 +43,9 @@ const loadRoutes = (app) => {
 
   // Progress routes
   app.use("/api/progress", progressRoutes);
+
+  // FriendRequest routes
+  app.use("/api/friend-requests", friendRequestRoutes);
 
   app.use("/api/uploads", uploadRoutes);
 };

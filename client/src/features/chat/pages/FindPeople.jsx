@@ -1,83 +1,385 @@
+// import React, { useEffect, useState } from "react";
+// import FriendRequests from "@/features/chat/components/FriendRequests";
+// import { getUsers } from "../services/findPeopleServices";
+// import { getUserAvatar } from "@/utils/getUserAvatar";
+
+// // 👇 socket listeners
+// import {
+//   onPendingFriendRequests,
+//   onSentFriendRequests,
+//   onFriendRequestReceived,
+//   onFriendRequestSent,
+//   onFriendRequestActionDone,
+//   onFriendsList,
+//   removeAllListeners,
+// } from "@/socket/socketListeners";
+
+// import { getSocket } from "@/socket/socket";
+
+// const FindPeoplePage = () => {
+//   const [allUsers, setAllUsers] = useState([]);
+//   const [incomingRequests, setIncomingRequests] = useState([]);
+//   const [loading, setLoading] = useState(false);
+
+//   /* ===============================
+//      FETCH USERS
+//   =============================== */
+//   useEffect(() => {
+//     const fetchAllUsers = async () => {
+//       setLoading(true);
+//       try {
+//         const usersArray = await getUsers();
+//         setAllUsers(
+//           usersArray.map((user) => ({
+//             ...user,
+//             avatar: getUserAvatar(user.avatar),
+//             requestStatus: null,
+//           })),
+//         );
+//       } catch (err) {
+//         console.error("Failed to fetch users:", err);
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     fetchAllUsers();
+//   }, []);
+
+//   /* ===============================
+//      SOCKET LISTENERS
+//   =============================== */
+//   useEffect(() => {
+//     const socket = getSocket();
+//     if (!socket) return;
+
+//     // 🔹 initial socket data handled automatically by backend
+//     // (no need to emit custom event unless backend expects it)
+
+//     /* ---------- Pending received ---------- */
+//     onPendingFriendRequests((requests) => {
+//       setIncomingRequests(requests);
+//     });
+
+//     /* ---------- Pending sent ---------- */
+//     onSentFriendRequests((sentRequests) => {
+//       setAllUsers((prev) =>
+//         prev.map((u) => ({
+//           ...u,
+//           requestStatus: sentRequests.some((r) => r.receiver === u._id)
+//             ? "pending"
+//             : u.requestStatus === "accepted"
+//               ? "accepted"
+//               : null,
+//         })),
+//       );
+//     });
+
+//     /* ---------- Realtime receive ---------- */
+//     onFriendRequestReceived((request) => {
+//       setIncomingRequests((prev) => [request, ...prev]);
+
+//       setAllUsers((prev) =>
+//         prev.map((u) =>
+//           u._id === request.sender
+//             ? { ...u, requestStatus: "pending" }
+//             : u,
+//         ),
+//       );
+//     });
+
+//     /* ---------- Sender confirmation ---------- */
+//     onFriendRequestSent((request) => {
+//       setAllUsers((prev) =>
+//         prev.map((u) =>
+//           u._id === request.receiver
+//             ? { ...u, requestStatus: "pending" }
+//             : u,
+//         ),
+//       );
+//     });
+
+//     /* ===============================
+//        🔥 FRIENDS LIST (SOURCE OF TRUTH)
+//     =============================== */
+//     onFriendsList((friends) => {
+//       const friendIds = friends.map((f) => f._id);
+
+//       setAllUsers((prev) =>
+//         prev.map((u) => ({
+//           ...u,
+//           requestStatus: friendIds.includes(u._id)
+//             ? "accepted"
+//             : u.requestStatus === "pending"
+//               ? "pending"
+//               : null,
+//         })),
+//       );
+//     });
+
+//     /* ---------- Accept / Reject ---------- */
+//     onFriendRequestActionDone((updatedRequest) => {
+//       setIncomingRequests((prev) =>
+//         prev.filter((r) => r._id !== updatedRequest._id),
+//       );
+//     });
+
+//     /* ---------- Cleanup ---------- */
+//     return () => {
+//       removeAllListeners();
+//     };
+//   }, []);
+
+//   /* ===============================
+//      ACTIONS
+//   =============================== */
+//   const handleSendRequest = (user) => {
+//     const socket = getSocket();
+//     if (!socket) return;
+
+//     socket.emit("send_friend_request", { receiverId: user._id });
+
+//     // optimistic UI
+//     setAllUsers((prev) =>
+//       prev.map((u) =>
+//         u._id === user._id ? { ...u, requestStatus: "pending" } : u,
+//       ),
+//     );
+//   };
+
+//   const handleAccept = (request) => {
+//     getSocket()?.emit("update_friend_request", {
+//       requestId: request._id,
+//       status: "accepted",
+//     });
+//   };
+
+//   const handleReject = (request) => {
+//     getSocket()?.emit("update_friend_request", {
+//       requestId: request._id,
+//       status: "rejected",
+//     });
+//   };
+
+//   /* ===============================
+//      UI
+//   =============================== */
+//   return (
+//     <div className="space-y-6">
+//       <div>
+//         <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
+//           Find People
+//         </h1>
+//         <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+//           Connect with other students and expand your network.
+//         </p>
+//       </div>
+
+//       <div className="bg-white dark:bg-[#26283e] rounded-xl shadow-sm p-4">
+//         {loading ? (
+//           <p className="text-sm text-gray-500">Loading users...</p>
+//         ) : (
+//           <div className="space-y-3">
+//             {allUsers.map((user) => (
+//               <div
+//                 key={user._id}
+//                 className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-[#1f2337]"
+//               >
+//                 <div className="flex items-center gap-3">
+//                   <img
+//                     src={user.avatar}
+//                     className="w-10 h-10 rounded-full"
+//                   />
+//                   <div>
+//                     <div className="text-sm font-medium">{user.name}</div>
+//                     <div className="text-xs text-gray-500">{user.email}</div>
+//                   </div>
+//                 </div>
+
+//                 <button
+//                   onClick={() => {
+//                     if (user.requestStatus === "accepted") {
+//                       console.log("💬 Open chat with:", user.name);
+//                     } else if (!user.requestStatus) {
+//                       handleSendRequest(user);
+//                     }
+//                   }}
+//                   disabled={user.requestStatus === "pending"}
+//                   className={`px-4 py-2 rounded-lg text-sm transition ${
+//                     user.requestStatus === "pending"
+//                       ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+//                       : user.requestStatus === "accepted"
+//                         ? "bg-green-600 text-white"
+//                         : "bg-blue-600 text-white"
+//                   }`}
+//                 >
+//                   {user.requestStatus === "pending"
+//                     ? "Request Sent"
+//                     : user.requestStatus === "accepted"
+//                       ? "Send Message"
+//                       : "Add Friend"}
+//                 </button>
+//               </div>
+//             ))}
+//           </div>
+//         )}
+//       </div>
+
+//       {/* 👇 RECEIVER SIDE */}
+//       <FriendRequests
+//         requests={incomingRequests}
+//         onAccept={handleAccept}
+//         onReject={handleReject}
+//       />
+//     </div>
+//   );
+// };
+
+// export default FindPeoplePage;
+
 import React, { useEffect, useState } from "react";
 import FriendRequests from "@/features/chat/components/FriendRequests";
-import { connectSocket, getSocket } from "@/features/chat/ChatSocket";
-import { getUsers } from "../services/findPeopleServices";
+import { getUsers, syncFriends } from "../services/findPeopleServices";
 import { getUserAvatar } from "@/utils/getUserAvatar";
 
+import {
+  onFriendRequestReceived,
+  onFriendRequestSent,
+  onFriendRequestActionDone,
+  removeAllListeners,
+} from "@/socket/socketListeners";
+
+import { getSocket } from "@/socket/socket";
+
 const FindPeoplePage = () => {
-  const [requests, setRequests] = useState([]); // ← not used yet — maybe you fetch requests elsewhere?
-  const [searchQuery, setSearchQuery] = useState("");
   const [allUsers, setAllUsers] = useState([]);
-  const [searchResults, setSearchResults] = useState([]);
+  const [incomingRequests, setIncomingRequests] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // Only one useEffect — runs once on mount
+  /* ===============================
+     INITIAL DATA (API = SOURCE OF TRUTH)
+  =============================== */
   useEffect(() => {
-    const fetchAllUsers = async () => {
-      setLoading(true);
-      try {
-        const usersArray = await getUsers();           // ← returns array directly
+  const fetchInitialData = async () => {
+    setLoading(true);
+    try {
+      const users = await getUsers();
+      const { friends, sentRequests, receivedRequests } = await syncFriends();
 
-        console.log("Fetched users:", usersArray);     // ← for debugging
+      // 👉 IDs derive karo (IMPORTANT FIX)
+      const friendIds = friends.map((f) => f._id);
+      const sentIds = sentRequests.map((r) => r.receiver._id);
 
-        // Optional: add default avatar if you want (not required)
-        const enhanced = usersArray.map(user => ({
-          ...user,
-          avatar: getUserAvatar(user.avatar),
-        }));
+      setIncomingRequests(receivedRequests);
 
-        setAllUsers(enhanced);
-        setSearchResults(enhanced);   // show all users initially
-      } catch (error) {
-        console.error("Failed to fetch users:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+      setAllUsers(
+        users.map((user) => {
+          let requestStatus = null;
 
-    fetchAllUsers();
-  }, []); // ← empty deps = run once
+          if (friendIds.includes(user._id)) {
+            requestStatus = "accepted";
+          } else if (sentIds.includes(user._id)) {
+            requestStatus = "pending";
+          }
 
-  // Filter when user clicks Search button
-  const handleSearch = () => {
-    if (!searchQuery.trim()) {
-      setSearchResults(allUsers); // show all again if search cleared
-      return;
+          return {
+            ...user,
+            avatar: getUserAvatar(user.avatar),
+            requestStatus,
+          };
+        })
+      );
+    } catch (err) {
+      console.error("❌ Initial data load failed:", err);
+    } finally {
+      setLoading(false);
     }
-
-    const filtered = allUsers.filter(
-      (user) =>
-        user.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        user.email?.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-    setSearchResults(filtered);
   };
 
+  fetchInitialData();
+}, []);
+
+
+  /* ===============================
+     SOCKET = REALTIME ONLY
+  =============================== */
+  useEffect(() => {
+    const socket = getSocket();
+    if (!socket) return;
+
+    /* ----- someone sent you request ----- */
+    onFriendRequestReceived((request) => {
+      setIncomingRequests((prev) => [request, ...prev]);
+
+      setAllUsers((prev) =>
+        prev.map((u) =>
+          u._id === request.sender ? { ...u, requestStatus: "pending" } : u,
+        ),
+      );
+    });
+
+    /* ----- confirmation to sender ----- */
+    onFriendRequestSent((request) => {
+      setAllUsers((prev) =>
+        prev.map((u) =>
+          u._id === request.receiver ? { ...u, requestStatus: "pending" } : u,
+        ),
+      );
+    });
+
+    /* ----- accept / reject done ----- */
+    onFriendRequestActionDone((updatedRequest) => {
+      setIncomingRequests((prev) =>
+        prev.filter((r) => r._id !== updatedRequest._id),
+      );
+
+      if (updatedRequest.status === "accepted") {
+        setAllUsers((prev) =>
+          prev.map((u) =>
+            u._id === updatedRequest.sender
+              ? { ...u, requestStatus: "accepted" }
+              : u,
+          ),
+        );
+      }
+    });
+
+    return () => {
+      removeAllListeners();
+    };
+  }, []);
+
+  /* ===============================
+     ACTIONS
+  =============================== */
   const handleSendRequest = (user) => {
-    const socket = getSocket();
-    socket.emit("send_friend_request", { to: user._id }); // ← note: your log shows _id, not id
+    getSocket()?.emit("send_friend_request", { receiverId: user._id });
 
-    // Optional: optimistic remove (like your original intent)
-    setSearchResults((prev) => prev.filter((u) => u._id !== user._id));
+    // optimistic UI
+    setAllUsers((prev) =>
+      prev.map((u) =>
+        u._id === user._id ? { ...u, requestStatus: "pending" } : u,
+      ),
+    );
   };
 
-  // Accept / Reject handlers (unchanged)
   const handleAccept = (request) => {
-    const socket = getSocket();
-    socket.emit("update_friend_request", {
-      requestId: request.id,
+    getSocket()?.emit("update_friend_request", {
+      requestId: request._id,
       status: "accepted",
     });
   };
 
   const handleReject = (request) => {
-    const socket = getSocket();
-    socket.emit("update_friend_request", {
-      requestId: request.id,
+    getSocket()?.emit("update_friend_request", {
+      requestId: request._id,
       status: "rejected",
     });
   };
 
+  /* ===============================
+     UI (UNCHANGED)
+  =============================== */
   return (
     <div className="space-y-6">
       <div>
@@ -89,72 +391,59 @@ const FindPeoplePage = () => {
         </p>
       </div>
 
-      {/* Search Bar */}
       <div className="bg-white dark:bg-[#26283e] rounded-xl shadow-sm p-4">
-        <div className="flex gap-3">
-          <input
-            type="text"
-            placeholder="Search by name or email..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="flex-1 px-4 py-3 rounded-lg bg-gray-50 dark:bg-[#222436] border border-gray-200 dark:border-[#222436] text-sm text-gray-800 dark:text-gray-100"
-          />
-          <button
-            onClick={handleSearch}
-            className="px-5 py-3 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white rounded-lg text-sm font-medium transition"
-          >
-            Search
-          </button>
-        </div>
-
-        {/* Search Results */}
         {loading ? (
-          <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">Loading users...</p>
-        ) : searchResults.length > 0 ? (
-          <div className="mt-4 space-y-3">
-            <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
-              Users
-            </h3>
-            {searchResults.map((user) => (
+          <p className="text-sm text-gray-500">Loading users...</p>
+        ) : (
+          <div className="space-y-3">
+            {allUsers.map((user) => (
               <div
-                key={user._id}                    // ← use _id (from your log)
-                className="flex items-center justify-between gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-[#1f2337] transition"
+                key={user._id}
+                className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-[#1f2337]"
               >
                 <div className="flex items-center gap-3">
-                  <img
-                    src={getUserAvatar(user.avatar)}
-                    alt={user.name}
-                    className="w-10 h-10 rounded-full object-cover"
-                  />
+                  <img src={user.avatar} className="w-10 h-10 rounded-full" />
                   <div>
-                    <div className="text-sm font-medium text-gray-900 dark:text-white">
-                      {user.name}
-                    </div>
-                    {user.email && (
-                      <div className="text-xs text-gray-500 dark:text-gray-400">
-                        {user.email}
-                      </div>
-                    )}
+                    <div className="text-sm font-medium">{user.name}</div>
+                    <div className="text-xs text-gray-500">{user.email}</div>
                   </div>
                 </div>
+
                 <button
-                  onClick={() => handleSendRequest(user)}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm"
+                  onClick={() => {
+                    if (user.requestStatus === "accepted") {
+                      console.log("💬 Open chat with:", user.name);
+                    } else if (!user.requestStatus) {
+                      handleSendRequest(user);
+                    }
+                  }}
+                  disabled={user.requestStatus === "pending"}
+                  className={`px-4 py-2 rounded-lg text-sm transition ${
+                    user.requestStatus === "pending"
+                      ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                      : user.requestStatus === "accepted"
+                        ? "bg-green-600 text-white"
+                        : "bg-blue-600 text-white"
+                  }`}
                 >
-                  Add Friend
+                  {user.requestStatus === "pending"
+                    ? "Request Sent"
+                    : user.requestStatus === "accepted"
+                      ? "Send Message"
+                      : "Add Friend"}
                 </button>
               </div>
             ))}
           </div>
-        ) : (
-          <p className="mt-4 text-sm text-gray-500 dark:text-gray-400 text-center">
-            No users found
-          </p>
         )}
       </div>
 
-      {/* Friend Requests */}
-      <FriendRequests requests={requests} onAccept={handleAccept} onReject={handleReject} />
+      {/* 👇 RECEIVER SIDE */}
+      <FriendRequests
+        requests={incomingRequests}
+        onAccept={handleAccept}
+        onReject={handleReject}
+      />
     </div>
   );
 };
