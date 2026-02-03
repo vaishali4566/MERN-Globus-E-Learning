@@ -7,7 +7,7 @@ import CreateCourse from "@/pages/trainer/courses/CreateCourse";
 import MyCourses from "@/features/courses/pages/MyCourses";
 import CourseBuilderPage from "@/pages/trainer/courses/CourseBuilderPage";
 import { CoursePlayerPage } from "@/features/coursePlayer";
-import FindPeople from "@/features/chat/pages/FindPeople";
+import FindPeople from "@/features/findPeople/pages/FindPeople";
 import ChatPage from "@/features/chat/pages/ChatPage";
 
 const TrainerRoutes = () => {
