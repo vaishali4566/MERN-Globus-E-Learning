@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import FriendList from "@/features/chat/components/FriendList";
 import ChatUI from "@/features/chat/components/ChatUI";
-import { connectSocket, getSocket } from "@/features/chat/ChatSocket";
+import { getSocket } from "@/socket/socket"; 
 import { getUserAvatar } from "@/utils/getUserAvatar";
 
-// ⚠️ abhi mock friends
+// ⚠️ abhi mock friends (later API se aayenge)
 const mockFriends = [
-  { id: "u1", name: "Alice Johnson", avatar: getUserAvatar() },
-  { id: "u2", name: "Bob Smith", avatar: getUserAvatar() },
+  { _id: "u1", name: "Alice Johnson", avatar: getUserAvatar() },
+  { _id: "u2", name: "Bob Smith", avatar: getUserAvatar() },
 ];
 
 const ChatLayout = () => {
@@ -15,15 +15,13 @@ const ChatLayout = () => {
   const [messages, setMessages] = useState([]);
   const [friends, setFriends] = useState(mockFriends);
 
-  // 🔌 SOCKET CONNECTION + LISTENERS
+  // 📩 SOCKET LISTENERS (no connect / disconnect here)
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) return;
+    const socket = getSocket();
+    if (!socket) return;
 
-    const socket = connectSocket(token);
-
-    // 📩 Receive message
-    socket.on("receive_message", (msg) => {
+    // 📥 Receive message
+    const handleReceiveMessage = (msg) => {
       setMessages((prev) => [
         ...prev,
         {
@@ -35,10 +33,10 @@ const ChatLayout = () => {
           }),
         },
       ]);
-    });
+    };
 
     // 📤 Sender ack
-    socket.on("message_sent", (msg) => {
+    const handleMessageSent = (msg) => {
       setMessages((prev) => [
         ...prev,
         {
@@ -50,25 +48,33 @@ const ChatLayout = () => {
           }),
         },
       ]);
-    });
+    };
 
-    return () => socket.disconnect();
+    socket.on("receive_message", handleReceiveMessage);
+    socket.on("message_sent", handleMessageSent);
+
+    // ✅ cleanup: sirf listeners remove
+    return () => {
+      socket.off("receive_message", handleReceiveMessage);
+      socket.off("message_sent", handleMessageSent);
+    };
   }, []);
 
   // 🧑‍🤝‍🧑 Select chat friend
   const handleSelect = (friend) => {
     setSelectedFriend(friend);
-    setMessages([]); // baad me yahan history API
+    setMessages([]); // later: chat history API
   };
 
-  // 📤 Send message
+  // 📤 Send message (backend compatible)
   const handleSend = (text) => {
     if (!selectedFriend) return;
 
     const socket = getSocket();
+    if (!socket) return;
 
     socket.emit("send_message", {
-      receiverId: selectedFriend.id,
+      receiverId: selectedFriend._id, // ✅ MongoDB id
       message: text,
     });
   };
