@@ -13,7 +13,7 @@ const ChatUI = ({ selectedFriend, messages = [], onSend }) => {
 
   if (!selectedFriend) {
     return (
-      <div className="bg-white dark:bg-[#1f2337] rounded-xl shadow-sm  h-full flex items-center justify-center">
+      <div className="bg-white dark:bg-[#1f2337] rounded-xl shadow-sm  h-210 flex items-center justify-center">
         <div className="text-center text-gray-500 dark:text-gray-400">Select a friend to start chatting</div>
       </div>
     );

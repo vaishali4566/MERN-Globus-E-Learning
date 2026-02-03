@@ -37,17 +37,14 @@ export default function QuizPlayer({ quizId, onSubmit }) {
   };
 
   const handleSubmit = () => {
-    console.log("Student Answers:", answers);
     setSubmitted(true);
-    setShowResult(true); // show result in same component
-    console.log(showResult)
+    setShowResult(true); 
 
     // 🔜 optional: send answers to backend
     if (onSubmit) onSubmit(answers, quiz); // callback to parent if needed
   };
 
   const handleTimeUp = () => {
-    console.log("Time's up! Auto-submitting...");
     handleSubmit();
   };
 

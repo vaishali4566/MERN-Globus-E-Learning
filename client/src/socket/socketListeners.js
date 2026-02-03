@@ -64,6 +64,8 @@ export const onFriendsList = (cb) => {
   getSocket()?.on("friends_list", cb);
 };
 
+
+
 /* =========================
    CLEANUP (VERY IMPORTANT)
 ========================= */

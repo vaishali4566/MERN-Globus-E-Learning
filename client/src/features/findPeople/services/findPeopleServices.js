@@ -6,7 +6,6 @@ import api from "@/services/api";
 export const getUsers = async (params = {}) => {
   try {
     const response = await api.get("/users", { params });
-    console.log("🟢 getUsers API response:", response.data);
     return response.data; // array of users
   } catch (err) {
     console.error("❌ getUsers API error:", err);
@@ -20,7 +19,6 @@ export const getUsers = async (params = {}) => {
 export const syncFriends = async () => {
   try {
     const response = await api.get("/friend-requests");
-    console.log("🟢 syncFriends API response:", response.data);
 
     if (!response.data.success) {
       throw new Error(response.data.message || "Failed to sync friend data");

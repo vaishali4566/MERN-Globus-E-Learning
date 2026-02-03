@@ -15,7 +15,7 @@ import AllCoursesPage from "@/features/courses/pages/AllCoursesPage";
 import CheckoutPage from "@/features/payment/pages/CheckoutPage";
 import { CoursePlayerPage } from "@/features/coursePlayer";
 import { CourseProgressDetail } from "@/features/progress";
-import FindPeople from "@/features/chat/pages/FindPeople";
+import FindPeople from "@/features/findPeople/pages/FindPeople";
 
 const StudentRoutes = () => {
   return (

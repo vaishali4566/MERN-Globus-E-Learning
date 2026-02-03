@@ -1,96 +1,177 @@
 import React, { useEffect, useState } from "react";
 import FriendList from "@/features/chat/components/FriendList";
 import ChatUI from "@/features/chat/components/ChatUI";
-import { getSocket } from "@/socket/socket"; 
-import { getUserAvatar } from "@/utils/getUserAvatar";
+import { getSocket } from "@/socket/socket";
 
-// ⚠️ abhi mock friends (later API se aayenge)
-const mockFriends = [
-  { _id: "u1", name: "Alice Johnson", avatar: getUserAvatar() },
-  { _id: "u2", name: "Bob Smith", avatar: getUserAvatar() },
-];
+// Services
+import {
+  fetchChatConversationsService,
+  getOrCreateConversation,
+  loadMessages,
+} from "../services/chatServices";
 
 const ChatLayout = () => {
-  const [selectedFriend, setSelectedFriend] = useState(null);
-  const [messages, setMessages] = useState([]);
-  const [friends, setFriends] = useState(mockFriends);
+  const currentUser = JSON.parse(localStorage.getItem("user"));
+  const currentUserId = currentUser?.id;
 
-  // 📩 SOCKET LISTENERS (no connect / disconnect here)
+  // 👉 REQUIRED STORES
+  const [selectedFriend, setSelectedFriend] = useState(null);
+  const [activeConversationId, setActiveConversationId] = useState(null);
+
+  // Other state
+  const [messages, setMessages] = useState([]);
+  const [friends, setFriends] = useState([]);
+
+  /* ===============================
+     1️⃣ Load friend list
+  =============================== */
+  useEffect(() => {
+    const fetchFriends = async () => {
+      try {
+        const list = await fetchChatConversationsService();
+        setFriends(Array.isArray(list) ? list : []);
+      } catch (err) {
+        console.error("❌ Failed to load friends:", err);
+        setFriends([]);
+      }
+    };
+
+    fetchFriends();
+  }, []);
+
+  /* ===============================
+     2️⃣ Socket listener
+  =============================== */
   useEffect(() => {
     const socket = getSocket();
     if (!socket) return;
 
-    // 📥 Receive message
     const handleReceiveMessage = (msg) => {
-      setMessages((prev) => [
-        ...prev,
-        {
-          text: msg.message,
-          fromMe: false,
-          time: new Date(msg.createdAt).toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          }),
-        },
-      ]);
-    };
 
-    // 📤 Sender ack
-    const handleMessageSent = (msg) => {
-      setMessages((prev) => [
-        ...prev,
-        {
-          text: msg.message,
-          fromMe: true,
-          time: new Date(msg.createdAt).toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          }),
-        },
-      ]);
-    };
+  const isActive =
+    activeConversationId && msg.conversation === activeConversationId;
+
+  if (isActive) {
+    setMessages((prev) => [
+      ...prev,
+      {
+        _id: msg._id,
+        text: msg.text,
+        fromMe: msg.sender === currentUserId,
+        time: new Date(msg.createdAt).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+      },
+    ]);
+  }
+};
+
 
     socket.on("receive_message", handleReceiveMessage);
-    socket.on("message_sent", handleMessageSent);
 
-    // ✅ cleanup: sirf listeners remove
-    return () => {
-      socket.off("receive_message", handleReceiveMessage);
-      socket.off("message_sent", handleMessageSent);
-    };
-  }, []);
+    return () => socket.off("receive_message", handleReceiveMessage);
+  }, [activeConversationId]);
 
-  // 🧑‍🤝‍🧑 Select chat friend
-  const handleSelect = (friend) => {
-    setSelectedFriend(friend);
-    setMessages([]); // later: chat history API
-  };
+  /* ===============================
+     3️⃣ Select friend
+  =============================== */
+  const handleSelect = async (friend) => {
 
-  // 📤 Send message (backend compatible)
+  setSelectedFriend(friend);
+
+  try {
+
+    const conversation = await getOrCreateConversation(friend._id);
+
+    if (!conversation) {
+      console.warn("⚠️ No conversation returned");
+      return;
+    }
+
+    setActiveConversationId(conversation._id);
+
+    const msgs = await loadMessages(conversation._id);
+
+
+    const formattedMessages = msgs.map((m) => {
+      const fromMe =
+        String(m.sender?._id || m.sender) === String(currentUserId);
+
+      return {
+        _id: m._id,
+        text: m.text,
+        fromMe,
+        time: new Date(m.createdAt).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+      };
+    });
+
+    setMessages(formattedMessages);
+
+    setFriends((prev) =>
+      prev.map((f) =>
+        f._id === friend._id ? { ...f, unreadCount: 0 } : f,
+      ),
+    );
+
+  } catch (err) {
+    console.error("❌ Failed to open chat:", err);
+  }
+};
+
+  /* ===============================
+     4️⃣ Send message
+  =============================== */
   const handleSend = (text) => {
-    if (!selectedFriend) return;
+    if (!selectedFriend || !activeConversationId) return;
 
     const socket = getSocket();
     if (!socket) return;
 
     socket.emit("send_message", {
-      receiverId: selectedFriend._id, // ✅ MongoDB id
-      message: text,
+      receiverId: selectedFriend._id,
+      conversationId: activeConversationId,
+      text: text,
     });
+
+    // optimistic UI
+    setMessages((prev) => [
+      ...prev,
+      {
+        _id: `temp-${Date.now()}`,
+
+        text,
+        fromMe: true,
+        time: new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+      },
+    ]);
+
+    setFriends((prev) =>
+      prev.map((f) =>
+        f._id === selectedFriend._id ? { ...f, lastMessage: text } : f,
+      ),
+    );
   };
 
+  /* ===============================
+     UI
+  =============================== */
   return (
-    <div className="h-screen dark:bg-[#26283e] flex">
+    <div className="h-210 dark:bg-[#26283e] flex">
       {/* LEFT */}
-      <aside className="w-96 border-r border-gray-100 dark:border-[#222436] overflow-y-auto">
-        <div className="space-y-6">
-          <FriendList friends={friends} onSelect={handleSelect} />
-        </div>
+      <aside className="w-96 border-r border-gray-100 dark:border-[#222436]">
+        <FriendList friends={friends} onSelect={handleSelect} />
       </aside>
 
       {/* RIGHT */}
-      <main className="flex-1 overflow-y-auto px-6">
-        <div className="bg-gray-100 dark:bg-[#1f2337] rounded-xl shadow-sm p-6 h-[calc(100vh-96px)]">
+      <main className="flex-1 px-6">
+        <div className="bg-gray-100 dark:bg-[#1f2337] rounded-xl p-6 h-full">
           <ChatUI
             selectedFriend={selectedFriend}
             messages={messages}

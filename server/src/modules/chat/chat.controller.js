@@ -1,33 +1,69 @@
-import { getMessagesService, sendMessageService } from "../modules/chat/chat.service.js";
+import { getMessageFriendListService, getOrCreateConversationService, fetchChatsService} from "./chat.service.js";
 
-// 📥 Get 1-to-1 messages
-export const getMessages = async (req, res) => {
-  const { user1, user2 } = req.query;
-
-  if (!user1 || !user2)
-    return res.status(400).json({ error: "Both user IDs required" });
-
+/**
+ * GET /api/chats/:conversationId
+ * Fetch all chats for a conversation
+ */
+export const fetchChatsController = async (req, res) => {
   try {
-    const messages = await getMessagesService(user1, user2);
-    res.status(200).json(messages);
+    const { conversationId } = req.params;
+
+    const chats = await fetchChatsService(conversationId);
+
+    res.status(200).json({
+      success: true,
+      data: chats,
+    });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Server error" });
+    console.error("❌ fetchChatsController error:", err.message);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch chats",
+    });
   }
 };
 
-// 📤 Send a new message
-export const sendMessage = async (req, res) => {
-  const { sender, receiver, message } = req.body;
 
-  if (!sender || !receiver || !message)
-    return res.status(400).json({ error: "All fields required" });
-
+export const getMessageFriendListController = async (req, res) => {
   try {
-    const newMessage = await sendMessageService(sender, receiver, message);
-    res.status(201).json(newMessage);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Server error" });
+    const userId = req.user.id;
+
+    const friends = await getMessageFriendListService(userId);
+
+    return res.status(200).json({
+      success: true,
+      data: friends,
+    });
+  } catch (error) {
+    console.error("❌ Message Friend List Error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to load conversations",   
+    });
   }
 };
+
+/**
+ * Controller to get or create conversation between logged-in user & selected user
+ */
+export const getOrCreateConversationController = async (req, res) => {
+  try {
+    const myId = req.user.id;
+    const friendId = req.params.friendId; 
+
+    const conversation = await getOrCreateConversationService(myId, friendId);
+
+    res.status(200).json({
+      success: true,
+      data: conversation,
+    });
+  } catch (err) {
+    console.error("❌ getOrCreateConversation error:", err.message);
+    res.status(500).json({
+      success: false,
+      message: err.message || "Failed to get or create conversation",
+    });
+  }
+};
+
+
