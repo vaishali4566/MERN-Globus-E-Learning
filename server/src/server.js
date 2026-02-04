@@ -24,7 +24,10 @@ const startServer = async () => {
 
       const io = new Server(server, {
         cors: {
-          origin: "*",
+          origin: [
+            "http://localhost:5173",
+            "https://mern-globus-e-learning.vercel.app",
+          ],
           methods: ["GET", "POST"],
         },
       });
@@ -38,7 +41,6 @@ const startServer = async () => {
     server.listen(PORT, () => {
       console.log(`🚀 Server running on port ${PORT}`);
     });
-
   } catch (error) {
     console.error("❌ Server failed to start", error);
     process.exit(1);
