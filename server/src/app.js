@@ -10,7 +10,10 @@ const app = express();
 /* ---------- Global Middlewares ---------- */
 app.use(
   cors({
-    origin: "http://localhost:5173",
+   origin: [
+    "http://localhost:5173",
+    "https://mern-globus-e-learning.vercel.app"
+  ],
     credentials: true,               
   })
 );
