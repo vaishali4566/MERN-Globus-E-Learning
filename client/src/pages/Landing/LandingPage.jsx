@@ -5,26 +5,30 @@ import {
   FiVideo,
   FiBookOpen,
   FiCheckCircle,
-  FiStar,
 } from "react-icons/fi";
 import { Link } from "react-router-dom";
 
 const LandingPage = () => {
   return (
     <div className="min-h-screen">
-
       {/* ================= TOP NAV ================= */}
       <header className="border-b dark:border-[#1E2B4A]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <h1 className="text-lg font-bold text-gray-900 dark:text-white">
-            EduPlatform
+            Globus-E-Learning
           </h1>
 
           <div className="flex items-center gap-3">
-            <Link to="/auth/login" className="text-sm px-4 py-2 rounded-lg border dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-darkHover">
+            <Link
+              to="/auth/login"
+              className="text-sm px-4 py-2 rounded-lg border dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-darkHover"
+            >
               Login
             </Link>
-            <Link to="/auth/signup" className="text-sm px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700">
+            <Link
+              to="/auth/signup"
+              className="text-sm px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700"
+            >
               Sign Up
             </Link>
           </div>
@@ -33,7 +37,6 @@ const LandingPage = () => {
 
       {/* ================= PAGE CONTENT ================= */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-32">
-
         {/* ================= HERO ================= */}
         <section className="grid lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-6">
@@ -45,8 +48,8 @@ const LandingPage = () => {
             </h1>
 
             <p className="text-gray-600 dark:text-gray-400 text-lg max-w-xl">
-              Attend expert-led live classes, track your learning progress,
-              and master skills with structured courses built for real results.
+              Attend expert-led live classes, track your learning progress, and
+              master skills with structured courses built for real results.
             </p>
 
             <div className="flex items-center gap-4">
@@ -143,7 +146,6 @@ const LandingPage = () => {
             Enroll Now
           </button>
         </section>
-
       </main>
     </div>
   );
