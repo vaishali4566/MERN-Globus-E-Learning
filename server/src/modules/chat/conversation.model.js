@@ -12,17 +12,11 @@ const conversationSchema = new mongoose.Schema(
 
     lastMessage: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Message",
+      ref: "Chat",
       default: null,
     },
   },
-  { timestamps: true } // createdAt, updatedAt
+  { timestamps: true } 
 );
-
-/**
- * IMPORTANT:
- * participants array hamesha 2 users ka hoga
- * order matter nahi karta
- */
 
 export default mongoose.model("Conversation", conversationSchema);

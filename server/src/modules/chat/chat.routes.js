@@ -22,11 +22,3 @@ router.get(
 router.get("/:conversationId", protect, fetchChatsController);
 
 export default router;
-
-// 1️⃣ Conversation Model + API
-// 2️⃣ Message Model
-// 3️⃣ Get / Create Conversation API
-// 4️⃣ Load Messages API
-// 5️⃣ Send Message Socket
-// 6️⃣ Receive Message UI
-// 7️⃣ Seen / unread (last)
