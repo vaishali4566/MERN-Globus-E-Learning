@@ -10,38 +10,34 @@ dotenv.config();
 const PORT = process.env.PORT || 5000;
 const ENABLE_SOCKET = process.env.ENABLE_SOCKET === "true";
 
+const server = http.createServer(app);
+
 const startServer = async () => {
   try {
-    // 1️⃣ Connect to Database
+    // 1️⃣ Connect DB
     await connectDB();
     console.log("✅ Database connected");
 
-    // 2️⃣ Create HTTP server from Express app
-    const server = http.createServer(app);
-
-    // 3️⃣ Conditionally start socket.io (DEV only)
+    // 2️⃣ Socket.io (only when enabled)
     if (ENABLE_SOCKET) {
-      console.log("🟢 Socket.io enabled (dev mode)");
+      console.log("🟢 Socket.io enabled");
 
       const io = new Server(server, {
         cors: {
-          origin: "*", // replace later with frontend URL
+          origin: "*",
           methods: ["GET", "POST"],
         },
       });
 
-      // 4️⃣ Register chat socket logic
       registerChatSocket(io);
     } else {
-      console.log("🟡 Socket.io disabled (prod / Vercel)");
+      console.log("🟡 Socket.io disabled");
     }
 
-    // 5️⃣ Start server ONLY in non-Vercel environment
-    if (process.env.NODE_ENV !== "production") {
-      server.listen(PORT, () => {
-        console.log(`🚀 Server running on http://localhost:${PORT}`);
-      });
-    }
+    // 3️⃣ ALWAYS listen (Render requires this)
+    server.listen(PORT, () => {
+      console.log(`🚀 Server running on port ${PORT}`);
+    });
 
   } catch (error) {
     console.error("❌ Server failed to start", error);
