@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import StudentDashboard from "../pages/student/dashboard/StudentDashboard";
 import MyCoursesPage from "@/pages/student/courses/MyCoursesPage";
-import Assignments from "../pages/student/assignments/Page";
+import Assignments from "../pages/student/assignments/page";
 import Chat from "../features/chat/pages/ChatPage";
 import Profile from "../pages/student/Profile";
 import Quiz from "../pages/student/quiz/Page";
