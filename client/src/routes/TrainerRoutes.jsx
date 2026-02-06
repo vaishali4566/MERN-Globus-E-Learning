@@ -9,6 +9,7 @@ import CourseBuilderPage from "@/pages/trainer/courses/CourseBuilderPage";
 import { CoursePlayerPage } from "@/features/coursePlayer";
 import FindPeople from "@/features/findPeople/pages/FindPeople";
 import ChatPage from "@/features/chat/pages/ChatPage";
+import Profile from "@/features/profile/pages/Profile";
 
 const TrainerRoutes = () => {
   return (
@@ -25,6 +26,7 @@ const TrainerRoutes = () => {
         <Route path="find-people" element={<FindPeople />} />
         <Route path="courses/create" element={<CreateCourse />} />
         <Route path="my-courses" element={<MyCourses />} />
+        <Route path="profile" element={<Profile />} />
         <Route
           path="courses/:courseId/builder"
           element={<CourseBuilderPage />}

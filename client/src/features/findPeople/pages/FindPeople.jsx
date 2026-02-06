@@ -1,5 +1,3 @@
-
-
 import React, { useEffect, useState } from "react";
 import FriendRequests from "@/features/findPeople/components/FriendRequests";
 import { getUsers, syncFriends } from "../services/findPeopleServices";

@@ -38,7 +38,9 @@ export const checkEnrollment = asyncHandler(async (req, res) => {
 
 
 export const getMyEnrolledCourses = async (req, res, next) => {
+  console.time("getMyCourses");
   const user = req.user;
+
 
   if (user.role !== "student") {
     return next(new AppError("Only students can access enrolled courses", 403));
@@ -51,4 +53,5 @@ export const getMyEnrolledCourses = async (req, res, next) => {
     count: enrollments.length,
     data: enrollments,
   });
+   console.timeEnd("getMyCourses");
 };

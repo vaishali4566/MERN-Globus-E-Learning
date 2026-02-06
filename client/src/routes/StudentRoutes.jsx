@@ -3,7 +3,7 @@ import StudentDashboard from "../pages/student/dashboard/StudentDashboard";
 import MyCoursesPage from "@/pages/student/courses/MyCoursesPage";
 import Assignments from "../pages/student/assignments/page";
 import Chat from "../features/chat/pages/ChatPage";
-import Profile from "../pages/student/Profile";
+import Profile from "../features/profile/pages/Profile";
 import Quiz from "../pages/student/quiz/Page";
 import SchedulePage from "@/pages/student/schedule/Page";
 import LiveClasses from "@/pages/student/liveclass/Page";
@@ -16,6 +16,7 @@ import CheckoutPage from "@/features/payment/pages/CheckoutPage";
 import { CoursePlayerPage } from "@/features/coursePlayer";
 import { CourseProgressDetail } from "@/features/progress";
 import FindPeople from "@/features/findPeople/pages/FindPeople";
+import AnnouncementsPage from "@/features/announcements/pages/AnnouncementsPage";
 
 const StudentRoutes = () => {
   return (
@@ -32,8 +33,6 @@ const StudentRoutes = () => {
         {/* default: /student */}
         <Route path="dashboard" element={<StudentDashboard />} />
         <Route path="explore-courses" element={<AllCoursesPage />} />
-
-        {/* /student/my-courses */}
         <Route path="my-courses" element={<MyCoursesPage />} />
         <Route path="find-people" element={<FindPeople />} />
         <Route path="assignments" element={<Assignments />} />
@@ -44,6 +43,7 @@ const StudentRoutes = () => {
         <Route path="live-classes" element={<LiveClasses />} />
         <Route path="progress" element={<Progress />} />
         <Route path="certificates" element={<Certificates />} />
+        <Route path="announcements" element={<AnnouncementsPage />} />
         <Route path="checkout/:courseId" element={<CheckoutPage />} />
         
       </Route>

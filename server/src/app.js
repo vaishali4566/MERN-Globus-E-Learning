@@ -1,6 +1,5 @@
 import express from "express";
 import cors from "cors";
-
 import loadRoutes from "./routes/index.js";
 import { errorHandler } from "./middlewares/error.middleware.js";
 import path from "path"

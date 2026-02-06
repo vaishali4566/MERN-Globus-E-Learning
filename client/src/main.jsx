@@ -4,19 +4,19 @@ import "./index.css";
 import App from "./App.jsx";
 import { ThemeProvider } from "./context/ThemeProvider";
 import { BrowserRouter } from "react-router-dom";
+import { UserProvider } from "@/context/UserContext";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
       <ThemeProvider>
-      <App />
-    </ThemeProvider>
+        <UserProvider>
+          <App />
+        </UserProvider>
+      </ThemeProvider>
     </BrowserRouter>
-  </StrictMode>
+  </StrictMode>,
 );
-
-
-
 
 // | #  | Feature              | Kya karta hai                  | Real Use Case          |
 // | -- | -------------------- | ------------------------------ | ---------------------- |
