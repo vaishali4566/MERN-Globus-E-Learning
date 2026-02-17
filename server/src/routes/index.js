@@ -32,7 +32,7 @@ const loadRoutes = (app) => {
 
   // User routes
   app.use("/api/users", userRoutes);
-  
+
   //Quiz routes
   app.use("/api/quizzes", quizRoutes);
 

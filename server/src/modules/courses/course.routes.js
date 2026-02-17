@@ -13,22 +13,140 @@ import { uploadThumbnail } from "../../middlewares/uploadThumbnail.middleware.js
 
 const router = express.Router();
 
-// ========== GET Routes ==========
+/**
+ * @swagger
+ * tags:
+ *   name: Courses
+ *   description: Course management APIs
+ */
+
+/**
+ * @swagger
+ * /api/courses:
+ *   get:
+ *     summary: Get all courses
+ *     tags: [Courses]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Courses fetched successfully
+ */
 router.get("/", protect, getAllCourses);
+
+/**
+ * @swagger
+ * /api/courses/my-courses:
+ *   get:
+ *     summary: Get trainer's courses
+ *     tags: [Courses]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Trainer courses fetched
+ */
 router.get("/my-courses", protect, allowedRoles("trainer"), getMyCourses);
+
+/**
+ * @swagger
+ * /api/courses/{courseId}/player:
+ *   get:
+ *     summary: Get course player data
+ *     tags: [Courses]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: courseId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Player data fetched
+ */
 router.get("/:courseId/player", protect, getCoursePlayerData);
+
+/**
+ * @swagger
+ * /api/courses/{courseId}:
+ *   get:
+ *     summary: Get course by ID
+ *     tags: [Courses]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: courseId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Course fetched successfully
+ */
 router.get("/:courseId", protect, getCourseById);
 
-// ========== POST Route (with file upload) ==========
+/**
+ * @swagger
+ * /api/courses:
+ *   post:
+ *     summary: Create a new course
+ *     tags: [Courses]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - title
+ *               - description
+ *               - price
+ *               - thumbnail
+ *             properties:
+ *               title:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               price:
+ *                 type: number
+ *               thumbnail:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       201:
+ *         description: Course created successfully
+ */
 router.post(
   "/",
   protect,
   allowedRoles("trainer"),
-  uploadThumbnail.single("thumbnail"), // multer must run before controller
+  uploadThumbnail.single("thumbnail"),
   createCourse
 );
 
-// ========== PATCH Route ==========
+/**
+ * @swagger
+ * /api/courses/{courseId}/publish:
+ *   patch:
+ *     summary: Publish a course
+ *     tags: [Courses]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: courseId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Course published successfully
+ */
 router.patch(
   "/:courseId/publish",
   protect,

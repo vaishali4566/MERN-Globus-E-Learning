@@ -1,5 +1,6 @@
 import User from "../auth/auth.model.js";
 import { AppError } from "../../utils/appError.js";
+import bcrypt from "bcryptjs";
 
 // Get all users or filter by role
 export const getUsersService = async (role, currentUserId) => {
@@ -12,7 +13,7 @@ export const getUsersService = async (role, currentUserId) => {
 
   // 👇 remove current user
   return users.filter(
-    (user) => user._id.toString() !== currentUserId
+    (user) => user._id.toString() !== currentUserId 
   );
 };
 
