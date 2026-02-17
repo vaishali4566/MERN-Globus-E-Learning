@@ -1,15 +1,14 @@
-import React from "react";
-import { Routes, Route } from "react-router-dom";
-import ProtectedRoute from "./gaurds/ProtectedRoute";
 import DashboardLayout from "@/components/layout/DashboardLayout";
-import TrainerDashboard from "@/pages/trainer/dashboard/TrainerDashboard";
-import CreateCourse from "@/pages/trainer/courses/CreateCourse";
-import MyCourses from "@/features/courses/pages/MyCourses";
-import CourseBuilderPage from "@/pages/trainer/courses/CourseBuilderPage";
-import { CoursePlayerPage } from "@/features/coursePlayer";
-import FindPeople from "@/features/findPeople/pages/FindPeople";
 import ChatPage from "@/features/chat/pages/ChatPage";
+import { CoursePlayerPage } from "@/features/coursePlayer";
+import MyCourses from "@/features/courses/pages/MyCourses";
+import FindPeople from "@/features/findPeople/pages/FindPeople";
 import Profile from "@/features/profile/pages/Profile";
+import CourseBuilderPage from "@/pages/trainer/courses/CourseBuilderPage";
+import CreateCourse from "@/pages/trainer/courses/CreateCourse";
+import TrainerDashboard from "@/pages/trainer/dashboard/TrainerDashboard";
+import { Route, Routes } from "react-router-dom";
+import ProtectedRoute from "./gaurds/ProtectedRoute";
 
 const TrainerRoutes = () => {
   return (

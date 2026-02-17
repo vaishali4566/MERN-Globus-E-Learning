@@ -5,7 +5,7 @@ import AuthLayout from "../../features/auth/components/AuthLayout";
 import AuthForm from "../../features/auth/components/AuthForm";
 import SocialLogin from "../../features/auth/components/SocialLogin";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { signupApi } from "../../features/auth/authApi"; // make sure you have signupApi defined
+import { signupApi } from "../../features/auth/authApi";
 
 import logo from "../../assets/images/auth/logo.jpg";
 

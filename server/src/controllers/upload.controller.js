@@ -52,7 +52,21 @@ export const uploadProfilePhoto = async (req, res) => {
 
     const userId = req.user.id;
 
-    // 1️⃣ Upload to Cloudinary
+    // 1️⃣ Get existing user
+    const user = await User.findById(userId);
+
+    // 2️⃣ Delete old image from Cloudinary (if exists)
+    if (user.profilePhoto) {
+      const publicId = user.profilePhoto
+        .split("/")
+        .slice(-3)
+        .join("/")
+        .split(".")[0];
+
+      await cloudinary.uploader.destroy(publicId);
+    }
+
+    // 3️⃣ Upload new image
     const result = await cloudinary.uploader.upload(req.file.path, {
       resource_type: "image",
       folder: `users/${userId}/profile`,
@@ -62,15 +76,14 @@ export const uploadProfilePhoto = async (req, res) => {
       ]
     });
 
-    // 2️⃣ Update user profile
+    // 4️⃣ Update DB
     await User.findByIdAndUpdate(userId, {
       profilePhoto: result.secure_url
     });
 
-    // 3️⃣ Delete local file
-    fs.unlinkSync(req.file.path);
+    // 5️⃣ Remove local file
+    await fs.promises.unlink(req.file.path);
 
-    // 4️⃣ Send data to frontend
     res.status(200).json({
       success: true,
       url: result.secure_url,
@@ -85,3 +98,4 @@ export const uploadProfilePhoto = async (req, res) => {
     });
   }
 };
+

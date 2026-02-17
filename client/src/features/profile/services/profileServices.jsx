@@ -54,3 +54,24 @@ export const updatePasswordService = async (payload) => {
   const { data } = await api.patch("/users/me/password", payload);
   return data;
 };
+
+/* =====================
+   PROFILE PHOTO
+===================== */
+
+export const uploadProfilePhotoService = async (file) => {
+  const formData = new FormData();
+  formData.append("profilePhoto", file); // IMPORTANT: key must match multer
+
+  const { data } = await api.post(
+    "/uploads/profile-photo",
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
+
+  return data;
+};

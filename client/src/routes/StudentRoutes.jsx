@@ -1,22 +1,22 @@
-import { Routes, Route } from "react-router-dom";
-import StudentDashboard from "../pages/student/dashboard/StudentDashboard";
+import DashboardLayout from "@/components/layout/DashboardLayout";
+import AnnouncementsPage from "@/features/announcements/pages/AnnouncementsPage";
+import { CoursePlayerPage } from "@/features/coursePlayer";
+import AllCoursesPage from "@/features/courses/pages/AllCoursesPage";
+import FindPeople from "@/features/findPeople/pages/FindPeople";
+import CheckoutPage from "@/features/payment/pages/CheckoutPage";
+import { CourseProgressDetail } from "@/features/progress";
+import Certificates from "@/pages/student/certificates/Page";
 import MyCoursesPage from "@/pages/student/courses/MyCoursesPage";
-import Assignments from "../pages/student/assignments/page";
-import Chat from "../features/chat/pages/ChatPage";
-import Profile from "../features/profile/pages/Profile";
-import Quiz from "../pages/student/quiz/Page";
-import SchedulePage from "@/pages/student/schedule/Page";
 import LiveClasses from "@/pages/student/liveclass/Page";
 import Progress from "@/pages/student/progress/Page";
-import Certificates from "@/pages/student/certificates/Page";
-import DashboardLayout from "@/components/layout/DashboardLayout";
+import SchedulePage from "@/pages/student/schedule/Page";
 import ProtectedRoute from "@/routes/gaurds/ProtectedRoute";
-import AllCoursesPage from "@/features/courses/pages/AllCoursesPage";
-import CheckoutPage from "@/features/payment/pages/CheckoutPage";
-import { CoursePlayerPage } from "@/features/coursePlayer";
-import { CourseProgressDetail } from "@/features/progress";
-import FindPeople from "@/features/findPeople/pages/FindPeople";
-import AnnouncementsPage from "@/features/announcements/pages/AnnouncementsPage";
+import { Route, Routes } from "react-router-dom";
+import Chat from "../features/chat/pages/ChatPage";
+import Profile from "../features/profile/pages/Profile";
+import Assignments from "../pages/student/assignments/page";
+import StudentDashboard from "../pages/student/dashboard/StudentDashboard";
+import Quiz from "../pages/student/quiz/Page";
 
 const StudentRoutes = () => {
   return (
