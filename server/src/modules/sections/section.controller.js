@@ -1,6 +1,6 @@
 import asyncHandler from "../../utils/asyncHandler.js";
 import { AppError } from "../../utils/appError.js";
-import { createSectionService } from "./section.service.js";
+import { createSectionService, deleteSectionService } from "./section.service.js";
 
 export const createSection = asyncHandler(async (req, res) => {
   const { title, description, courseId } = req.body;
@@ -23,5 +23,25 @@ export const createSection = asyncHandler(async (req, res) => {
     success: true,
     message: "Section created successfully",
     data: section,
+  });
+});
+
+export const deleteSection = asyncHandler(async (req, res) => {
+  const { sectionId } = req.params;
+  const { courseId } = req.query;
+
+  if (!sectionId || !courseId) {
+    throw new AppError("Section id and course id are required", 400);
+  }
+
+  await deleteSectionService({
+    sectionId,
+    courseId,
+    deletedBy: req.user.id,
+  });
+
+  res.status(200).json({
+    success: true,
+    message: "Section deleted successfully",
   });
 });

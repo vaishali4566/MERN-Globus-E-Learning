@@ -25,7 +25,7 @@ export const getUsersService = async (role) => {
   const query = role ? `?role=${role}` : "";
   const { data } = await api.get(`/users${query}`);
   return data;
-};
+};                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
 
 /* =====================
    BASIC INFO

@@ -37,8 +37,14 @@ export const createAssignmentService = async (data) => {
     isPublished: false,
   });
 
+  if (course.status === "published") {
+    course.needsRepublish = true;
+    await course.save();
+  }
+
   return assignment;
 };
+
 
 /**
  * Get assignments for a student from their enrolled courses
@@ -102,3 +108,61 @@ export const getStudentAssignmentsService = async (studentId) => {
     throw error;
   }
 };
+
+export const deleteAssignmentService = async ({
+  assignmentId,
+  courseId,
+  deletedBy,
+}) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    // 1️⃣ Validate course
+    const course = await Course.findById(courseId).session(session);
+    if (!course) throw new AppError("Course not found", 404);
+
+    // 2️⃣ Ownership check
+    if (course.trainer.toString() !== deletedBy.toString()) {
+      throw new AppError("Not authorized to delete assignment", 403);
+    }
+
+    // 3️⃣ Find assignment
+    const assignment = await Assignment.findById(assignmentId).session(session);
+    if (!assignment) throw new AppError("Assignment not found", 404);
+
+    // 4️⃣ Safety check → assignment belongs to course
+    if (assignment.course.toString() !== courseId.toString()) {
+      throw new AppError(
+        "Assignment does not belong to this course",
+        400
+      );
+    }
+
+    // 5️⃣ Remove assignment from section contents (if stored there)
+    await Section.findByIdAndUpdate(
+      assignment.section,
+      { $pull: { contents: assignment._id } },
+      { session }
+    );
+
+    // 6️⃣ Delete assignment (this also deletes submissions if embedded)
+    await Assignment.findByIdAndDelete(assignmentId).session(session);
+
+    // 7️⃣ Mark course for republish if published
+    if (course.status === "published") {
+      course.needsRepublish = true;
+      await course.save({ session });
+    }
+
+    await session.commitTransaction();
+    session.endSession();
+
+    return true;
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
+  }
+};
+

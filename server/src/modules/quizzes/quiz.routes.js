@@ -3,7 +3,8 @@ import {
   createQuiz,
   getQuizForStudent,
   getQuizWithAnswers,
-  getStudentQuizzes
+  getStudentQuizzes,
+  deleteQuiz,
 } from "./quiz.controller.js";
 import questionRoutes from "./question.routes.js";
 import { protect } from "../../middlewares/auth.middleware.js";
@@ -103,6 +104,8 @@ router.get("/:quizId", protect, getQuizForStudent);
  *         description: Quiz results fetched
  */
 router.get("/:quizId/results", protect, getQuizWithAnswers);
+
+router.delete("/:quizId", protect, allowedRoles("trainer"), deleteQuiz);
 
 /**
  * @swagger

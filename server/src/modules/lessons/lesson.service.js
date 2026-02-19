@@ -50,23 +50,76 @@ export const createLessonService = async (data) => {
           isPublished: false,
         },
       ],
-      { session }
+      { session },
     );
 
     // 7️⃣ VERY IMPORTANT: Add lesson to section.contents array
     await Section.findByIdAndUpdate(
       section,
-      { 
-        $push: { contents: lesson._id },    // ← This was missing!
-        $inc: { totalLessons: 1 }
+      {
+        $push: { contents: lesson._id }, // ← This was missing!
+        $inc: { totalLessons: 1 },
       },
-      { session, new: true }
+      { session, new: true },
     );
+
+    if (courseExists.status === "published") {
+      courseExists.needsRepublish = true;
+      await courseExists.save({ session });
+    }
 
     await session.commitTransaction();
     session.endSession();
 
     return lesson;
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
+  }
+};
+
+export const deleteLessonService = async ({ lessonId, courseId, deletedBy }) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    // 1️⃣ Validate course
+    const course = await Course.findById(courseId).session(session);
+    if (!course) throw new AppError("Course not found", 404);
+
+    // 2️⃣ Ownership check
+    if (course.trainer.toString() !== deletedBy.toString()) {
+      throw new AppError("Unauthorized lesson deletion", 403);
+    }
+
+    // 3️⃣ Find lesson
+    const lesson = await Lesson.findById(lessonId).session(session);
+    if (!lesson) throw new AppError("Lesson not found", 404);
+
+    // 4️⃣ Remove lesson from section.contents + decrease count
+    await Section.findByIdAndUpdate(
+      lesson.section,
+      {
+        $pull: { contents: lesson._id },
+        $inc: { totalLessons: -1 },
+      },
+      { session }
+    );
+
+    // 5️⃣ Delete lesson
+    await Lesson.findByIdAndDelete(lessonId).session(session);
+
+    // 6️⃣ Mark course for republish
+    if (course.status === "published") {
+      course.needsRepublish = true;
+      await course.save({ session });
+    }
+
+    await session.commitTransaction();
+    session.endSession();
+
+    return true;
   } catch (error) {
     await session.abortTransaction();
     session.endSession();

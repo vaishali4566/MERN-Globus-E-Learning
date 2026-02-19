@@ -1,5 +1,5 @@
 import express from "express";
-import { createLesson } from "./lesson.controller.js";
+import { createLesson, deleteLesson } from "./lesson.controller.js";
 import { protect } from "../../middlewares/auth.middleware.js";
 import { allowedRoles } from "../../middlewares/role.middleware.js";
 
@@ -33,25 +33,54 @@ const router = express.Router();
  *             properties:
  *               courseId:
  *                 type: string
- *                 example: 65f2abc12345
  *               sectionId:
  *                 type: string
- *                 example: 65f2def67890
  *               title:
  *                 type: string
- *                 example: Introduction to JavaScript
  *               description:
  *                 type: string
- *                 example: Basics of JS
  *               videoUrl:
  *                 type: string
- *                 example: https://video-url.com/video.mp4
  *     responses:
  *       201:
  *         description: Lesson created successfully
- *       403:
- *         description: Only trainer can create lessons
  */
 router.post("/", protect, allowedRoles("trainer"), createLesson);
+
+/**
+ * @swagger
+ * /api/lessons/{lessonId}:
+ *   delete:
+ *     summary: Delete a lesson
+ *     tags: [Lessons]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: lessonId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the lesson to delete
+ *       - in: query
+ *         name: courseId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Course ID of the lesson
+ *     responses:
+ *       200:
+ *         description: Lesson deleted successfully
+ *       403:
+ *         description: Unauthorized deletion
+ *       404:
+ *         description: Lesson or Course not found
+ */
+router.delete(
+  "/:lessonId",
+  protect,
+  allowedRoles("trainer"),
+  deleteLesson
+);
 
 export default router;

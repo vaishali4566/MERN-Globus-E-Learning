@@ -114,43 +114,44 @@ export const getMyCoursesService = async (userId, role) => {
 
 // ================= PUBLISH COURSE =================
 export const publishCourseService = async (courseId, trainerId) => {
-  // 1️⃣ Find the course by id & trainer
   const course = await Course.findOne({ _id: courseId, trainer: trainerId });
   if (!course) return null;
 
-  // 2️⃣ Check if course has at least one section
-  if (!course.sections?.length) {
+  // Proper section check
+  const sectionCount = await Section.countDocuments({
+    course: course._id,
+  });
+
+  if (sectionCount === 0) {
     throw new AppError("Add at least one section before publishing", 400);
   }
 
-  // 3️⃣ Publish the course
+  // Update course state
   course.status = "published";
+  course.needsRepublish = false;
+  course.lastPublishedAt = new Date();
   await course.save();
 
-  // 4️⃣ Auto-publish all sections of this course
+  // Publish all sections
   await Section.updateMany(
     { course: course._id },
     { $set: { isPublished: true } }
   );
 
-  // 5️⃣ Get all section IDs
   const sections = await Section.find({ course: course._id });
   const sectionIds = sections.map((s) => s._id);
 
   if (sectionIds.length) {
-    // ✅ Publish all lessons
     await Lesson.updateMany(
       { section: { $in: sectionIds } },
       { $set: { isPublished: true } }
     );
 
-    // ✅ Publish all assignments
     await Assignment.updateMany(
       { section: { $in: sectionIds } },
       { $set: { isPublished: true } }
     );
 
-    // ✅ Publish all quizzes
     await Quiz.updateMany(
       { section: { $in: sectionIds } },
       { $set: { isPublished: true } }
@@ -159,6 +160,8 @@ export const publishCourseService = async (courseId, trainerId) => {
 
   return course;
 };
+
+
 
 // ================= COURSE PLAYER =================
 export const getCoursePlayerDataService = async (courseId, userId) => {
@@ -308,3 +311,58 @@ export const getCoursePlayerDataService = async (courseId, userId) => {
 
   return { course, sections };
 };
+
+// ================= REPUBLISH COURSE =================
+export const republishCourseService = async (courseId, trainerId) => {
+  const course = await Course.findOne({
+    _id: courseId,
+    trainer: trainerId,
+    status: "published",
+  });
+
+  if (!course) return null;
+
+  // Ensure content exists
+  const sectionCount = await Section.countDocuments({
+    course: course._id,
+  });
+
+  if (sectionCount === 0) {
+    throw new AppError("Add at least one section before republishing", 400);
+  }
+
+  // Publish only unpublished sections
+  await Section.updateMany(
+    { course: course._id, isPublished: false },
+    { $set: { isPublished: true } }
+  );
+
+  const sections = await Section.find({ course: course._id });
+  const sectionIds = sections.map((s) => s._id);
+
+  if (sectionIds.length) {
+    await Lesson.updateMany(
+      { section: { $in: sectionIds }, isPublished: false },
+      { $set: { isPublished: true } }
+    );
+
+    await Assignment.updateMany(
+      { section: { $in: sectionIds }, isPublished: false },
+      { $set: { isPublished: true } }
+    );
+
+    await Quiz.updateMany(
+      { section: { $in: sectionIds }, isPublished: false },
+      { $set: { isPublished: true } }
+    );
+  }
+
+  // Reset republish flag
+  course.needsRepublish = false;
+  course.lastPublishedAt = new Date();
+  await course.save();
+
+  return course;
+};
+
+

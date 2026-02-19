@@ -86,6 +86,17 @@ const courseSchema = new mongoose.Schema(
       index: true,
     },
 
+    needsRepublish: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
+
+    lastPublishedAt: {
+      type: Date,
+      default: null,
+    },
+
     // ===== STATS =====
     totalStudents: {
       type: Number,
@@ -98,7 +109,7 @@ const courseSchema = new mongoose.Schema(
     },
 
     totalDuration: {
-      type: Number, // minutes
+      type: Number,
       default: 0,
     },
 
@@ -116,7 +127,7 @@ const courseSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 // ===== SLUG GENERATION =====

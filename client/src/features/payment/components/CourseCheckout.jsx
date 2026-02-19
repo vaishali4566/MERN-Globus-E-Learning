@@ -10,7 +10,7 @@ export default function CourseCheckout({ course }) {
 
   useEffect(() => {
     if (!course?._id) return;
-    if (hasCreatedRef.current) return; // 🔐 BLOCK repeat calls
+    if (hasCreatedRef.current) return;
 
     hasCreatedRef.current = true;
 
@@ -20,12 +20,12 @@ export default function CourseCheckout({ course }) {
         setClientSecret(res.data.data.clientSecret);
       } catch (err) {
         console.error("PaymentIntent fetch failed", err);
-        hasCreatedRef.current = false; // allow retry if failed
+        hasCreatedRef.current = false;
       }
     };
 
     fetchClientSecret();
-  }, [course?._id]); // ✅ depend ONLY on id
+  }, [course?._id]);
 
   if (!course) return <div>Loading course...</div>;
   if (!clientSecret) return <div>Preparing payment...</div>;

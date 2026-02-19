@@ -1,5 +1,5 @@
 import express from "express";
-import { createSection } from "./section.controller.js";
+import { createSection, deleteSection } from "./section.controller.js";
 import { protect } from "../../middlewares/auth.middleware.js";
 import { allowedRoles } from "../../middlewares/role.middleware.js";
 
@@ -43,5 +43,12 @@ const router = express.Router();
  *         description: Only trainer can create sections
  */
 router.post("/", protect, allowedRoles("trainer"), createSection);
+
+router.delete(
+  "/:sectionId",
+  protect,
+  allowedRoles("trainer"),
+  deleteSection
+);
 
 export default router;

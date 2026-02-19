@@ -1,6 +1,6 @@
 import asyncHandler from "../../utils/asyncHandler.js";
 import { AppError } from "../../utils/appError.js";
-import { createQuizService, getQuizForStudentService, getQuizWithAnswersService, getStudentQuizzesService } from "./quiz.service.js";
+import { createQuizService, getQuizForStudentService, getQuizWithAnswersService, getStudentQuizzesService, deleteQuizService } from "./quiz.service.js";
 
 export const createQuiz = asyncHandler(async (req, res) => {
   const {
@@ -70,6 +70,27 @@ export const createQuiz = asyncHandler(async (req, res) => {
     },
   });
 });
+
+export const deleteQuiz = asyncHandler(async (req, res) => {
+  const { quizId } = req.params;
+  const { courseId } = req.query;
+
+  if (!quizId || !courseId) {
+    throw new AppError("Quiz id and course id are required", 400);
+  }
+
+  await deleteQuizService({
+    quizId,
+    courseId,
+    deletedBy: req.user.id,
+  });
+
+  res.status(200).json({
+    success: true,
+    message: "Quiz deleted successfully",
+  });
+});
+
 
 export const getQuizForStudent = asyncHandler(async (req, res) => {
   const { quizId } = req.params;
