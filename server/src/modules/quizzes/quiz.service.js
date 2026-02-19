@@ -35,6 +35,11 @@ export const createQuizService = async (data) => {
     isPublished: false, // default draft
   });
 
+  if (course.status === "published") {
+  course.needsRepublish = true;
+  await course.save();
+}
+
   return quiz;
 };
 
@@ -77,6 +82,67 @@ export const getQuizForStudentService = async (quizId) => {
     questions: safeQuestions,
   };
 };
+
+export const deleteQuizService = async ({
+  quizId,
+  courseId,
+  deletedBy,
+}) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    // 1️⃣ Validate course
+    const course = await Course.findById(courseId).session(session);
+    if (!course) throw new AppError("Course not found", 404);
+
+    // 2️⃣ Ownership check
+    if (course.trainer.toString() !== deletedBy.toString()) {
+      throw new AppError("Not authorized to delete quiz", 403);
+    }
+
+    // 3️⃣ Find quiz
+    const quiz = await Quiz.findById(quizId).session(session);
+    if (!quiz) throw new AppError("Quiz not found", 404);
+
+    // 4️⃣ Safety: quiz belongs to course
+    if (quiz.course.toString() !== courseId.toString()) {
+      throw new AppError("Quiz does not belong to this course", 400);
+    }
+
+    // 5️⃣ Delete related questions
+    await Question.deleteMany({ quiz: quizId }).session(session);
+
+    // 6️⃣ Delete related attempts
+    await QuizAttempt.deleteMany({ quiz: quizId }).session(session);
+
+    // 7️⃣ Remove quiz from section.contents (if stored there)
+    await Section.findByIdAndUpdate(
+      quiz.section,
+      { $pull: { contents: quiz._id } },
+      { session }
+    );
+
+    // 8️⃣ Delete quiz itself
+    await Quiz.findByIdAndDelete(quizId).session(session);
+
+    // 9️⃣ Mark course for republish
+    if (course.status === "published") {
+      course.needsRepublish = true;
+      await course.save({ session });
+    }
+
+    await session.commitTransaction();
+    session.endSession();
+
+    return true;
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
+  }
+};
+
 
 export const getQuizWithAnswersService = async (quizId) => {
   // 🛑 HARD GUARD

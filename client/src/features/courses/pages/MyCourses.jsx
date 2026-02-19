@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import CourseCard from "../components/CourseCard";
 import EnrolledCourseCard from "../components/EnrolledCourseCard";
 import {
-  getTrainerCourses,
+  getMyCourses,
   getStudentCourses,
 } from "@/features/courses/services/courseService";
 
@@ -26,7 +26,7 @@ const MyCourses = () => {
         let res;
 
         if (role === "trainer") {
-          res = await getTrainerCourses();
+          res = await getMyCourses();
           setCourses(res?.data || []);
         } else {
           res = await getStudentCourses();

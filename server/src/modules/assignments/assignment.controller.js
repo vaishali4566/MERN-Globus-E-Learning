@@ -1,6 +1,6 @@
 import asyncHandler from "../../utils/asyncHandler.js";
 import { AppError } from "../../utils/appError.js";
-import { createAssignmentService, getStudentAssignmentsService } from "./assignment.service.js";
+import { createAssignmentService, getStudentAssignmentsService , deleteAssignmentService} from "./assignment.service.js";
 
 export const createAssignment = asyncHandler(async (req, res) => {
   const {
@@ -67,3 +67,24 @@ export const getStudentAssignments = asyncHandler(async (req, res) => {
     data: assignments,
   });
 });
+
+export const deleteAssignment = asyncHandler(async (req, res) => {
+  const { assignmentId } = req.params;
+  const { courseId } = req.query;
+
+  if (!assignmentId || !courseId) {
+    throw new AppError("Assignment id and course id are required", 400);
+  }
+
+  await deleteAssignmentService({
+    assignmentId,
+    courseId,
+    deletedBy: req.user.id,
+  });
+
+  res.status(200).json({
+    success: true,
+    message: "Assignment deleted successfully",
+  });
+});
+

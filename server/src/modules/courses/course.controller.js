@@ -6,7 +6,8 @@ import {
   getMyCoursesService,
   publishCourseService,
   getAllCoursesService,
-  getCoursePlayerDataService
+  getCoursePlayerDataService,
+  republishCourseService
 } from "./course.service.js";
 import Enrollment from "../enrollments/enrollment.model.js";
 
@@ -65,6 +66,7 @@ export const getCourseById = asyncHandler(async (req, res) => {
   const { courseId } = req.params;
 
   const course = await getCourseByIdService(courseId, req.user);
+  console.log(course);
 
   if (!course) {
     throw new AppError("Course not found", 404);
@@ -77,11 +79,9 @@ export const getCourseById = asyncHandler(async (req, res) => {
 });
 
 // ================= GET MY COURSES =================
-export const getMyCourses = async (req, res) => {
-
+export const getMyCourses = asyncHandler(async (req, res) => {
   const userId = req.user.id;
-
-  const role = req.user.role; 
+  const role = req.user.role;
 
   const courses = await getMyCoursesService(userId, role);
 
@@ -89,7 +89,8 @@ export const getMyCourses = async (req, res) => {
     success: true,
     data: courses,
   });
-};
+});
+
 
 
 // ================= GET ALL PUBLISHED COURSES =================
@@ -161,11 +162,13 @@ export const publishCourse = asyncHandler(async (req, res) => {
 
   res.status(200).json({
     success: true,
-    message: "Course published successfully with all sections and lessons",
+    message: "Course published successfully",
     data: {
       id: course._id,
       title: course.title,
       status: course.status,
+      needsRepublish: course.needsRepublish,
+      lastPublishedAt: course.lastPublishedAt,
     },
   });
 });
@@ -191,3 +194,29 @@ export const getCoursePlayerData = async (req, res, next) => {
     next(error);
   }
 };
+
+
+// ================= REPUBLISH COURSE CONTROLLER =================
+export const republishCourse = asyncHandler(async (req, res) => {
+  const { courseId } = req.params;
+  const trainerId = req.user.id;
+
+  const course = await republishCourseService(courseId, trainerId);
+
+  if (!course) {
+    throw new AppError("Course not found or permission denied", 404);
+  }
+
+  res.status(200).json({
+    success: true,
+    message: "Course republished successfully",
+    data: {
+      id: course._id,
+      title: course.title,
+      status: course.status,
+      needsRepublish: course.needsRepublish,
+      lastPublishedAt: course.lastPublishedAt,
+    },
+  });
+});
+

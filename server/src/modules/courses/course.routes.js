@@ -6,6 +6,7 @@ import {
   publishCourse,
   getAllCourses,
   getCoursePlayerData,
+  republishCourse
 } from "./course.controller.js";
 import { protect } from "../../middlewares/auth.middleware.js";
 import { allowedRoles } from "../../middlewares/role.middleware.js";
@@ -153,5 +154,32 @@ router.patch(
   allowedRoles("trainer"),
   publishCourse
 );
+
+
+/**
+ * @swagger
+ * /api/courses/{courseId}/republish:
+ *   patch:
+ *     summary: Republish a course after updates
+ *     tags: [Courses]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: courseId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Course republished successfully
+ */
+router.patch(
+  "/:courseId/republish",
+  protect,     
+  allowedRoles("trainer"),
+  republishCourse
+);
+
 
 export default router;

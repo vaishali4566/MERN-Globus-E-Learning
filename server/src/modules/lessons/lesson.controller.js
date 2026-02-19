@@ -1,6 +1,6 @@
 import asyncHandler from "../../utils/asyncHandler.js";
 import { AppError } from "../../utils/appError.js";
-import { createLessonService } from "./lesson.service.js";
+import { createLessonService, deleteLessonService } from "./lesson.service.js";
 
 export const createLesson = asyncHandler(async (req, res) => {
   const {
@@ -70,3 +70,23 @@ export const createLesson = asyncHandler(async (req, res) => {
     data: lesson
   });
 });
+
+export const deleteLesson = asyncHandler(async (req, res) => {
+  const { lessonId, courseId } = req.body;
+
+  if (!lessonId || !courseId) {
+    throw new AppError("Lesson id and course id are required", 400);
+  }
+
+  await deleteLessonService({
+    lessonId,
+    courseId,
+    deletedBy: req.user.id,
+  });
+
+  res.status(200).json({
+    success: true,
+    message: "Lesson deleted successfully",
+  });
+});
+
