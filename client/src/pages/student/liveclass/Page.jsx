@@ -49,7 +49,7 @@ const LiveClasses = () => {
             {/* Top */}
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
-                <FiVideo className="text-blue-600 dark:text-blue-400" />
+                <FiVideo className="text-blue-500 dark:text-blue-400" />
                 <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
                   Live Class
                 </span>
@@ -60,7 +60,7 @@ const LiveClasses = () => {
                   ${
                     cls.status === "Live"
                       ? "bg-red-500 text-white"
-                      : "bg-blue-100 text-blue-600 dark:bg-blue-900/40 dark:text-blue-400"
+                      : "bg-blue-100 text-blue-500 dark:bg-blue-900/40 dark:text-blue-400"
                   }`}
               >
                 {cls.status}
@@ -91,7 +91,7 @@ const LiveClasses = () => {
                 ${
                   cls.status === "Live"
                     ? "bg-red-500 text-white hover:bg-red-600"
-                    : "border border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
+                    : "border border-blue-500 text-blue-500 hover:bg-blue-600 hover:text-white"
                 }`}
             >
               {cls.status === "Live" ? "Join Now" : "View Details"}

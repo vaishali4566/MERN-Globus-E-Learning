@@ -50,7 +50,7 @@ const SchedulePage = () => {
               {/* Top */}
               <div className="flex items-center justify-between mb-3">
                 <div className="w-10 h-10 flex items-center justify-center rounded-lg
-                                bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400">
+                                bg-blue-100 dark:bg-blue-500/20 text-blue-500 dark:text-blue-400">
                   {item.icon}
                 </div>
 

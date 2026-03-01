@@ -1,23 +1,29 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import DashboardLayout from "./components/layout/DashboardLayout";
-// import AuthRoutes from "./routes/AuthRoutes";
+import { Routes, Route } from "react-router-dom";
 import StudentRoutes from "./routes/StudentRoutes";
-// import PublicRoutes from "./routes/PublicRoutes";
+import TrainerRoutes from "./routes/TrainerRoutes";
+import AuthRoutes from "./routes/AuthRoutes";
+import LandingPage from "./pages/Landing/LandingPage";
+import SocketProvider from "@/context/SocketProvider";
 
 function App() {
+  const token = localStorage.getItem("token");
+
   return (
-    <Router>
+    <SocketProvider token={token}>
       <Routes>
-        {/* Public */}
-        {/* <Route path="/*" element={<PublicRoutes />} /> */}
+        {/* Landing */}
+        <Route path="/" element={<LandingPage />} />
 
         {/* Auth */}
-        {/* <Route path="/auth/*" element={<AuthRoutes />} /> */}
+        <Route path="/auth/*" element={<AuthRoutes />} />
 
-        {/* Student Dashboard */}
+        {/* Student */}
         <Route path="/student/*" element={<StudentRoutes />} />
+
+        {/* Trainer */}
+        <Route path="/trainer/*" element={<TrainerRoutes />} />
       </Routes>
-    </Router>
+    </SocketProvider>
   );
 }
 

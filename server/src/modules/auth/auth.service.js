@@ -16,9 +16,10 @@ export const signupUser = async ({ name, email, password, role }) => {
 
 // Login service
 export const loginUser = async ({ email, password }) => {
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email }).select("+password");
+
   if (!user) {
-    throw new AppError("Invalid credentials", 401); 
+    throw new AppError("Invalid credentials", 401);
   }
 
   const isMatch = await user.comparePassword(password);
@@ -28,4 +29,3 @@ export const loginUser = async ({ email, password }) => {
 
   return user;
 };
-
